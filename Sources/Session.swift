@@ -1,0 +1,145 @@
+import AppKit
+
+struct NoteRecord: Codable {
+    var id: UUID
+    var name: String
+    var draftFile: String
+    var selection: Int
+    var scrollY: Double
+    var logPath: String? = nil
+    var logOffset: Int64? = nil
+    var syntax: String? = nil // nil: infer from name; "plain": explicitly disable highlighting
+}
+
+struct SessionRecord: Codable {
+    var version = 2
+    var activeID: UUID
+    var notes: [NoteRecord]
+}
+
+final class Note {
+    var isLog: Bool { record.logPath != nil }
+    var language: TextLanguage {
+        if isLog { return .plain }
+        return record.syntax.flatMap(TextLanguage.init(rawValue:)) ?? TextLanguage.detect(record.name)
+    }
+    var record: NoteRecord
+    var storage: NSTextStorage?
+    var logFile: LogFile?
+    var logIndex: LogIndex?
+    let undo = UndoManager()
+    var dirty: Bool
+    init(record: NoteRecord, storage: NSTextStorage? = nil, dirty: Bool = false) {
+        self.record = record
+        self.storage = storage
+        self.dirty = dirty
+        undo.levelsOfUndo = 100
+    }
+    convenience init(name: String, text: String = "") {
+        self.init(record: NoteRecord(id: UUID(), name: name, draftFile: "", selection: 0, scrollY: 0),
+                  storage: NSTextStorage(string: text), dirty: true)
+    }
+}
+
+enum SessionError: LocalizedError {
+    case invalid(String)
+    var errorDescription: String? {
+        switch self { case .invalid(let detail): return "草稿读取失败：\(detail)。原有文件未被覆盖。" }
+    }
+}
+
+final class SessionStore {
+    let directory: URL
+    let drafts: URL
+    var recoveryNotice: String?
+    private let fm = FileManager.default
+    private var lockFD: Int32 = -1
+    private var manifest: URL { directory.appendingPathComponent("session.json") }
+    private var previous: URL { directory.appendingPathComponent("session.previous.json") }
+
+    init(directory: URL) throws {
+        self.directory = directory
+        drafts = directory.appendingPathComponent("drafts", isDirectory: true)
+        try fm.createDirectory(at: drafts, withIntermediateDirectories: true)
+        lockFD = open(directory.appendingPathComponent("session.lock").path, O_CREAT | O_RDWR, 0o600)
+        guard lockFD >= 0, flock(lockFD, LOCK_EX | LOCK_NB) == 0 else {
+            if lockFD >= 0 { close(lockFD); lockFD = -1 }
+            throw SessionError.invalid("此草稿目录已由另一个 Textlet 进程使用，或无法加锁")
+        }
+    }
+    deinit { if lockFD >= 0 { close(lockFD) } }
+
+    func text(for record: NoteRecord) throws -> String {
+        if record.logPath != nil { return "" }
+        guard !record.draftFile.isEmpty,
+              record.draftFile == (record.draftFile as NSString).lastPathComponent else {
+            throw SessionError.invalid("无效草稿路径")
+        }
+        return try String(contentsOf: drafts.appendingPathComponent(record.draftFile), encoding: .utf8)
+    }
+
+    private func read(_ url: URL) throws -> SessionRecord {
+        let session = try JSONDecoder().decode(SessionRecord.self, from: Data(contentsOf: url))
+        guard (1...2).contains(session.version), !session.notes.isEmpty,
+              Set(session.notes.map(\.id)).count == session.notes.count,
+              session.notes.contains(where: { $0.id == session.activeID }) else {
+            throw SessionError.invalid("会话格式无效")
+        }
+        // Validate all referenced files before accepting a generation; retain only the active buffer later.
+        for record in session.notes { _ = try text(for: record) }
+        return session
+    }
+
+    func load() throws -> SessionRecord? {
+        guard fm.fileExists(atPath: manifest.path) else {
+            if fm.fileExists(atPath: previous.path) { return try read(previous) }
+            return nil
+        }
+        do { return try read(manifest) }
+        catch {
+            guard let recovered = try? read(previous) else {
+                throw SessionError.invalid("当前会话和备份都无法读取；数据位于 \(directory.path)")
+            }
+            let archive = directory.appendingPathComponent("session.damaged-\(UUID().uuidString).json")
+            try fm.copyItem(at: manifest, to: archive)
+            try Data(contentsOf: previous).write(to: manifest, options: .atomic)
+            recoveryNotice = "已从上一份完整快照恢复草稿；损坏的会话文件已保留。"
+            return recovered
+        }
+    }
+
+    func save(notes: [Note], activeID: UUID) throws {
+        guard !notes.isEmpty else { throw SessionError.invalid("不能保存空会话") }
+        var records = notes.map(\.record)
+        for (index, note) in notes.enumerated() where !note.isLog && (note.dirty || note.record.draftFile.isEmpty) {
+            guard let storage = note.storage else { throw SessionError.invalid("草稿缓冲区缺失") }
+            let name = "\(note.record.id.uuidString)-\(UUID().uuidString).txt"
+            try Data(storage.string.utf8).write(to: drafts.appendingPathComponent(name), options: .atomic)
+            records[index].draftFile = name
+        }
+        let snapshot = SessionRecord(activeID: activeID, notes: records)
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        let encoded = try encoder.encode(snapshot)
+        // Content revisions precede the atomic manifest commit, so a failed save cannot corrupt an old snapshot.
+        if fm.fileExists(atPath: manifest.path) {
+            try Data(contentsOf: manifest).write(to: previous, options: .atomic)
+        }
+        try encoded.write(to: manifest, options: .atomic)
+        for (index, note) in notes.enumerated() {
+            note.record = records[index]
+            note.dirty = false
+        }
+        // Keep files referenced by BOTH committed generations.
+        var retained = Set(records.map(\.draftFile))
+        if let data = try? Data(contentsOf: previous),
+           let old = try? JSONDecoder().decode(SessionRecord.self, from: data) {
+            retained.formUnion(old.notes.map(\.draftFile))
+        }
+        if let files = try? fm.contentsOfDirectory(at: drafts, includingPropertiesForKeys: nil) {
+            for file in files where file.pathExtension == "txt" && !retained.contains(file.lastPathComponent) {
+                try? fm.removeItem(at: file)
+            }
+        }
+    }
+}

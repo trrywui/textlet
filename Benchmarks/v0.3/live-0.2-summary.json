@@ -1,0 +1,35 @@
+{
+  "observedAt": "2026-09-25 22:50:26 +0800",
+  "appVersion": "0.2.0",
+  "pid": 28784,
+  "runtimeMinutes": 60,
+  "physicalFootprintMiB": 101.0,
+  "physicalFootprintPeakMiB": 310.2,
+  "notes": 3,
+  "draftBytes": [
+    1373,
+    5730,
+    1478
+  ],
+  "windowSizePoints": [
+    1680,
+    968
+  ],
+  "vmmap": {
+    "ownedUnmappedDirtyMiB": 47.9,
+    "IOSurfaceVirtualMiB": 56.4,
+    "IOSurfaceDirtyMiB": 6.84,
+    "mallocAllocatedMiB": 22.7,
+    "mallocDirtyAndSwapMiB": 31.6
+  },
+  "heapCounts": {
+    "Note": 3,
+    "NoteTab": 3,
+    "NSConcreteTextStorage": 3
+  },
+  "leaks": {
+    "found": 0,
+    "leakedBytes": 0
+  },
+  "scope": "只读进程诊断；仅汇总草稿体积，不记录正文。vmmap 虚拟区间不能直接相加视为物理内存；0 leaks 不排除可达对象缓存滞留。"
+}

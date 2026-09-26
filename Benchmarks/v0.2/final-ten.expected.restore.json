@@ -1,0 +1,91 @@
+{
+  "details" : [
+    {
+      "name" : "测试 · 1200 行",
+      "scrollActual" : 40331,
+      "scrollExpected" : 40331,
+      "selectionActual" : 74400,
+      "selectionExpected" : 74400,
+      "textMatches" : true
+    },
+    {
+      "name" : "测试 · 1200 行",
+      "scrollActual" : 40331,
+      "scrollExpected" : 40331,
+      "selectionActual" : 74400,
+      "selectionExpected" : 74400,
+      "textMatches" : true
+    },
+    {
+      "name" : "测试 · 1200 行",
+      "scrollActual" : 0,
+      "scrollExpected" : 0,
+      "selectionActual" : 0,
+      "selectionExpected" : 0,
+      "textMatches" : true
+    },
+    {
+      "name" : "测试 · 1200 行",
+      "scrollActual" : 0,
+      "scrollExpected" : 0,
+      "selectionActual" : 0,
+      "selectionExpected" : 0,
+      "textMatches" : true
+    },
+    {
+      "name" : "测试 · 1200 行",
+      "scrollActual" : 0,
+      "scrollExpected" : 0,
+      "selectionActual" : 0,
+      "selectionExpected" : 0,
+      "textMatches" : true
+    },
+    {
+      "name" : "测试 · 1200 行",
+      "scrollActual" : 0,
+      "scrollExpected" : 0,
+      "selectionActual" : 0,
+      "selectionExpected" : 0,
+      "textMatches" : true
+    },
+    {
+      "name" : "测试 · 1200 行",
+      "scrollActual" : 0,
+      "scrollExpected" : 0,
+      "selectionActual" : 0,
+      "selectionExpected" : 0,
+      "textMatches" : true
+    },
+    {
+      "name" : "测试 · 1200 行",
+      "scrollActual" : 0,
+      "scrollExpected" : 0,
+      "selectionActual" : 0,
+      "selectionExpected" : 0,
+      "textMatches" : true
+    },
+    {
+      "name" : "测试 · 1200 行",
+      "scrollActual" : 0,
+      "scrollExpected" : 0,
+      "selectionActual" : 0,
+      "selectionExpected" : 0,
+      "textMatches" : true
+    },
+    {
+      "name" : "测试 · 1200 行",
+      "scrollActual" : 20165.5,
+      "scrollExpected" : 20165.5,
+      "selectionActual" : 0,
+      "selectionExpected" : 0,
+      "textMatches" : true
+    }
+  ],
+  "memory" : {
+    "footprintMiB" : 51.234375,
+    "peakResidentMiB" : 74.578125,
+    "residentMiB" : 73.41796875
+  },
+  "restorePassed" : true,
+  "tabCount" : 10
+}

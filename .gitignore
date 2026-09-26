@@ -1,0 +1,27 @@
+# macOS
+.DS_Store
+.AppleDouble
+
+# 构建和发布产物
+/build/
+/dist/
+/.build/
+/.swiftpm/
+/DerivedData/
+*.app/
+*.dSYM/
+*.zip
+
+# 临时测试数据、大日志和本机会话
+/work/
+/fixtures/
+/test-output/
+*.log
+session.json
+session.previous.json
+session.lock
+
+# 编辑器临时文件
+*.swp
+*.swo
+*~

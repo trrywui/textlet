@@ -1,0 +1,84 @@
+PASS literal characters and line endings survive persistence
+PASS tabs and active selection restore
+PASS new revision commits
+PASS caret location persists
+PASS missing revision falls back to consistent previous snapshot
+PASS fallback is reported, not silent
+PASS unrecoverable session is rejected instead of overwritten
+PASS failed load leaves source untouched
+PASS second writer cannot open same session
+All persistence tests passed.
+PASS JSON preserves numeric tokens exactly
+PASS JSON preserves escapes and Unicode
+PASS JSON formatting is idempotent
+PASS JSON retains duplicate keys
+PASS JSON rejects invalid input ""
+PASS JSON rejects invalid input "{"
+PASS JSON rejects invalid input "[1,]"
+PASS JSON rejects invalid input "{\"a\":1,}"
+PASS JSON rejects invalid input "01"
+PASS JSON rejects invalid input "1."
+PASS JSON rejects invalid input "1e"
+PASS JSON rejects invalid input "[true false]"
+PASS JSON rejects invalid input "{a:1}"
+PASS JSON rejects invalid input "\"x\n\""
+PASS JSON rejects invalid input "\"\\z\""
+PASS JSON rejects invalid input "\"\\u123z\""
+PASS JSON rejects invalid input "falseX"
+PASS JSON rejects invalid input "[] []"
+PASS JSON rejects invalid input "[[[[[[[[[[[[[[[[[[[["
+PASS JSON input memory limit
+PASS line count handles CRLF, CR, LF, Unicode and trailing newline
+PASS CRLF is a single logical boundary
+PASS sparse line checkpoints
+PASS line checkpoints invalidate after edit
+PASS empty note has line 1
+PASS log index counts CRLF across blocks
+PASS log page advances without gaps or broken UTF-8
+PASS absolute log line number
+PASS log page advances without gaps or broken UTF-8
+PASS absolute log line number
+PASS log page advances without gaps or broken UTF-8
+PASS absolute log line number
+PASS log page advances without gaps or broken UTF-8
+PASS absolute log line number
+PASS log page advances without gaps or broken UTF-8
+PASS absolute log line number
+PASS log page advances without gaps or broken UTF-8
+PASS absolute log line number
+PASS log page advances without gaps or broken UTF-8
+PASS absolute log line number
+PASS log page advances without gaps or broken UTF-8
+PASS absolute log line number
+PASS log page advances without gaps or broken UTF-8
+PASS absolute log line number
+PASS log page advances without gaps or broken UTF-8
+PASS absolute log line number
+PASS log page advances without gaps or broken UTF-8
+PASS absolute log line number
+PASS log page advances without gaps or broken UTF-8
+PASS absolute log line number
+PASS log page advances without gaps or broken UTF-8
+PASS absolute log line number
+PASS log page advances without gaps or broken UTF-8
+PASS absolute log line number
+PASS all log pages reconstruct original bytes
+PASS UTF-8 literal full-file search
+PASS no-match search reaches EOF
+PASS index cancellation
+PASS search matches across block/UTF-8 boundary
+PASS huge single line remains bounded
+PASS huge single line remains bounded
+PASS huge single line remains bounded
+PASS huge single line remains bounded
+PASS huge single line remains bounded
+PASS huge single line remains bounded
+PASS huge line and emoji survive paging
+PASS jump within multibyte character is aligned
+PASS changed or truncated logs require explicit reload
+PASS empty log opens
+PASS 0.1 session remains readable
+PASS log path and viewport persist without copying file
+PASS missing external log does not prevent draft recovery
+PASS log tabs never create full-file drafts
+All feature tests passed.

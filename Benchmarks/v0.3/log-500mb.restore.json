@@ -1,0 +1,18 @@
+{
+  "checks" : {
+    "activeLogRestored" : true,
+    "bytePositionRestored" : true,
+    "lineNumberRestored" : true,
+    "note-259DF4E2-65E8-4B71-8AF7-38BEFE7C3FA8" : true,
+    "note-AD7B901B-55F1-4944-89D4-F67DA7E67A79" : true,
+    "note-D3172088-2135-419A-A486-8F0CB164724E" : true,
+    "viewportRestored" : true
+  },
+  "memory" : {
+    "footprintMiB" : 50.2265625,
+    "peakFootprintMiB" : 50.2265625,
+    "peakResidentMiB" : 65.1328125,
+    "residentMiB" : 65.1328125
+  },
+  "seconds" : 1.6106101740006125
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Textlet",
+    "id": "textlet",
+    "background": "#24251F",
+    "description": "断开右端的大写 T；琥珀色横画呼应 Monokai。"
+  },
+  {
+    "name": "Textbit",
+    "id": "textbit",
+    "background": "#1C2129",
+    "description": "小写 t 顶端拆出一个蓝灰方块，强调轻巧与小片段。"
+  },
+  {
+    "name": "Textmark",
+    "id": "textmark",
+    "background": "#242124",
+    "description": "窄斜体 T 与细短下划线，偏排印与阅读气质。"
+  },
+  {
+    "name": "Mintext",
+    "id": "mintext",
+    "background": "#1F2524",
+    "description": "紧凑的 txt 字形；灰绿 x 连接两侧米白 t，最接近文本文件的直接表达。"
+  }
+]
