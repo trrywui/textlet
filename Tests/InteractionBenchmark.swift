@@ -197,8 +197,7 @@ final class InteractionBenchmark {
                 probes.append(WeakProbe(temporary))
                 probes.append(WeakProbe(temporary.storage))
                 probes.append(WeakProbe(app.tabStack.arrangedSubviews.last))
-                app.notes.removeLast()
-                try? app.selectNote(app.notes[0].record.id, saveCurrent: false)
+                app.closeNote(temporary.record.id)
             }
             tick += 1
         }

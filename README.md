@@ -1,10 +1,18 @@
 # Textlet
 
-面向 macOS 14 Intel 的原生纯文本编辑器。Swift + AppKit，无 WebView、Electron、第三方运行时和语言服务器。目标是降低常驻内存；50MB 仍不是所有场景下的硬上限，本次检查见 [0.4.1 简测记录](docs/简测记录-0.4.1.md)，大小窗口的历史实测见 [0.3 性能测试报告](docs/性能测试-0.3.md)。
+面向 macOS 14 Intel 的原生纯文本编辑器。Swift + AppKit，无 WebView、Electron、第三方运行时和语言服务器。当前版本为 **0.5.0（build 7）**，默认采用已试用的 CPU/内存平衡绘制实现。50MB 不是所有场景下的硬上限，性能取舍见 [平衡报告](docs/逐行绘制CPU内存平衡-2026-09-28.md)。
 
 ## 运行
 
-运行 `bash scripts/build.sh`，然后打开 `build/Textlet.app`，也可拖进“应用程序”目录。这是本机编译、临时签名的试用版本，尚未公证。
+运行 `bash scripts/build.sh`，得到正式项目的 `build/Textlet.app`，可拖进“应用程序”目录。本机构建采用临时签名，尚未公证。安装前退出旧 Textlet，避免同一草稿目录被两个进程使用。
+
+## 0.5.0 更新与项目归档
+
+优化试用版的绘制实现已成为正式构建默认：复用未变化的行图片、限制离屏缓存、合并绘制请求，并减少纯文本编辑不需要的 Touch Bar 状态更新。应用名仍为 **Textlet**，草稿目录仍为 `~/Library/Application Support/Textlet/`，不自动迁移试用版草稿。
+
+后续功能直接在 `/Users/lee/workspace/code/textlet` 开发。整合前的完整项目快照位于 `archives/textlet-before-promotion-2026-09-28/`，包含当时的未提交代码、测试记录、构建产物和独立 Git 历史包；该本地归档不纳入 Git。它保存了原正式构建及当时已有的实验实现，不能直接当成只有旧版代码的干净分支。
+
+交接与验证见 [正式版整合记录](docs/正式版整合-2026-09-28.md)。电脑中已安装的应用和用户草稿未在本次整合中删除或替换；项目外测试遗留见 [清理交接清单](docs/项目外测试遗留清单-2026-09-28.md)。
 
 ## 0.4.1 更新
 
@@ -56,10 +64,14 @@ SQL 识别常用关键词、引号文本、数字和注释；YAML 识别常用�
 | `⌘Z` / `⇧⌘Z` | 撤销 / 重做 |
 | `⇧⌘]` / `⇧⌘[` | 下一个 / 上一个标签 |
 | `⌘+` / `⌘-` | 放大 / 缩小文字 |
-| `⌘W` | 关闭当前标签，需确认 |
+| `⌘W` | 关闭当前标签；空草稿直接关闭，有内容时选择不保存、保存或取消 |
 | `⌘Q` | 保存会话并退出，下次恢复 |
 
 关闭窗口也会保存会话并退出。要保留笔记，直接退出即可，不必逐个关闭标签。
+
+有内容的普通标签关闭时提示“您想保存对文件所做的更改吗？”，按钮从左到右为“不保存、保存、取消”。保存会打开现有 UTF-8 导出面板，成功后关闭标签；取消面板或导出失败会保留标签。空格、换行也算内容。关闭最后一个标签后会保留一个新的空白标签。
+
+窗口退出时的尺寸与位置随会话保存，下次启动恢复；双击标题栏放大后的窗口同样恢复为放大尺寸。显示器断开或分辨率改变时会调整到当前屏幕可见区域。
 
 普通文本打开为草稿副本，自动保存不会改写原文件。需要写回文件时，使用 `⌘S` 导出并选择原路径。每个普通标签有独立撤销记录。
 
@@ -73,6 +85,7 @@ SQL 识别常用关键词、引号文本、数字和注释；YAML 识别常用�
 - 当前快照损坏时尝试上一代并提示；两代都损坏时停止加载，不覆盖原稿。
 - 同一草稿目录只允许一个写入进程；保存失败会阻止正常退出。
 - 0.4 可读取 0.1 / 0.2 / 0.3 会话；写入仍使用 v2 清单，新增可选的标签语言字段。
+- 窗口位置使用可选的 `windowFrame` 字段；旧会话没有此字段时使用默认窗口大小。
 - 撤销记录不跨重启保留；突然断电或强制结束进程仍可能丢失最后尚未保存的输入。
 
 ## 内存设计与边界
@@ -93,6 +106,8 @@ Java、Python、Rust 和 JSON 尚无语法高亮；JSON 格式化仍然可用。
 - `scripts/`：构建和合成日志生成脚本。
 - `docs/`、`Benchmarks/`：性能报告、历史测量及验收记录。
 - `build/`：本机构建产物，已被 Git 忽略。
+- `test-output/`：新的测试会话、临时基线源码与检查输出，已被 Git 忽略。
+- `archives/`：整合前的本地项目归档，已被 Git 忽略。
 
 ## 构建与测试
 
@@ -100,33 +115,34 @@ Java、Python、Rust 和 JSON 尚无语法高亮；JSON 格式化仍然可用。
 
 ```sh
 bash scripts/build.sh
+./build/Textlet.app/Contents/MacOS/textlet --build-info
 ./build/Textlet.app/Contents/MacOS/textlet --self-test
 ```
 
 构建脚本也可接收自定义 `.app` 输出路径。需要重新生成图标时，执行 `bash scripts/build-icon.sh`（由 `scripts/icon.swift` 按矢量源的几何绘制），随后重新构建应用。应用包、压缩包和大型日志不纳入 Git。
 
-普通窗口回归测试持续约 30 秒，自动结束。附加 `--stress` 测试十标签。
+下列示例均从项目根目录运行，先执行 `mkdir -p test-output`。每次新测量应使用未占用的会话目录。普通窗口回归测试持续约 30 秒，自动结束。附加 `--stress` 测试十标签。
 
 ```sh
 ./build/Textlet.app/Contents/MacOS/textlet \
-  --data-dir /tmp/textlet-small-session \
-  --benchmark /tmp/textlet-small.json
+  --data-dir test-output/textlet-small-session \
+  --benchmark test-output/textlet-small.json
 ./build/Textlet.app/Contents/MacOS/textlet \
-  --data-dir /tmp/textlet-small-session \
-  --restore-check /tmp/textlet-small.expected.json
+  --data-dir test-output/textlet-small-session \
+  --restore-check test-output/textlet-small.expected.json
 ```
 
 大日志与 JSON 快捷键测试：
 
 ```sh
-python3 scripts/make-log-fixtures.py /tmp/textlet-fixtures
+python3 scripts/make-log-fixtures.py test-output/textlet-fixtures
 ./build/Textlet.app/Contents/MacOS/textlet \
-  --data-dir /tmp/textlet-log-session \
-  --feature-benchmark /tmp/textlet-log.json \
-  --log-fixture /tmp/textlet-fixtures/500MB.log
+  --data-dir test-output/textlet-log-session \
+  --feature-benchmark test-output/textlet-log.json \
+  --log-fixture test-output/textlet-fixtures/500MB.log
 ./build/Textlet.app/Contents/MacOS/textlet \
-  --data-dir /tmp/textlet-log-session \
-  --feature-restore /tmp/textlet-log.expected.json
+  --data-dir test-output/textlet-log-session \
+  --feature-restore test-output/textlet-log.expected.json
 ```
 
 所有测试必须用隔离目录。基准测试拒绝覆盖已有会话；重启检查使用相应测试会话。测试窗口会自行切换、编辑和隐藏，请勿操作它们。测试结束后才截图；普通启动不采样、不截图。原始结果见 `Benchmarks/v0.2/` 和 `Benchmarks/v0.3/`。
@@ -136,11 +152,11 @@ python3 scripts/make-log-fixtures.py /tmp/textlet-fixtures
 
 ```sh
 ./build/Textlet.app/Contents/MacOS/textlet \
-  --data-dir /tmp/textlet-interaction-session \
-  --interaction-benchmark /tmp/textlet-interaction.json
+  --data-dir test-output/textlet-interaction-session \
+  --interaction-benchmark test-output/textlet-interaction.json
 ./build/Textlet.app/Contents/MacOS/textlet \
-  --data-dir /tmp/textlet-interaction-session \
-  --restore-check /tmp/textlet-interaction.expected.json
+  --data-dir test-output/textlet-interaction-session \
+  --restore-check test-output/textlet-interaction.expected.json
 ```
 
 附加 `--quick-check` 可运行约 17 秒的快速功能检查，跳过大小窗口和长循环测量。
@@ -153,8 +169,44 @@ python3 scripts/make-log-fixtures.py /tmp/textlet-fixtures
 ```sh
 ./build/Textlet.app/Contents/MacOS/textlet --syntax-test
 ./build/Textlet.app/Contents/MacOS/textlet \
-  --data-dir /tmp/textlet-appearance-session \
-  --appearance-check /tmp/textlet-appearance.json
+  --data-dir test-output/textlet-appearance-session \
+  --appearance-check test-output/textlet-appearance.json
 ```
 
 第二项约 8 秒，只用合成文本检查配色、三种高亮、语言保存、撤销、只读模式和查找替换栏；草稿目录必须为空。截图仅用于检查测试窗口外观。
+
+关闭标签与窗口恢复回归：
+
+```sh
+./build/Textlet.app/Contents/MacOS/textlet \
+  --data-dir test-output/textlet-lifecycle-session \
+  --lifecycle-check test-output/textlet-lifecycle.json
+./build/Textlet.app/Contents/MacOS/textlet \
+  --data-dir test-output/textlet-window-session \
+  --window-check test-output/textlet-window-zoom.json --window-size zoom
+./build/Textlet.app/Contents/MacOS/textlet \
+  --data-dir test-output/textlet-window-session \
+  --window-check test-output/textlet-window-restored.json
+```
+
+关闭回归必须使用新建的隔离草稿目录，输出目录也应独立且为空（会生成合成导出文件）。窗口回归可使用 `--window-size small` 验证小窗口退出与恢复。GUI 测试需要可访问 macOS 图形会话。
+
+关闭回归使用真实确认框和文件写入，路径选择由测试替身提供，不代表系统保存面板交互已经完整自动化验证。附加 `--no-screenshot` 可禁用关闭确认框截图，便于独立进行内存扫描。本次完整结果和限制见 [2026-09-27 回归报告](docs/回归测试-2026-09-27.md)。
+
+
+## 可选的独立实验构建
+
+可单独构建带完整编辑功能的“Textlet 实验版”：
+
+```sh
+bash scripts/build-experimental.sh
+open 'build/Textlet Rows.app'
+```
+
+正式版与实验版现在使用同一套优化绘制实现，均保留系统输入、撤销、查找替换及现有功能。实验构建额外启用 `TEXTLET_EXPERIMENTAL`，草稿位于独立的 `~/Library/Application Support/Textlet-Rows-Experiment/`，不会自动导入正式版草稿。日常使用和后续功能开发以正式构建为准。
+
+使用方法和测量边界见 [实验版说明](Experiments/TextletRows/README.md)；完整结果见 [实验版集成验证](docs/Textlet实验版集成验证-2026-09-27.md)。
+
+正式版的行图片缓存预算为 32MiB，供滚动复用；这不是整个应用的内存上限，可见行超出预算时优先保证显示。历史实验报告中“正式版”“原版”指当时的旧构建，请按报告日期理解。验证过程与取舍见 [CPU/内存平衡报告](docs/逐行绘制CPU内存平衡-2026-09-28.md)。
+
+连续输入、滚动和停止后的 CPU 对照见 [2026-09-28 测量报告](docs/真实连续输入与滚动CPU对照-2026-09-28.md)。

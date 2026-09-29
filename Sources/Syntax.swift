@@ -214,6 +214,9 @@ final class SyntaxHighlighter {
     private func clearColors() {
         guard let layout = editor?.layoutManager, let storage = editor?.textStorage else { return }
         layout.removeTemporaryAttribute(.foregroundColor, forCharacterRange: NSRange(location: 0, length: storage.length))
+#if ROW_RENDERER
+        (editor as? RowRenderingTextView)?.invalidateRows()
+#endif
     }
     func update() {
         guard !updating, language != .plain, let editor, !editor.hasMarkedText(),

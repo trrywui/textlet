@@ -41,6 +41,23 @@ func runSelfTests() throws {
     var locked = false
     do { _ = try SessionStore(directory: root) } catch { locked = true }
     try expect(locked, "second writer cannot open same session")
+    let windowStore = try SessionStore(directory: root.appendingPathComponent("window"))
+    let windowNote = Note(name: "window")
+    let frame = NSRect(x: 120, y: 90, width: 1000, height: 700)
+    try windowStore.save(notes: [windowNote], activeID: windowNote.record.id, windowFrame: frame)
+    let restoredFrame = try windowStore.load()?.windowFrame
+    try expect(restoredFrame == frame, "window size and position survive persistence")
+    let screen = NSRect(x: 0, y: 25, width: 1680, height: 1000)
+    let minimum = NSSize(width: 480, height: 320)
+    try expect(Textlet.visibleWindowFrame(frame, screens: [screen], minimum: minimum) == frame, "normal window frame stays unchanged")
+    try expect(Textlet.visibleWindowFrame(screen, screens: [screen], minimum: minimum) == screen, "zoomed window frame stays unchanged")
+    let offscreen = NSRect(x: 3000, y: -2000, width: 2000, height: 1500)
+    try expect(Textlet.visibleWindowFrame(offscreen, screens: [screen], minimum: minimum) == screen, "removed display and smaller resolution keep window reachable")
+    let secondScreen = NSRect(x: -1920, y: 0, width: 1920, height: 1080)
+    let secondFrame = NSRect(x: -1700, y: 100, width: 860, height: 612)
+    try expect(Textlet.visibleWindowFrame(secondFrame, screens: [screen, secondScreen], minimum: minimum) == secondFrame, "secondary display negative coordinates survive")
+    try expect(Textlet.visibleWindowFrame(NSRect(x: 0, y: 0, width: -1, height: 600), screens: [screen], minimum: minimum) == nil,
+               "invalid window dimensions use default")
     print("All persistence tests passed.")
     try runFeatureTests(root: root.appendingPathComponent("features"))
 }

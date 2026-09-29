@@ -16,6 +16,8 @@
 /work/
 /fixtures/
 /test-output/
+# 本机完整旧项目快照（含 Git bundle 与构建产物）
+/archives/
 *.log
 session.json
 session.previous.json

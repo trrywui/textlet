@@ -15,6 +15,7 @@ struct SessionRecord: Codable {
     var version = 2
     var activeID: UUID
     var notes: [NoteRecord]
+    var windowFrame: NSRect? = nil
 }
 
 final class Note {
@@ -108,7 +109,7 @@ final class SessionStore {
         }
     }
 
-    func save(notes: [Note], activeID: UUID) throws {
+    func save(notes: [Note], activeID: UUID, windowFrame: NSRect? = nil) throws {
         guard !notes.isEmpty else { throw SessionError.invalid("不能保存空会话") }
         var records = notes.map(\.record)
         for (index, note) in notes.enumerated() where !note.isLog && (note.dirty || note.record.draftFile.isEmpty) {
@@ -117,7 +118,7 @@ final class SessionStore {
             try Data(storage.string.utf8).write(to: drafts.appendingPathComponent(name), options: .atomic)
             records[index].draftFile = name
         }
-        let snapshot = SessionRecord(activeID: activeID, notes: records)
+        let snapshot = SessionRecord(activeID: activeID, notes: records, windowFrame: windowFrame)
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         let encoded = try encoder.encode(snapshot)

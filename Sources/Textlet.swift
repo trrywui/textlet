@@ -39,7 +39,13 @@ final class EditorWindow: NSWindow {
     }
 }
 
-final class EditorView: NSTextView {
+#if ROW_RENDERER
+typealias EditorRenderingView = RowRenderingTextView
+#else
+typealias EditorRenderingView = NSTextView
+#endif
+
+final class EditorView: EditorRenderingView {
     override func paste(_ sender: Any?) {
         pastePlainText(from: .general)
     }
@@ -77,6 +83,10 @@ final class EditorScrollView: NSScrollView {
 }
 
 final class BackgroundView: NSView {
+#if ROW_RENDERER
+    override var wantsUpdateLayer: Bool { true }
+    override func updateLayer() { layer?.backgroundColor = Theme.chrome.cgColor }
+#endif
     override func draw(_ dirtyRect: NSRect) {
         Theme.chrome.setFill()
         bounds.intersection(dirtyRect).fill()
@@ -135,7 +145,7 @@ final class NoteTab: NSView {
         close.contentTintColor = Theme.muted
         close.target = self
         close.action = #selector(closeNote)
-        close.toolTip = note.isLog ? "关闭日志标签（不删除原文件）" : "关闭笔记（会确认删除草稿）"
+        close.toolTip = note.isLog ? "关闭日志标签（不删除原文件）" : "关闭笔记（有内容时询问是否保存）"
         close.translatesAutoresizingMaskIntoConstraints = false
         addSubview(label)
         addSubview(close)
@@ -194,6 +204,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
     var featureBenchmark: FeatureBenchmark?
     var interactionBenchmark: InteractionBenchmark?
     var lastSaveError: String?
+    var restoredWindowFrame: NSRect?
     var active: Note { notes.first(where: { $0.record.id == activeID })! }
 
     static func argument(_ name: String) -> String? {
@@ -207,11 +218,12 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
             // Store drafts under Textlet's application-specific directory.
             let base = Self.argument("--data-dir").map { URL(fileURLWithPath: $0, isDirectory: true) }
                 ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-                    .appendingPathComponent("Textlet", isDirectory: true)
+                    .appendingPathComponent(AppEdition.sessionDirectory, isDirectory: true)
             store = try SessionStore(directory: base)
             if let session = try store.load() {
                 notes = session.notes.map { Note(record: $0) }
                 activeID = session.activeID
+                restoredWindowFrame = session.windowFrame
             } else {
                 notes = [Note(name: "临时笔记")]
                 activeID = notes[0].record.id
@@ -227,6 +239,13 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
             if let notice = store.recoveryNotice { showMessage("已恢复草稿", notice) }
             for path in pendingOpen { openText(URL(fileURLWithPath: path)) }
             pendingOpen.removeAll()
+            if let output = Self.argument("--rendering-comparison") { runRenderingComparison(app: self, output: URL(fileURLWithPath: output)) }
+            if let output = Self.argument("--real-usage-benchmark") { runRealUsageBenchmark(app: self, output: URL(fileURLWithPath: output)) }
+#if ROW_RENDERER
+            if let output = Self.argument("--rows-check") { runRowsIntegrationCheck(app: self, output: URL(fileURLWithPath: output)) }
+#endif
+            if let output = Self.argument("--lifecycle-check") { runLifecycleCheck(app: self, output: URL(fileURLWithPath: output)) }
+            if let output = Self.argument("--window-check") { runWindowCheck(app: self, output: URL(fileURLWithPath: output)) }
             if let output = Self.argument("--appearance-check") { runAppearanceCheck(app: self, output: URL(fileURLWithPath: output)) }
             if let output = Self.argument("--benchmark") {
                 benchmark = Benchmark(app: self, output: URL(fileURLWithPath: output))
@@ -253,13 +272,17 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
     func buildWindow() {
         window = EditorWindow(contentRect: NSRect(x: 0, y: 0, width: 860, height: 590),
                           styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false)
-        window.title = "Textlet"
+        window.title = AppEdition.name
         window.titlebarAppearsTransparent = true
         window.backgroundColor = Theme.chrome
         window.minSize = NSSize(width: 480, height: 320)
         window.isReleasedWhenClosed = false
         window.delegate = self
         window.center()
+        if let frame = restoredWindowFrame,
+           let restored = Self.visibleWindowFrame(frame, screens: NSScreen.screens.map(\.visibleFrame), minimum: window.minSize) {
+            window.setFrame(restored, display: false)
+        }
         window.contentView = BackgroundView(frame: window.contentView!.bounds)
         let content = window.contentView!
 
@@ -329,11 +352,24 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         scroller.wantsLayer = false
         scroller.contentView.wantsLayer = false
         editor.wantsLayer = false
+#if ROW_RENDERER
+        content.wantsLayer = true
+        content.layerContentsRedrawPolicy = .onSetNeedsDisplay
+        scroller.drawsBackground = false
+        scroller.contentView.drawsBackground = false
+        editor.wantsLayer = true
+        editor.layerContentsRedrawPolicy = .onSetNeedsDisplay
+#endif
         scroller.verticalScrollElasticity = .none
         scroller.horizontalScrollElasticity = .none
         scroller.translatesAutoresizingMaskIntoConstraints = false
         ruler = LineNumberRuler(scrollView: scroller, editor: editor)
-        highlighter.onHighlight = { [weak self] in self?.ruler?.needsDisplay = true }
+        highlighter.onHighlight = { [weak self] in
+            self?.ruler?.needsDisplay = true
+#if ROW_RENDERER
+            self?.editor.invalidateRows()
+#endif
+        }
         (scroller as? EditorScrollView)?.onViewportLayout = { [weak self] in self?.ruler?.needsDisplay = true }
         scroller.contentView.postsBoundsChangedNotifications = true
         NotificationCenter.default.addObserver(self, selector: #selector(viewportChanged),
@@ -392,11 +428,11 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
             entry.target = target
             menu.addItem(entry)
         }
-        let app = group("Textlet")
-        item(app, "关于 Textlet", #selector(about), "", self)
+        let app = group(AppEdition.name)
+        item(app, "关于 \(AppEdition.name)", #selector(about), "", self)
         app.addItem(.separator())
-        item(app, "隐藏 Textlet", #selector(NSApplication.hide(_:)), "h", NSApp)
-        item(app, "退出 Textlet", #selector(NSApplication.terminate(_:)), "q", NSApp)
+        item(app, "隐藏 \(AppEdition.name)", #selector(NSApplication.hide(_:)), "h", NSApp)
+        item(app, "退出 \(AppEdition.name)", #selector(NSApplication.terminate(_:)), "q", NSApp)
         let file = group("文件")
         item(file, "新建笔记", #selector(newNote), "n", self)
         item(file, "打开文本…", #selector(openPanel), "o", self)
@@ -585,7 +621,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         saveTimer = nil
         capturePosition()
         do {
-            try store.save(notes: notes, activeID: activeID)
+            try store.save(notes: notes, activeID: activeID, windowFrame: window?.frame)
             lastSaveError = nil
             updateStatus()
             return true
@@ -643,14 +679,31 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         catch { showMessage("无法切换笔记", error.localizedDescription) }
     }
     @objc func closeCurrent() { closeNote(activeID) }
-    func closeNote(_ id: UUID) {
+    func closeNote(_ id: UUID, save: ((Note) -> Bool)? = nil) {
         guard let note = notes.first(where: { $0.record.id == id }) else { return }
-        let alert = NSAlert()
-        alert.messageText = "关闭“\(note.record.name)”？"
-        alert.informativeText = note.isLog ? "这只会关闭日志标签，原文件不会被删除。" : "这会从会话中移除这条草稿。想保留所有笔记，请直接退出 Textlet。"
-        alert.addButton(withTitle: "取消")
-        alert.addButton(withTitle: "关闭笔记")
-        guard alert.runModal() == .alertSecondButtonReturn, saveSession() else { return }
+        do {
+            if note.isLog {
+                let alert = NSAlert()
+                alert.messageText = "关闭“\(note.record.name)”？"
+                alert.informativeText = "这只会关闭日志标签，原文件不会被删除。"
+                alert.addButton(withTitle: "取消")
+                alert.addButton(withTitle: "关闭笔记")
+                guard alert.runModal() == .alertSecondButtonReturn else { return }
+            } else if try !text(for: note).isEmpty {
+                let response = makeCloseAlert().runModal()
+                if response == .alertSecondButtonReturn {
+                    guard save?(note) ?? exportNote(note) else { return }
+                } else if response != .alertThirdButtonReturn { return }
+            }
+            try removeNote(id)
+        } catch { showMessage("无法关闭笔记", error.localizedDescription) }
+    }
+
+    func makeCloseAlert() -> CloseNoteAlert { CloseNoteAlert() }
+
+    func removeNote(_ id: UUID) throws {
+        guard notes.contains(where: { $0.record.id == id }) else { return }
+        guard saveSession() else { throw SessionError.invalid(lastSaveError ?? "会话保存失败") }
         let closingActive = activeID == id
         let oldNotes = notes
         let oldActive = activeID
@@ -658,13 +711,13 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         if notes.isEmpty { notes = [Note(name: "临时笔记")] }
         do {
             if closingActive { try selectNote(notes[0].record.id, saveCurrent: false) }
-            guard saveSession() else {
-                notes = oldNotes
-                try selectNote(oldActive!, saveCurrent: false)
-                return
-            }
+            guard saveSession() else { throw SessionError.invalid(lastSaveError ?? "会话保存失败") }
             renderTabs()
-        } catch { showMessage("无法关闭笔记", error.localizedDescription) }
+        } catch {
+            notes = oldNotes
+            try selectNote(oldActive!, saveCurrent: false)
+            throw error
+        }
     }
     @objc func renameNote() {
         let alert = NSAlert()
@@ -713,14 +766,27 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         } catch { showMessage("无法打开文本", error.localizedDescription) }
     }
     @objc func exportText() {
-        guard !active.isLog else { return }
+        _ = exportNote(active)
+    }
+    func text(for note: Note) throws -> String {
+        if let storage = note.storage { return storage.string }
+        return try store.text(for: note.record)
+    }
+    func writeText(_ note: Note, to url: URL) throws {
+        try text(for: note).write(to: url, atomically: true, encoding: .utf8)
+    }
+    @discardableResult func exportNote(_ note: Note) -> Bool {
+        guard !note.isLog else { return false }
         let panel = NSSavePanel()
-        panel.nameFieldStringValue = active.record.name.contains(".") ? active.record.name : active.record.name + ".txt"
+        panel.nameFieldStringValue = note.record.name.contains(".") ? note.record.name : note.record.name + ".txt"
         panel.title = "导出 UTF-8 文本"
-        if panel.runModal() == .OK, let url = panel.url {
-            do { try editor.string.write(to: url, atomically: true, encoding: .utf8) }
-            catch { showMessage("导出失败", error.localizedDescription) }
-        }
+        guard panel.runModal() == .OK, let url = panel.url else { return false }
+        return exportNote(note, to: url)
+    }
+    @discardableResult func exportNote(_ note: Note, to url: URL) -> Bool {
+        do { try writeText(note, to: url); return true }
+        catch { showMessage("导出失败", error.localizedDescription) }
+        return false
     }
     @objc func largerFont() { setFontSize(min(28, (editor.font?.pointSize ?? 14) + 1)) }
     @objc func smallerFont() { setFontSize(max(10, (editor.font?.pointSize ?? 14) - 1)) }
@@ -786,13 +852,13 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
     @objc func performance() {
         let sample = memorySample()
         let size = window.contentView!.bounds.size
-        showMessage("Textlet · 性能信息", String(format:
+        showMessage("\(AppEdition.name) · 性能信息", String(format:
             "当前内存：%.1f MiB\n本次运行峰值：%.1f MiB\n驻留内存 RSS：%.1f MiB\n打开标签：%d\n窗口：%.0f × %.0f · %.0f 倍像素\n\n使用 phys_footprint；不包含 WindowServer。大窗口、字体缓存和撤销历史也会占用内存。",
             sample["footprintMiB"] ?? 0, sample["peakFootprintMiB"] ?? 0, sample["residentMiB"] ?? 0,
             notes.count, size.width, size.height, window.backingScaleFactor))
     }
     @objc func about() {
-        showMessage("Textlet", "0.4.1 · 原生轻量编辑器\n\n随手记，轻一点。\n经典 Monokai · SQL / YAML / TOML 基础高亮\n支持纯文本、多标签、自动恢复、查找替换、JSON 格式化、行号与大日志分段查看。")
+        showMessage(AppEdition.name, "\(AppEdition.version) · \(AppEdition.description)\n\n随手记，轻一点。\n经典 Monokai · SQL / YAML / TOML 基础高亮\n支持纯文本、多标签、自动恢复、查找替换、JSON 格式化、行号与大日志分段查看。")
     }
     func showMessage(_ title: String, _ detail: String) {
         let alert = NSAlert()
