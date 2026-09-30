@@ -1,0 +1,116 @@
+{
+  "gpu": [
+    {
+      "time": 1790564759.1906939,
+      "activeGPU": "IGPU",
+      "switchCountHex": "01000000"
+    },
+    {
+      "time": 1790564761.241032,
+      "activeGPU": "IGPU",
+      "switchCountHex": "01000000"
+    },
+    {
+      "time": 1790564763.283487,
+      "activeGPU": "IGPU",
+      "switchCountHex": "01000000"
+    },
+    {
+      "time": 1790564765.316303,
+      "activeGPU": "IGPU",
+      "switchCountHex": "01000000"
+    },
+    {
+      "time": 1790564767.359034,
+      "activeGPU": "IGPU",
+      "switchCountHex": "01000000"
+    },
+    {
+      "time": 1790564769.392538,
+      "activeGPU": "IGPU",
+      "switchCountHex": "01000000"
+    },
+    {
+      "time": 1790564771.434768,
+      "activeGPU": "IGPU",
+      "switchCountHex": "01000000"
+    },
+    {
+      "time": 1790564773.472804,
+      "activeGPU": "IGPU",
+      "switchCountHex": "01000000"
+    },
+    {
+      "time": 1790564775.511167,
+      "activeGPU": "IGPU",
+      "switchCountHex": "01000000"
+    },
+    {
+      "time": 1790564777.550048,
+      "activeGPU": "IGPU",
+      "switchCountHex": "01000000"
+    },
+    {
+      "time": 1790564779.5923672,
+      "activeGPU": "IGPU",
+      "switchCountHex": "01000000"
+    },
+    {
+      "time": 1790564781.629772,
+      "activeGPU": "IGPU",
+      "switchCountHex": "01000000"
+    },
+    {
+      "time": 1790564783.671155,
+      "activeGPU": "IGPU",
+      "switchCountHex": "01000000"
+    },
+    {
+      "time": 1790564785.7131588,
+      "activeGPU": "IGPU",
+      "switchCountHex": "01000000"
+    },
+    {
+      "time": 1790564787.7527292,
+      "activeGPU": "IGPU",
+      "switchCountHex": "01000000"
+    },
+    {
+      "time": 1790564789.7939572,
+      "activeGPU": "IGPU",
+      "switchCountHex": "01000000"
+    },
+    {
+      "time": 1790564791.8335428,
+      "activeGPU": "IGPU",
+      "switchCountHex": "01000000"
+    },
+    {
+      "time": 1790564793.871947,
+      "activeGPU": "IGPU",
+      "switchCountHex": "01000000"
+    },
+    {
+      "time": 1790564795.8999171,
+      "activeGPU": "IGPU",
+      "switchCountHex": "01000000"
+    }
+  ],
+  "session": "/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-c3sidzj3",
+  "binary": "/Users/lee/workspace/code/textlet/build/Textlet Balanced.app/Contents/MacOS/textlet-rows",
+  "binarySHA256": "531cac5cc9125d55bb2860bf8822f8760238a7aa543b23eb246c8b1a88dba524",
+  "command": [
+    "/Users/lee/workspace/code/textlet/build/Textlet Balanced.app/Contents/MacOS/textlet-rows",
+    "--data-dir",
+    "/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-c3sidzj3",
+    "--real-usage-benchmark",
+    "/Users/lee/workspace/code/textlet/Benchmarks/2026-09-28/cpu-balance/final32-local.json",
+    "--benchmark-position",
+    "head",
+    "--benchmark-rate",
+    "20",
+    "--benchmark-scroll-span",
+    "6"
+  ],
+  "exitCode": 0
+}

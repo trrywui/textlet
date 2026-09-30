@@ -1,0 +1,10 @@
+{
+  "checks" : {
+    "exitFramePersisted" : true,
+    "firstLaunchUsesDefaultSize" : true,
+    "nativeZoomFillsScreen" : true,
+    "quitSavesSession" : true
+  },
+  "frame" : "{{0, 57}, {1680, 968}}",
+  "zoomed" : true
+}

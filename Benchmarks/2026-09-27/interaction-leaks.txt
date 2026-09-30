@@ -1,0 +1,25 @@
+Process:         textlet [36576]
+Path:            /Users/USER/*/Textlet.app/Contents/MacOS/textlet
+Load Address:    0x101b66000
+Identifier:      local.textlet.editor
+Version:         0.4.1 (6)
+Code Type:       X86-64
+Platform:        macOS
+Parent Process:  Python [36528]
+
+Date/Time:       2026-09-27 05:44:46.107 +0800
+Launch Time:     2026-09-27 05:43:35.316 +0800
+OS Version:      macOS 14.8.9 (23J631)
+Report Version:  7
+Analysis Tool:   /Applications/Xcode.app/Contents/Developer/usr/bin/leaks
+Analysis Tool Version:  Xcode 16.2 (16C5032a)
+
+Physical footprint:         64.9M
+Physical footprint (peak):  210.8M
+Idle exit:                  untracked
+----
+
+leaks Report Version: 4.0
+Process 36576: 44509 nodes malloced for 8650 KB
+Process 36576: 0 leaks for 0 total leaked bytes.
+

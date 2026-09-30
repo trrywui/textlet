@@ -1,0 +1,31 @@
+{
+  "checks" : {
+    "allRequestedButtonsClicked" : true,
+    "buttonsLeftToRight" : true,
+    "cancelDestinationKeepsInactiveTab" : true,
+    "cancelPreservesTextAndUndo" : true,
+    "cancelRemainsDefault" : true,
+    "clearedTabClosesWithoutDialog" : true,
+    "closePromptExact" : true,
+    "discardInactiveKeepsActiveText" : true,
+    "escapeCancelsClose" : true,
+    "failedCloseRollsBackTabsAndActiveID" : true,
+    "failedWritePreservesText" : true,
+    "lastEmptyTabClosesWithoutDialog" : true,
+    "readFailureKeepsTab" : true,
+    "returnKeepsCancelDefault" : true,
+    "savedSessionContainsOnlyRemainingTab" : true,
+    "saveFailureKeepsTabAndText" : true,
+    "saveInactiveExportsCorrectTextThenCloses" : true,
+    "saveLastActiveThenCreateEmptyTab" : true,
+    "unloadedEmptyClosesWithoutDialog" : true,
+    "whitespaceCountsAsContent" : true
+  },
+  "memory" : {
+    "footprintMiB" : 29.8203125,
+    "peakFootprintMiB" : 29.8203125,
+    "peakResidentMiB" : 50.43359375,
+    "residentMiB" : 50.43359375
+  },
+  "systemFilePickerStubbed" : true
+}

@@ -1,0 +1,29 @@
+{
+  "allPassed" : true,
+  "checks" : {
+    "bitmapBudget" : true,
+    "boundedVisibleTiles" : true,
+    "compositionCommit" : true,
+    "compositionRedo" : true,
+    "compositionSingleUndo" : true,
+    "coordinateRoundTrip0" : true,
+    "coordinateRoundTrip1" : true,
+    "coordinateRoundTrip2" : true,
+    "coordinateRoundTrip6" : true,
+    "coordinateRoundTrip7" : true,
+    "deleteWholeGrapheme" : true,
+    "emptyInput" : true,
+    "emptyUndo" : true,
+    "IMEContextSubstring" : true,
+    "markedRange" : true,
+    "redoGrapheme" : true,
+    "replaceSelection" : true,
+    "scrollEvictsTiles" : true,
+    "shiftArrowSelectsGrapheme" : true,
+    "shiftArrowShrinksSelection" : true,
+    "trailingEmptyLine" : true,
+    "undoGrapheme" : true,
+    "wraps" : true
+  },
+  "realInputMethodTested" : false
+}

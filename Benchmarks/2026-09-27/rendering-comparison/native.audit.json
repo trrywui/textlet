@@ -1,0 +1,153 @@
+{
+  "gpu": [
+    {
+      "time": 1790515178.7504241,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515180.782273,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515182.816298,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515184.84721,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515186.876431,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515188.907247,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515190.935968,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515192.968555,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515195.000057,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515197.025994,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515199.055917,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515201.090515,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515203.12358,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515205.1564958,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515207.179782,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515209.20868,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515211.232148,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515213.261733,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515215.2920399,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515217.3151581,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515219.344942,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515221.376414,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515223.405015,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515225.428882,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515227.46436,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515229.4971561,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515231.53026,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515233.567124,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    },
+    {
+      "time": 1790515233.594332,
+      "activeGPU": "IGPU",
+      "switchCountHex": "03000000"
+    }
+  ],
+  "session": "/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-comparison-native-p7sc3q0q",
+  "binary": "/private/tmp/textlet-rendering-compare/Native.app/Contents/MacOS/textlet",
+  "binarySHA256": "22138d4cad2bc270e2528791ae984786dee466123bbd4e299614f7048e71dc00",
+  "exitCode": 0
+}

@@ -1,0 +1,128 @@
+{
+  "source": "final-rows.json",
+  "gpuBefore": "  |   \"ActiveGPU\" = \"GFX0\"\n  |   \"SwitchCount\" = <02000000>\n",
+  "gpuAfter": "  |   \"ActiveGPU\" = \"GFX0\"\n  |   \"SwitchCount\" = <02000000>\n",
+  "units": "MiB, process TASK_VM_INFO.phys_footprint only",
+  "stages": {
+    "small": {
+      "samples": 41,
+      "foregroundSamples": 41,
+      "maxMiB": 16.8203125,
+      "lastMiB": 15.7109375,
+      "systemPeakMiB": 16.96875,
+      "maxBitmapMiB": 0.0743408203125,
+      "maxTiles": 2
+    },
+    "large-resize": {
+      "samples": 29,
+      "foregroundSamples": 29,
+      "maxMiB": 18.3046875,
+      "lastMiB": 16.5625,
+      "systemPeakMiB": 21.7890625,
+      "maxBitmapMiB": 0.07177734375,
+      "maxTiles": 2
+    },
+    "large-edit": {
+      "samples": 82,
+      "foregroundSamples": 82,
+      "maxMiB": 16.60546875,
+      "lastMiB": 16.578125,
+      "systemPeakMiB": 21.7890625,
+      "maxBitmapMiB": 0.07177734375,
+      "maxTiles": 2
+    },
+    "large-idle": {
+      "samples": 113,
+      "foregroundSamples": 113,
+      "maxMiB": 16.6328125,
+      "lastMiB": 16.6328125,
+      "systemPeakMiB": 21.7890625,
+      "maxBitmapMiB": 0.07177734375,
+      "maxTiles": 2
+    },
+    "dense-load": {
+      "samples": 11,
+      "foregroundSamples": 11,
+      "maxMiB": 62.265625,
+      "lastMiB": 61.1171875,
+      "systemPeakMiB": 78.26953125,
+      "maxBitmapMiB": 20.7701416015625,
+      "maxTiles": 51
+    },
+    "dense-edit": {
+      "samples": 72,
+      "foregroundSamples": 72,
+      "maxMiB": 62.890625,
+      "lastMiB": 62.87109375,
+      "systemPeakMiB": 78.26953125,
+      "maxBitmapMiB": 20.7701416015625,
+      "maxTiles": 51
+    },
+    "dense-scroll": {
+      "samples": 31,
+      "foregroundSamples": 31,
+      "maxMiB": 67.08984375,
+      "lastMiB": 66.04296875,
+      "systemPeakMiB": 119.93359375,
+      "maxBitmapMiB": 21.4365234375,
+      "maxTiles": 53
+    }
+  },
+  "editP95Milliseconds": 11.559034999663709,
+  "checks": {
+    "final-rows": {
+      "passed": 11,
+      "failed": 0
+    },
+    "editing": {
+      "passed": 13,
+      "failed": 0
+    },
+    "interaction": {
+      "passed": 21,
+      "failed": 0
+    },
+    "lifecycle": {
+      "passed": 20,
+      "failed": 0
+    },
+    "log100": {
+      "passed": 23,
+      "failed": 0
+    },
+    "log500": {
+      "passed": 23,
+      "failed": 0
+    },
+    "window-zoom": {
+      "passed": 4,
+      "failed": 0
+    },
+    "window-restored": {
+      "passed": 3,
+      "failed": 0
+    },
+    "log100.expected.restore": {
+      "passed": 7,
+      "failed": 0
+    },
+    "log500.expected.restore": {
+      "passed": 7,
+      "failed": 0
+    },
+    "editing.expected.restore": {
+      "restorePassed": true
+    },
+    "interaction.expected.restore": {
+      "restorePassed": true
+    }
+  },
+  "sourceSHA256": {
+    "Sources/RowRenderingTextView.swift": "80f0cb4d87a1c171bffc243dc0a64ba11ef871a5c3eacc6ce86e1ac13bcdd6e1",
+    "Sources/AppEdition.swift": "a4e2dbb6a5d571920709579c9520b3501708163e2dff836cc89cff017ed4054e",
+    "Sources/Textlet.swift": "f9e5a5a3e8187b0cae1f4c72cf2ee32f30d6ee55dd3f5b57dbffb7a5e603247c",
+    "Sources/Syntax.swift": "2bc3ba6de74d0c85de0002c3e3f9b29c75a9cec214f5c3650383e3d01d6a4e53",
+    "Tests/RowsIntegrationTests.swift": "ad65f55106db81a7ead9100b04c228f567e803cf49a85bc240b8e7af562b658f",
+    "scripts/build-experimental.sh": "3a8ffc581a04628c80baf317c39e0040193d4ad427349165cb80a812eb3c8a34"
+  }
+}

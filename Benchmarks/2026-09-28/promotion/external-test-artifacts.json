@@ -1,0 +1,381 @@
+{
+  "scannedAt": "2026-09-28T16:16:37.951523+08:00",
+  "scope": "仅检查 /private/tmp 与当前用户 TMPDIR 的顶层条目；不是全盘应用数据清单",
+  "items": [
+    {
+      "path": "/private/tmp/textlet-balance",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-clang-module-cache",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-final-check",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-phase1",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-phase1-check.mhRVOJ",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-phase1-real.hL7xLl",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-phase1-rows-check.json",
+      "kind": "file",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-phase1-rows-check.json.colored.png",
+      "kind": "file",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-phase1-rows-check.json.find.png",
+      "kind": "file",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-phase1-rows-check.json.plain-tile-0.png",
+      "kind": "file",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-phase1-rows-check.json.plain-tile-1.png",
+      "kind": "file",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-phase1-rows-check.json.plain.png",
+      "kind": "file",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-phase1-rows-check.json.selection.png",
+      "kind": "file",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-phase1-rows-check.json.tile.png",
+      "kind": "file",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-profile",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-profile-input.sample.txt",
+      "kind": "file",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-profile-native-input.sample.txt",
+      "kind": "file",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-profile-native-real.GePtYI",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-profile-native-real.json",
+      "kind": "file",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-profile-real.chUTXm",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-profile-real.json",
+      "kind": "file",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-profile-scroll.iWou8i",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-profile-scroll.json",
+      "kind": "file",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-profile-scroll.sample.txt",
+      "kind": "file",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-real-native-build.log",
+      "kind": "file",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-real-rows-build.log",
+      "kind": "file",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-real-usage",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-real-usage-native.RdOIW2",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-real-usage-native2.mpjvVf",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-real-usage-native3.qKqDHt",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-real-usage-native4.3eTk0P",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-real-usage-native5.mGFvxO",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-real-usage-native6.RsXQLC",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-real-usage-rows.S9K94J",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-real-usage-rows2.jUo3Mi",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-real-usage-rows3.hd0JJf",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-sublime-real-usage",
+      "kind": "file",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-sublime-real-usage-085474AF-5628-4284-A2E9-B996FE3A8472",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-sublime-real-usage-2F1796B1-64E7-45D6-BFE1-834BF5500174",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-sublime-real-usage-3DECE661-391C-4CC9-8C55-333577DBD8F1",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-sublime-real-usage-46281129-252B-4079-BD43-D6A62F664D54",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-sublime-real-usage-46DEFE2C-A788-4CF8-BAF9-22AE08F09747",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-sublime-real-usage-521B6B0F-CCDF-4F86-BD87-3EA938826B5B",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-sublime-real-usage-8491E020-5E18-445E-B3B3-6C9949E381ED",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-sublime-real-usage-C6E8B66F-421D-4DBD-806F-7232E11D3ABB",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-sublime-real-usage-CC410CC8-A3D5-4E40-BBA3-17A80BFE861D",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/tmp/textlet-sublime-real-usage-E071BF36-7A64-4987-8E2A-3D8CAF4EF055",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-0vtvczrs",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-2gexvsvz",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-34571b8k",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-3h5k_4_6",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-3v_1bdrv",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-3v_p4iok",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-4qm20s00",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-6amff4sq",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-83pl56i5",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-8q4s603x",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-9gfc501o",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-b_5a_2fg",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-c3sidzj3",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-ev4owh57",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-fqsum6bs",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-g46rk6zp",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-i3fwocru",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-ju7mb072",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-ktwlkj2e",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-nw7jwb2r",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-o_ir4t8x",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-rkaptxp_",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-t_01xq5o",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-u0149gku",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-u61r5zgh",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-u9zuui0p",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-balance-yg6f2vd3",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    },
+    {
+      "path": "/private/var/folders/ts/j58hjhy15mx_t5pwg7ffx54m0000gn/T/textlet-swift-module-cache",
+      "kind": "directory",
+      "basis": "临时目录顶层名称匹配；删除前需结合历史测试记录复核"
+    }
+  ]
+}

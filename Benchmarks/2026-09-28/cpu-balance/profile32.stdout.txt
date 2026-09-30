@@ -1,0 +1,7 @@
+Sampling process 9060 for 3 seconds with 1 millisecond of run time between samples
+Sampling completed, processing symbols...
+Sample analysis of process 9060 written to file /Users/lee/workspace/code/textlet/Benchmarks/2026-09-28/cpu-balance/profile32.continuous-input.sample.txt
+Sampling process 9060 for 3 seconds with 1 millisecond of run time between samples
+Sampling completed, processing symbols...
+Sample analysis of process 9060 written to file /Users/lee/workspace/code/textlet/Benchmarks/2026-09-28/cpu-balance/profile32.continuous-scroll.sample.txt
+Real usage checks: ["retina2xThroughout": true, "inputOperationCount": true, "keyEventsChangedText": true, "idleSamplesCollected": true, "inputEventsChangedText": true, "allMeasuredSamplesForeground": true, "scrollOperationCount": true, "scrollEventsMovedViewport": true]

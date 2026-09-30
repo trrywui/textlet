@@ -1,0 +1,9 @@
+{
+  "checks" : {
+    "exitFramePersisted" : true,
+    "quitSavesSession" : true,
+    "restoredFrameMatchesPreviousExit" : true
+  },
+  "frame" : "{{0, 57}, {1680, 968}}",
+  "zoomed" : true
+}

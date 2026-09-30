@@ -1,0 +1,2 @@
+  |   "ActiveGPU" = "GFX0"
+  |   "SwitchCount" = <02000000>

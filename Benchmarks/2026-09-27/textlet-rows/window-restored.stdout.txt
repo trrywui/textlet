@@ -1,0 +1,1 @@
+Window checks: ["frame": "{{0, 57}, {1680, 968}}", "checks": ["exitFramePersisted": true, "quitSavesSession": true, "restoredFrameMatchesPreviousExit": true], "zoomed": true]

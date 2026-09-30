@@ -1,0 +1,28 @@
+{
+  "details": [
+    {
+      "name": "旧版笔记",
+      "scrollActual": 0,
+      "scrollExpected": 0,
+      "selectionActual": 4,
+      "selectionExpected": 4,
+      "textMatches": true
+    },
+    {
+      "name": "旧版 JSON",
+      "scrollActual": 0,
+      "scrollExpected": 0,
+      "selectionActual": 2,
+      "selectionExpected": 2,
+      "textMatches": true
+    }
+  ],
+  "memory": {
+    "footprintMiB": 19.01953125,
+    "peakFootprintMiB": 19.0859375,
+    "peakResidentMiB": 36.71484375,
+    "residentMiB": 36.71484375
+  },
+  "restorePassed": true,
+  "tabCount": 2
+}

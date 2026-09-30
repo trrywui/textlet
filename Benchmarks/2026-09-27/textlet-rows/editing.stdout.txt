@@ -1,0 +1,2 @@
+Benchmark report: /Users/lee/workspace/code/textlet/Benchmarks/2026-09-27/textlet-rows/editing.json
+Checks: ["redoIsolatedB": true, "undoIsolatedA": true, "pasteRemainsPlainText": true, "scrollRestoresAcrossTabs": true, "undoIsolatedB": true, "otherTabStillEdited": true, "pastePreservesLiteralCharacters": true, "longTextCanScroll": true, "finalSave": true, "fixtureSave": true, "plainTextAndSubstitutions": true, "pasteUndo": true, "undoAvailableA": true]

@@ -1,0 +1,1 @@
+Rendering comparison rows: ["retina2xThroughout": true, "allOperationsCompleted": true, "allMeasuredSamplesForeground": true, "denseTextLengthPreserved": true, "scrolledToDocumentEnd": true]

@@ -1,0 +1,9 @@
+{
+  "checks" : {
+    "exitFramePersisted" : true,
+    "firstLaunchUsesDefaultSize" : true,
+    "quitSavesSession" : true
+  },
+  "frame" : "{{410, 319}, {860, 618}}",
+  "zoomed" : false
+}

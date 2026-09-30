@@ -1,0 +1,2 @@
+  |   "ActiveGPU" = "IGPU"
+  |   "SwitchCount" = <03000000>

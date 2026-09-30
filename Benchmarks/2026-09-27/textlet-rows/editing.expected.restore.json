@@ -1,0 +1,36 @@
+{
+  "details" : [
+    {
+      "name" : "测试 · 3 行",
+      "scrollActual" : 0,
+      "scrollExpected" : 0,
+      "selectionActual" : 186,
+      "selectionExpected" : 186,
+      "textMatches" : true
+    },
+    {
+      "name" : "测试 · 30 行",
+      "scrollActual" : 551,
+      "scrollExpected" : 551,
+      "selectionActual" : 1860,
+      "selectionExpected" : 1860,
+      "textMatches" : true
+    },
+    {
+      "name" : "测试 · 100 行",
+      "scrollActual" : 1465.5,
+      "scrollExpected" : 1465.5,
+      "selectionActual" : 0,
+      "selectionExpected" : 0,
+      "textMatches" : true
+    }
+  ],
+  "memory" : {
+    "footprintMiB" : 22.6484375,
+    "peakFootprintMiB" : 22.66015625,
+    "peakResidentMiB" : 41.60546875,
+    "residentMiB" : 41.60546875
+  },
+  "restorePassed" : true,
+  "tabCount" : 3
+}

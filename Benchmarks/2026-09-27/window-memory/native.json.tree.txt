@@ -1,0 +1,22 @@
+NSThemeFrame (0.0, 0.0, 1680.0, 968.0) wantsLayer=false layer=Optional(NSViewBackingLayer) flatten=false
+  NSVisualEffectView (0.0, 0.0, 1680.0, 968.0) wantsLayer=false layer=Optional(NSViewBackingLayer) flatten=false
+  NSView (0.0, 0.0, 1680.0, 940.0) wantsLayer=false layer=Optional(NSViewBackingLayer) flatten=false
+    NSScrollView (0.0, 0.0, 1680.0, 940.0) wantsLayer=false layer=Optional(NSViewBackingLayer) flatten=false
+      _NSScrollViewContentBackgroundView (0.0, 0.0, 1680.0, 940.0) wantsLayer=false layer=Optional(NSViewBackingLayer) flatten=false
+        NSVisualEffectView (0.0, 0.0, 1680.0, 940.0) wantsLayer=false layer=Optional(NSViewBackingLayer) flatten=false
+      NSClipView (0.0, 0.0, 1680.0, 940.0) wantsLayer=false layer=Optional(NSViewBackingLayer) flatten=false
+        NSTextView (0.0, 0.0, 1680.0, 940.0) wantsLayer=false layer=Optional(NSViewBackingLayer) flatten=false
+          NSTextInsertionIndicator (5.0, 51.0, 1.0, 17.0) wantsLayer=true layer=Optional(NSViewBackingLayer) flatten=false
+      NSScroller (844.0, 0.0, 16.0, 590.0) wantsLayer=true layer=Optional(NSViewBackingLayer) flatten=false
+  NSTitlebarContainerView (0.0, 940.0, 1680.0, 28.0) wantsLayer=true layer=Optional(NSViewBackingLayer) flatten=false
+    NSScrollViewMirrorView (0.0, 0.0, 1680.0, 28.0) wantsLayer=false layer=Optional(NSViewBackingLayer) flatten=false
+      NSPortalView (0.0, 0.0, 1680.0, 28.0) wantsLayer=false layer=Optional(NSViewBackingLayer) flatten=false
+        _NSPortalView1 (0.0, 0.0, 1680.0, 28.0) wantsLayer=true layer=Optional(CAPortalLayer) flatten=false
+    NSTitlebarView (0.0, 0.0, 1680.0, 28.0) wantsLayer=false layer=Optional(NSViewBackingLayer) flatten=false
+      NSVisualEffectView (0.0, 0.0, 1680.0, 28.0) wantsLayer=false layer=Optional(NSViewBackingLayer) flatten=false
+      NSView (0.0, 0.0, 1680.0, 28.0) wantsLayer=false layer=Optional(CABackdropLayer) flatten=false
+      NSTextField (756.0, 7.0, 168.0, 16.0) wantsLayer=true layer=Optional(NSTextLayer) flatten=false
+      _NSThemeCloseWidget (7.0, 6.0, 14.0, 16.0) wantsLayer=true layer=Optional(NSViewBackingLayer) flatten=false
+      _NSThemeZoomWidget (47.0, 6.0, 14.0, 16.0) wantsLayer=true layer=Optional(NSViewBackingLayer) flatten=false
+      _NSThemeWidget (27.0, 6.0, 14.0, 16.0) wantsLayer=true layer=Optional(NSViewBackingLayer) flatten=false
+    _NSTitlebarDecorationView (0.0, 0.0, 1680.0, 28.0) wantsLayer=true layer=Optional(NSViewBackingLayer) flatten=false

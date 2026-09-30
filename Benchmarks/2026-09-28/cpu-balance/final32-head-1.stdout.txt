@@ -1,0 +1,1 @@
+Real usage checks: ["allMeasuredSamplesForeground": true, "keyEventsChangedText": true, "scrollEventsMovedViewport": true, "retina2xThroughout": true, "inputOperationCount": true, "inputEventsChangedText": true, "scrollOperationCount": true, "idleSamplesCollected": true]

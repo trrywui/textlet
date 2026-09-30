@@ -1,0 +1,1 @@
+Rendering comparison native: ["allOperationsCompleted": true, "denseTextLengthPreserved": true, "retina2xThroughout": true, "scrolledToDocumentEnd": true, "allMeasuredSamplesForeground": true]

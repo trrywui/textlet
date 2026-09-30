@@ -1,0 +1,21 @@
+{
+  "guiChecksPassed": 51,
+  "coreTestsPassed": true,
+  "syntaxTestsPassed": true,
+  "sameGPU": [
+    [
+      "IGPU",
+      "01000000"
+    ]
+  ],
+  "sameDimensions": [
+    [
+      1680,
+      940,
+      2
+    ]
+  ],
+  "everyControlledScrollEventMoved": true,
+  "testedDeliveredBinarySHA256": "382dc79897b528482c7e476d258019c824a51ac025210fe6db53e0e64bcaabde",
+  "acceptedApp": "/Users/lee/workspace/code/textlet/build/Textlet Balanced.app"
+}

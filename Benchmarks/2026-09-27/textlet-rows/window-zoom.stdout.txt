@@ -1,0 +1,1 @@
+Window checks: ["frame": "{{0, 57}, {1680, 968}}", "zoomed": true, "checks": ["nativeZoomFillsScreen": true, "quitSavesSession": true, "exitFramePersisted": true, "firstLaunchUsesDefaultSize": true]]

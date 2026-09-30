@@ -1,0 +1,26 @@
+{
+  "rows-1": {
+    "gpu": "AMD Radeon Pro 555X (first batch; confirmed immediately after pair)",
+    "role": "discrete GPU exploratory run"
+  },
+  "native-1": {
+    "gpu": "AMD Radeon Pro 555X (confirmed after pair)",
+    "role": "discrete GPU exploratory run"
+  },
+  "historical-native-now": {
+    "gpu": "AMD initially; user subsequently closed SenPlayer, Intel confirmed after completion",
+    "role": "diagnostic only, exclude from controlled comparison; different harness and GPU switch timing not tracked"
+  },
+  "native-igpu-1": {
+    "gpu": "see matching gpu-before/gpu-after files",
+    "role": "controlled same-GPU comparison"
+  },
+  "rows-igpu-1": {
+    "gpu": "see matching gpu-before/gpu-after files",
+    "role": "same GPU; sparse edit stage active; dense stages lost foreground and are excluded from controlled dense comparison"
+  },
+  "rows-igpu-2": {
+    "gpu": "IGPU before and after; SwitchCount unchanged",
+    "role": "final controlled same-GPU, all-foreground comparison"
+  }
+}

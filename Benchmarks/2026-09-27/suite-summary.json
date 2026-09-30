@@ -1,0 +1,79 @@
+[
+  {
+    "name": "normal",
+    "passed": true,
+    "code": 0,
+    "seconds": 30.5,
+    "failed": []
+  },
+  {
+    "name": "normal-restore",
+    "passed": true,
+    "code": 0,
+    "seconds": 2.45,
+    "failed": []
+  },
+  {
+    "name": "stress",
+    "passed": true,
+    "code": 0,
+    "seconds": 30.31,
+    "failed": []
+  },
+  {
+    "name": "stress-restore",
+    "passed": true,
+    "code": 0,
+    "seconds": 4.64,
+    "failed": []
+  },
+  {
+    "name": "interaction",
+    "passed": true,
+    "code": 0,
+    "seconds": 91.41,
+    "failed": []
+  },
+  {
+    "name": "interaction-restore",
+    "passed": true,
+    "code": 0,
+    "seconds": 2.28,
+    "failed": []
+  },
+  {
+    "name": "log100",
+    "passed": true,
+    "code": 0,
+    "seconds": 13.69,
+    "failed": []
+  },
+  {
+    "name": "log100-restore",
+    "passed": true,
+    "code": 0,
+    "seconds": 1.53,
+    "failed": []
+  },
+  {
+    "name": "log500",
+    "passed": true,
+    "code": 0,
+    "seconds": 16.07,
+    "failed": []
+  },
+  {
+    "name": "log500-restore",
+    "passed": true,
+    "code": 0,
+    "seconds": 2.38,
+    "failed": []
+  },
+  {
+    "name": "appearance",
+    "passed": true,
+    "code": 0,
+    "seconds": 8.95,
+    "failed": []
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "checks" : {
+    "colorIsNotStoredInDraft" : true,
+    "logIsPlainAndReadOnly" : true,
+    "manualLanguageSaved" : true,
+    "nativeReplaceStillOpens" : true,
+    "opaqueMonokai" : true,
+    "plainClearsColor" : true,
+    "sqlVisibleColor" : true,
+    "tabReturnRecolors" : true,
+    "tomlVisibleColor" : true,
+    "undoPreservesSource" : true,
+    "yamlVisibleColor" : true
+  },
+  "memoryMiB" : {
+    "footprintMiB" : 23.55078125,
+    "peakFootprintMiB" : 28.32421875,
+    "peakResidentMiB" : 63.19921875,
+    "residentMiB" : 58.359375
+  },
+  "scope" : "8-second isolated smoke check, synthetic small files, 860x590 window"
+}

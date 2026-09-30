@@ -1,0 +1,350 @@
+{
+  "baseline": {
+    "edits": 74,
+    "textUTF16Length": 31,
+    "systemPeakMiB": 167.41015625,
+    "stages": {
+      "launch": {
+        "minMiB": 21.0625,
+        "sampleMaxMiB": 21.2421875,
+        "lastMiB": 21.0625,
+        "samples": 7,
+        "activeSamples": 7,
+        "width": 860,
+        "height": 590,
+        "scale": 2
+      },
+      "small-idle": {
+        "minMiB": 24.953125,
+        "sampleMaxMiB": 27.921875,
+        "lastMiB": 24.95703125,
+        "samples": 30,
+        "activeSamples": 30,
+        "width": 860,
+        "height": 590,
+        "scale": 2
+      },
+      "small-edit": {
+        "minMiB": 25.41796875,
+        "sampleMaxMiB": 27.078125,
+        "lastMiB": 27.06640625,
+        "samples": 59,
+        "activeSamples": 59,
+        "width": 860,
+        "height": 590,
+        "scale": 2
+      },
+      "large-resize": {
+        "minMiB": 122.6953125,
+        "sampleMaxMiB": 127.69140625,
+        "lastMiB": 122.6953125,
+        "samples": 38,
+        "activeSamples": 38,
+        "width": 1680,
+        "height": 940,
+        "scale": 2
+      },
+      "large-idle": {
+        "minMiB": 122.6953125,
+        "sampleMaxMiB": 123.296875,
+        "lastMiB": 123.296875,
+        "samples": 50,
+        "activeSamples": 50,
+        "width": 1680,
+        "height": 940,
+        "scale": 2
+      },
+      "large-edit": {
+        "minMiB": 123.58203125,
+        "sampleMaxMiB": 167.40625,
+        "lastMiB": 162.859375,
+        "samples": 71,
+        "activeSamples": 71,
+        "width": 1680,
+        "height": 940,
+        "scale": 2
+      },
+      "large-settle": {
+        "minMiB": 116.671875,
+        "sampleMaxMiB": 162.91796875,
+        "lastMiB": 116.6953125,
+        "samples": 169,
+        "activeSamples": 169,
+        "width": 1680,
+        "height": 940,
+        "scale": 2
+      },
+      "small-again": {
+        "minMiB": 28.24609375,
+        "sampleMaxMiB": 28.2734375,
+        "lastMiB": 28.2734375,
+        "samples": 100,
+        "activeSamples": 100,
+        "width": 860,
+        "height": 590,
+        "scale": 2
+      }
+    }
+  },
+  "flatten": {
+    "edits": 75,
+    "textUTF16Length": 31,
+    "systemPeakMiB": 179.50390625,
+    "stages": {
+      "launch": {
+        "minMiB": 21.06640625,
+        "sampleMaxMiB": 21.1328125,
+        "lastMiB": 21.06640625,
+        "samples": 9,
+        "activeSamples": 9,
+        "width": 860,
+        "height": 590,
+        "scale": 2
+      },
+      "small-idle": {
+        "minMiB": 27.5546875,
+        "sampleMaxMiB": 32.625,
+        "lastMiB": 27.55859375,
+        "samples": 30,
+        "activeSamples": 30,
+        "width": 860,
+        "height": 590,
+        "scale": 2
+      },
+      "small-edit": {
+        "minMiB": 28.01953125,
+        "sampleMaxMiB": 28.3046875,
+        "lastMiB": 28.26171875,
+        "samples": 59,
+        "activeSamples": 59,
+        "width": 860,
+        "height": 590,
+        "scale": 2
+      },
+      "large-resize": {
+        "minMiB": 128.40234375,
+        "sampleMaxMiB": 179.4609375,
+        "lastMiB": 128.40234375,
+        "samples": 37,
+        "activeSamples": 37,
+        "width": 1680,
+        "height": 940,
+        "scale": 2
+      },
+      "large-idle": {
+        "minMiB": 128.40234375,
+        "sampleMaxMiB": 128.41015625,
+        "lastMiB": 128.41015625,
+        "samples": 49,
+        "activeSamples": 49,
+        "width": 1680,
+        "height": 940,
+        "scale": 2
+      },
+      "large-edit": {
+        "minMiB": 128.48828125,
+        "sampleMaxMiB": 173.19140625,
+        "lastMiB": 168.15625,
+        "samples": 72,
+        "activeSamples": 72,
+        "width": 1680,
+        "height": 940,
+        "scale": 2
+      },
+      "large-settle": {
+        "minMiB": 115.8515625,
+        "sampleMaxMiB": 168.1875,
+        "lastMiB": 115.88671875,
+        "samples": 169,
+        "activeSamples": 169,
+        "width": 1680,
+        "height": 940,
+        "scale": 2
+      },
+      "small-again": {
+        "minMiB": 27.81640625,
+        "sampleMaxMiB": 27.8515625,
+        "lastMiB": 27.84375,
+        "samples": 99,
+        "activeSamples": 99,
+        "width": 860,
+        "height": 590,
+        "scale": 2
+      }
+    }
+  },
+  "flat-color": {
+    "edits": 74,
+    "textUTF16Length": 31,
+    "systemPeakMiB": 163.875,
+    "stages": {
+      "launch": {
+        "minMiB": 23.421875,
+        "sampleMaxMiB": 25.25390625,
+        "lastMiB": 23.421875,
+        "samples": 7,
+        "activeSamples": 7,
+        "width": 860,
+        "height": 590,
+        "scale": 2
+      },
+      "small-idle": {
+        "minMiB": 23.9765625,
+        "sampleMaxMiB": 25.1796875,
+        "lastMiB": 23.9921875,
+        "samples": 30,
+        "activeSamples": 30,
+        "width": 860,
+        "height": 590,
+        "scale": 2
+      },
+      "small-edit": {
+        "minMiB": 25.921875,
+        "sampleMaxMiB": 26.42578125,
+        "lastMiB": 26.40625,
+        "samples": 59,
+        "activeSamples": 59,
+        "width": 860,
+        "height": 590,
+        "scale": 2
+      },
+      "large-resize": {
+        "minMiB": 159.6796875,
+        "sampleMaxMiB": 163.08984375,
+        "lastMiB": 159.6796875,
+        "samples": 37,
+        "activeSamples": 37,
+        "width": 1680,
+        "height": 940,
+        "scale": 2
+      },
+      "large-idle": {
+        "minMiB": 159.62890625,
+        "sampleMaxMiB": 159.68359375,
+        "lastMiB": 159.64453125,
+        "samples": 49,
+        "activeSamples": 49,
+        "width": 1680,
+        "height": 940,
+        "scale": 2
+      },
+      "large-edit": {
+        "minMiB": 158.30078125,
+        "sampleMaxMiB": 159.828125,
+        "lastMiB": 158.3125,
+        "samples": 71,
+        "activeSamples": 71,
+        "width": 1680,
+        "height": 940,
+        "scale": 2
+      },
+      "large-settle": {
+        "minMiB": 111.703125,
+        "sampleMaxMiB": 158.34765625,
+        "lastMiB": 111.734375,
+        "samples": 167,
+        "activeSamples": 167,
+        "width": 1680,
+        "height": 940,
+        "scale": 2
+      },
+      "small-again": {
+        "minMiB": 23.61328125,
+        "sampleMaxMiB": 23.87890625,
+        "lastMiB": 23.640625,
+        "samples": 101,
+        "activeSamples": 101,
+        "width": 860,
+        "height": 590,
+        "scale": 2
+      }
+    }
+  },
+  "native": {
+    "edits": 76,
+    "textUTF16Length": 31,
+    "systemPeakMiB": 167.87109375,
+    "stages": {
+      "launch": {
+        "minMiB": 11.17578125,
+        "sampleMaxMiB": 11.234375,
+        "lastMiB": 11.2265625,
+        "samples": 10,
+        "activeSamples": 10,
+        "width": 860,
+        "height": 590,
+        "scale": 2
+      },
+      "small-idle": {
+        "minMiB": 14.68359375,
+        "sampleMaxMiB": 15.26953125,
+        "lastMiB": 15.26953125,
+        "samples": 30,
+        "activeSamples": 30,
+        "width": 860,
+        "height": 590,
+        "scale": 2
+      },
+      "small-edit": {
+        "minMiB": 15.66796875,
+        "sampleMaxMiB": 16.171875,
+        "lastMiB": 16.1484375,
+        "samples": 59,
+        "activeSamples": 59,
+        "width": 860,
+        "height": 590,
+        "scale": 2
+      },
+      "large-resize": {
+        "minMiB": 117.9921875,
+        "sampleMaxMiB": 164.67578125,
+        "lastMiB": 117.99609375,
+        "samples": 37,
+        "activeSamples": 37,
+        "width": 1680,
+        "height": 940,
+        "scale": 2
+      },
+      "large-idle": {
+        "minMiB": 117.9921875,
+        "sampleMaxMiB": 118.01171875,
+        "lastMiB": 118.01171875,
+        "samples": 49,
+        "activeSamples": 49,
+        "width": 1680,
+        "height": 940,
+        "scale": 2
+      },
+      "large-edit": {
+        "minMiB": 118.046875,
+        "sampleMaxMiB": 167.859375,
+        "lastMiB": 167.8203125,
+        "samples": 72,
+        "activeSamples": 72,
+        "width": 1680,
+        "height": 940,
+        "scale": 2
+      },
+      "large-settle": {
+        "minMiB": 116.61328125,
+        "sampleMaxMiB": 167.87109375,
+        "lastMiB": 116.66015625,
+        "samples": 166,
+        "activeSamples": 166,
+        "width": 1680,
+        "height": 940,
+        "scale": 2
+      },
+      "small-again": {
+        "minMiB": 17.0859375,
+        "sampleMaxMiB": 17.33984375,
+        "lastMiB": 17.1171875,
+        "samples": 101,
+        "activeSamples": 101,
+        "width": 860,
+        "height": 590,
+        "scale": 2
+      }
+    }
+  }
+}

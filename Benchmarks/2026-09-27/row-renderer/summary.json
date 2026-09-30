@@ -1,0 +1,697 @@
+{
+  "native-1": {
+    "mode": "native",
+    "edits": 128,
+    "gpuBefore": null,
+    "gpuAfter": null,
+    "systemPeakMiB": 34.34765625,
+    "editTimingIncludingDisplay": {
+      "dense-edit": {
+        "count": 49,
+        "maxMs": 14.806311999564059,
+        "p50ms": 14.548783001373522,
+        "p95ms": 14.736610999534605
+      },
+      "large-edit": {
+        "count": 53,
+        "maxMs": 2.4516649973520543,
+        "p50ms": 2.1538930013775826,
+        "p95ms": 2.228427998488769
+      },
+      "small-edit": {
+        "count": 26,
+        "maxMs": 55.79665600089356,
+        "p50ms": 1.2112860022170935,
+        "p95ms": 1.8140929969376884
+      }
+    },
+    "stages": {
+      "small-idle": {
+        "sampleMaxMiB": 29.84375,
+        "lastMiB": 29.73828125,
+        "samples": 36,
+        "activeSamples": 36,
+        "width": 860,
+        "height": 590,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.0
+      },
+      "small-edit": {
+        "sampleMaxMiB": 32.9765625,
+        "lastMiB": 32.9765625,
+        "samples": 74,
+        "activeSamples": 74,
+        "width": 860,
+        "height": 590,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.0
+      },
+      "large-resize": {
+        "sampleMaxMiB": 34.16796875,
+        "lastMiB": 34.16015625,
+        "samples": 54,
+        "activeSamples": 54,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.0
+      },
+      "large-edit": {
+        "sampleMaxMiB": 34.34375,
+        "lastMiB": 18.74609375,
+        "samples": 155,
+        "activeSamples": 155,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.0
+      },
+      "large-idle": {
+        "sampleMaxMiB": 18.8125,
+        "lastMiB": 18.8125,
+        "samples": 255,
+        "activeSamples": 255,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.0
+      },
+      "dense-load": {
+        "sampleMaxMiB": 23.66796875,
+        "lastMiB": 23.66015625,
+        "samples": 40,
+        "activeSamples": 40,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 30311,
+        "bitmapMiBEstimate": 0.0
+      },
+      "dense-edit": {
+        "sampleMaxMiB": 23.86328125,
+        "lastMiB": 23.8203125,
+        "samples": 147,
+        "activeSamples": 147,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 30311,
+        "bitmapMiBEstimate": 0.0
+      },
+      "dense-scroll": {
+        "sampleMaxMiB": 24.83203125,
+        "lastMiB": 24.83203125,
+        "samples": 92,
+        "activeSamples": 92,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 30311,
+        "bitmapMiBEstimate": 0.0
+      },
+      "dense-idle": {
+        "sampleMaxMiB": 24.82421875,
+        "lastMiB": 24.81640625,
+        "samples": 106,
+        "activeSamples": 106,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 30311,
+        "bitmapMiBEstimate": 0.0
+      },
+      "small-again": {
+        "sampleMaxMiB": 24.38671875,
+        "lastMiB": 24.25390625,
+        "samples": 90,
+        "activeSamples": 90,
+        "width": 860,
+        "height": 590,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.0
+      }
+    }
+  },
+  "native-igpu-1": {
+    "mode": "native",
+    "edits": 128,
+    "gpuBefore": "|   \"ActiveGPU\" = \"IGPU\"\n  |   \"SwitchCount\" = <03000000>",
+    "gpuAfter": "|   \"ActiveGPU\" = \"IGPU\"\n  |   \"SwitchCount\" = <03000000>",
+    "systemPeakMiB": 181.05859375,
+    "editTimingIncludingDisplay": {
+      "dense-edit": {
+        "count": 49,
+        "maxMs": 15.338190001784824,
+        "p50ms": 14.371367000421742,
+        "p95ms": 14.669094001874328
+      },
+      "large-edit": {
+        "count": 51,
+        "maxMs": 2.259072000015294,
+        "p50ms": 2.1379280005930923,
+        "p95ms": 2.1789839993289206
+      },
+      "small-edit": {
+        "count": 28,
+        "maxMs": 46.81027799961157,
+        "p50ms": 1.153546996647492,
+        "p95ms": 1.3274420016387012
+      }
+    },
+    "stages": {
+      "small-idle": {
+        "sampleMaxMiB": 29.60546875,
+        "lastMiB": 29.58984375,
+        "samples": 38,
+        "activeSamples": 38,
+        "width": 860,
+        "height": 590,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.0
+      },
+      "small-edit": {
+        "sampleMaxMiB": 35.56640625,
+        "lastMiB": 35.56640625,
+        "samples": 81,
+        "activeSamples": 81,
+        "width": 860,
+        "height": 590,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.0
+      },
+      "large-resize": {
+        "sampleMaxMiB": 181.0546875,
+        "lastMiB": 127.41796875,
+        "samples": 52,
+        "activeSamples": 52,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.0
+      },
+      "large-edit": {
+        "sampleMaxMiB": 177.46484375,
+        "lastMiB": 177.19140625,
+        "samples": 151,
+        "activeSamples": 151,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.0
+      },
+      "large-idle": {
+        "sampleMaxMiB": 177.23828125,
+        "lastMiB": 70.60546875,
+        "samples": 265,
+        "activeSamples": 265,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.0
+      },
+      "dense-load": {
+        "sampleMaxMiB": 174.18359375,
+        "lastMiB": 125.34375,
+        "samples": 29,
+        "activeSamples": 29,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 30311,
+        "bitmapMiBEstimate": 0.0
+      },
+      "dense-edit": {
+        "sampleMaxMiB": 175.2734375,
+        "lastMiB": 175.2734375,
+        "samples": 148,
+        "activeSamples": 148,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 30311,
+        "bitmapMiBEstimate": 0.0
+      },
+      "dense-scroll": {
+        "sampleMaxMiB": 176.66015625,
+        "lastMiB": 127.0078125,
+        "samples": 92,
+        "activeSamples": 92,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 30311,
+        "bitmapMiBEstimate": 0.0
+      },
+      "dense-idle": {
+        "sampleMaxMiB": 127,
+        "lastMiB": 127,
+        "samples": 95,
+        "activeSamples": 95,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 30311,
+        "bitmapMiBEstimate": 0.0
+      },
+      "small-again": {
+        "sampleMaxMiB": 77.2890625,
+        "lastMiB": 77.28125,
+        "samples": 101,
+        "activeSamples": 101,
+        "width": 860,
+        "height": 590,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.0
+      }
+    }
+  },
+  "rows-1": {
+    "mode": "rows",
+    "edits": 127,
+    "gpuBefore": null,
+    "gpuAfter": null,
+    "systemPeakMiB": 54.0078125,
+    "editTimingIncludingDisplay": {
+      "dense-edit": {
+        "count": 47,
+        "maxMs": 30.712152998603415,
+        "p50ms": 27.775459999247687,
+        "p95ms": 29.4070300005842
+      },
+      "large-edit": {
+        "count": 54,
+        "maxMs": 1.609416001883801,
+        "p50ms": 1.4881089991831686,
+        "p95ms": 1.5696010013925843
+      },
+      "small-edit": {
+        "count": 26,
+        "maxMs": 1.7278630002692807,
+        "p50ms": 1.4976349993958138,
+        "p95ms": 1.6602399991825223
+      }
+    },
+    "stages": {
+      "small-idle": {
+        "sampleMaxMiB": 10.5859375,
+        "lastMiB": 10.5859375,
+        "samples": 39,
+        "activeSamples": 39,
+        "width": 860,
+        "height": 590,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.131256103515625
+      },
+      "small-edit": {
+        "sampleMaxMiB": 10.7734375,
+        "lastMiB": 10.74609375,
+        "samples": 80,
+        "activeSamples": 80,
+        "width": 860,
+        "height": 590,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.131256103515625
+      },
+      "large-resize": {
+        "sampleMaxMiB": 10.97265625,
+        "lastMiB": 10.97265625,
+        "samples": 54,
+        "activeSamples": 54,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.131256103515625
+      },
+      "large-edit": {
+        "sampleMaxMiB": 11.10546875,
+        "lastMiB": 11.10546875,
+        "samples": 156,
+        "activeSamples": 156,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.131256103515625
+      },
+      "large-idle": {
+        "sampleMaxMiB": 11.2890625,
+        "lastMiB": 11.2890625,
+        "samples": 255,
+        "activeSamples": 255,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.131256103515625
+      },
+      "dense-load": {
+        "sampleMaxMiB": 40.37890625,
+        "lastMiB": 40.37890625,
+        "samples": 40,
+        "activeSamples": 40,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 30311,
+        "bitmapMiBEstimate": 11.847793579101562
+      },
+      "dense-edit": {
+        "sampleMaxMiB": 43.49609375,
+        "lastMiB": 41.703125,
+        "samples": 140,
+        "activeSamples": 140,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 30311,
+        "bitmapMiBEstimate": 11.847793579101562
+      },
+      "dense-scroll": {
+        "sampleMaxMiB": 42.95703125,
+        "lastMiB": 41.99609375,
+        "samples": 96,
+        "activeSamples": 96,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 30311,
+        "bitmapMiBEstimate": 12.4461669921875
+      },
+      "dense-idle": {
+        "sampleMaxMiB": 41.99609375,
+        "lastMiB": 41.99609375,
+        "samples": 95,
+        "activeSamples": 95,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 30311,
+        "bitmapMiBEstimate": 11.93939208984375
+      },
+      "small-again": {
+        "sampleMaxMiB": 17.9453125,
+        "lastMiB": 17.9453125,
+        "samples": 101,
+        "activeSamples": 101,
+        "width": 860,
+        "height": 590,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.131256103515625
+      }
+    }
+  },
+  "rows-igpu-1": {
+    "mode": "rows",
+    "edits": 126,
+    "gpuBefore": "|   \"ActiveGPU\" = \"IGPU\"\n  |   \"SwitchCount\" = <03000000>",
+    "gpuAfter": "|   \"ActiveGPU\" = \"IGPU\"\n  |   \"SwitchCount\" = <03000000>",
+    "systemPeakMiB": 55.0390625,
+    "editTimingIncludingDisplay": {
+      "dense-edit": {
+        "count": 47,
+        "maxMs": 29.928105999715626,
+        "p50ms": 27.21357900009025,
+        "p95ms": 28.47310200013453
+      },
+      "large-edit": {
+        "count": 53,
+        "maxMs": 1.581701999384677,
+        "p50ms": 1.473377000365872,
+        "p95ms": 1.5329489979194477
+      },
+      "small-edit": {
+        "count": 26,
+        "maxMs": 1.6502889993716963,
+        "p50ms": 1.438865001546219,
+        "p95ms": 1.6144529981829692
+      }
+    },
+    "stages": {
+      "small-idle": {
+        "sampleMaxMiB": 10.078125,
+        "lastMiB": 10.078125,
+        "samples": 40,
+        "activeSamples": 40,
+        "width": 860,
+        "height": 590,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.131256103515625
+      },
+      "small-edit": {
+        "sampleMaxMiB": 10.2578125,
+        "lastMiB": 10.22265625,
+        "samples": 80,
+        "activeSamples": 80,
+        "width": 860,
+        "height": 590,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.131256103515625
+      },
+      "large-resize": {
+        "sampleMaxMiB": 10.8671875,
+        "lastMiB": 10.8671875,
+        "samples": 54,
+        "activeSamples": 54,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.131256103515625
+      },
+      "large-edit": {
+        "sampleMaxMiB": 11.02734375,
+        "lastMiB": 11.02734375,
+        "samples": 155,
+        "activeSamples": 155,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.131256103515625
+      },
+      "large-idle": {
+        "sampleMaxMiB": 11.265625,
+        "lastMiB": 11.265625,
+        "samples": 256,
+        "activeSamples": 94,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.131256103515625
+      },
+      "dense-load": {
+        "sampleMaxMiB": 40.2890625,
+        "lastMiB": 40.2890625,
+        "samples": 40,
+        "activeSamples": 0,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 30311,
+        "bitmapMiBEstimate": 11.847793579101562
+      },
+      "dense-edit": {
+        "sampleMaxMiB": 43.05859375,
+        "lastMiB": 41.93359375,
+        "samples": 140,
+        "activeSamples": 0,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 30311,
+        "bitmapMiBEstimate": 11.847793579101562
+      },
+      "dense-scroll": {
+        "sampleMaxMiB": 44.0390625,
+        "lastMiB": 43.0390625,
+        "samples": 96,
+        "activeSamples": 0,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 30311,
+        "bitmapMiBEstimate": 12.4461669921875
+      },
+      "dense-idle": {
+        "sampleMaxMiB": 43.22265625,
+        "lastMiB": 43.20703125,
+        "samples": 138,
+        "activeSamples": 87,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 30311,
+        "bitmapMiBEstimate": 11.93939208984375
+      },
+      "small-again": {
+        "sampleMaxMiB": 17.96875,
+        "lastMiB": 17.90234375,
+        "samples": 106,
+        "activeSamples": 106,
+        "width": 860,
+        "height": 590,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.131256103515625
+      }
+    }
+  },
+  "rows-igpu-2": {
+    "mode": "rows",
+    "edits": 126,
+    "gpuBefore": "|   \"ActiveGPU\" = \"IGPU\"\n  |   \"SwitchCount\" = <03000000>",
+    "gpuAfter": "|   \"ActiveGPU\" = \"IGPU\"\n  |   \"SwitchCount\" = <03000000>",
+    "systemPeakMiB": 54.1015625,
+    "editTimingIncludingDisplay": {
+      "dense-edit": {
+        "count": 47,
+        "maxMs": 29.80455899887602,
+        "p50ms": 27.583753999351757,
+        "p95ms": 28.65364299941575
+      },
+      "large-edit": {
+        "count": 53,
+        "maxMs": 1.5635740019206423,
+        "p50ms": 1.4931320001778658,
+        "p95ms": 1.5621189995727036
+      },
+      "small-edit": {
+        "count": 26,
+        "maxMs": 1.6643480012135115,
+        "p50ms": 1.5060799996717833,
+        "p95ms": 1.6136029989866074
+      }
+    },
+    "stages": {
+      "small-idle": {
+        "sampleMaxMiB": 10.34765625,
+        "lastMiB": 10.34765625,
+        "samples": 39,
+        "activeSamples": 39,
+        "width": 860,
+        "height": 590,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.131256103515625
+      },
+      "small-edit": {
+        "sampleMaxMiB": 10.58984375,
+        "lastMiB": 10.58984375,
+        "samples": 80,
+        "activeSamples": 80,
+        "width": 860,
+        "height": 590,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.131256103515625
+      },
+      "large-resize": {
+        "sampleMaxMiB": 11.19921875,
+        "lastMiB": 11.19921875,
+        "samples": 54,
+        "activeSamples": 54,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.131256103515625
+      },
+      "large-edit": {
+        "sampleMaxMiB": 11.3515625,
+        "lastMiB": 11.3515625,
+        "samples": 155,
+        "activeSamples": 155,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.131256103515625
+      },
+      "large-idle": {
+        "sampleMaxMiB": 11.53515625,
+        "lastMiB": 11.53515625,
+        "samples": 256,
+        "activeSamples": 256,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.131256103515625
+      },
+      "dense-load": {
+        "sampleMaxMiB": 40.64453125,
+        "lastMiB": 40.64453125,
+        "samples": 40,
+        "activeSamples": 40,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 30311,
+        "bitmapMiBEstimate": 11.847793579101562
+      },
+      "dense-edit": {
+        "sampleMaxMiB": 41.80078125,
+        "lastMiB": 41.80078125,
+        "samples": 140,
+        "activeSamples": 140,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 30311,
+        "bitmapMiBEstimate": 11.847793579101562
+      },
+      "dense-scroll": {
+        "sampleMaxMiB": 43.05859375,
+        "lastMiB": 42.0859375,
+        "samples": 96,
+        "activeSamples": 96,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 30311,
+        "bitmapMiBEstimate": 12.4461669921875
+      },
+      "dense-idle": {
+        "sampleMaxMiB": 42.0859375,
+        "lastMiB": 42.0859375,
+        "samples": 95,
+        "activeSamples": 95,
+        "width": 1680,
+        "height": 940,
+        "scale": 2,
+        "textUTF16Length": 30311,
+        "bitmapMiBEstimate": 11.93939208984375
+      },
+      "small-again": {
+        "sampleMaxMiB": 17.9296875,
+        "lastMiB": 17.9296875,
+        "samples": 101,
+        "activeSamples": 101,
+        "width": 860,
+        "height": 590,
+        "scale": 2,
+        "textUTF16Length": 31,
+        "bitmapMiBEstimate": 0.131256103515625
+      }
+    }
+  }
+}

@@ -1,0 +1,1 @@
+Feature restore: ["note-7B55BA4B-95AD-4D19-9371-FAABF824E50E": true, "note-550CA584-D1E0-4CDD-A758-AF57B18B4093": true, "viewportRestored": true, "activeLogRestored": true, "lineNumberRestored": true, "note-1BB9714B-8E3E-45D4-B2D3-99A518BC3FB7": true, "bytePositionRestored": true]

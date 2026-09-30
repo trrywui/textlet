@@ -1,0 +1,9 @@
+2026-09-27 10:02:49.280 textlet-asan[37619:205193] XType: Using static font registry.
+PASS SQL keywords, escaped strings, identifiers, numbers and nested comments
+PASS YAML keys, booleans and indented block scalars
+PASS TOML sections, keys, numbers and multiline strings
+PASS Sparse checkpoint resumes a long Unicode block comment
+PASS Old records without syntax still load and detect uppercase extensions
+PASS Explicit plain-text choice persists without changing text
+PASS Read-only large-file tabs always disable highlighting
+All syntax checks passed.

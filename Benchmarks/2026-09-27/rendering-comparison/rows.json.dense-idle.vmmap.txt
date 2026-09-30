@@ -1,0 +1,4 @@
+Failed to start process notifications for pid 23182 (4)
+2026-09-27 21:21:27.949 vmmap[23324:189021] Failed to create CSSymbolicatorRef for pid 23182 textlet-rows
+vmmap[23330]: vmmap cannot examine process 23182 (with name like '23182') because it no longer appears to be running.
+vmmap[23330]: [fatal] mach port for process 0 not valid

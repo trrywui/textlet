@@ -1,0 +1,12 @@
+--- Sources/Textlet.swift
++++ Sources/Textlet.swift
+@@ -77,6 +77,9 @@
+ }
+ 
+ final class BackgroundView: NSView {
++    override var wantsUpdateLayer: Bool { Textlet.argument("--probe-mode") == "flat-color" }
++    override func updateLayer() { layer?.backgroundColor = Theme.chrome.cgColor }
++
+     override func draw(_ dirtyRect: NSRect) {
+         Theme.chrome.setFill()
+         bounds.intersection(dirtyRect).fill()

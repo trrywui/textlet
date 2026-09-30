@@ -1,0 +1,1 @@
+Rows checks: ["visibleTilesBounded": true, "scrollRestored": true, "nativeMarkedText": true, "separateSessionIdentity": true, "compositionUndo": true, "plainModeChangesPixels": true, "save": true, "nativeChineseCommit": true, "nativeFindBar": true, "highlightChangesPixels": true, "glyphsActuallyPainted": true]

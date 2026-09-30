@@ -1,0 +1,13 @@
+Closing test: 临时笔记, [], saveAs=cancel
+Closing test: 临时笔记, ["取消"], saveAs=cancel
+Closing test: 笔记 2, [], saveAs=cancel
+Closing test: 空白字符, ["取消"], saveAs=cancel
+Closing test: 空白字符, ["不保存"], saveAs=cancel
+Closing test: 后台笔记, ["保存"], saveAs=cancel
+Closing test: 后台笔记, ["保存"], saveAs=saved-background.txt
+Closing test: 未加载的空草稿, [], saveAs=cancel
+Closing test: 读取失败, ["好"], saveAs=cancel
+Closing test: 读取失败, ["不保存"], saveAs=cancel
+Closing test: 临时笔记, ["保存", "好"], saveAs=missing-parent/file.txt
+Closing test: 临时笔记, ["保存"], saveAs=saved-active.txt
+Lifecycle checks: ["clearedTabClosesWithoutDialog": true, "saveLastActiveThenCreateEmptyTab": true, "saveInactiveExportsCorrectTextThenCloses": true, "saveFailureKeepsTabAndText": true, "cancelRemainsDefault": true, "lastEmptyTabClosesWithoutDialog": true, "unloadedEmptyClosesWithoutDialog": true, "closePromptExact": true, "allRequestedButtonsClicked": true, "buttonsLeftToRight": true, "discardInactiveKeepsActiveText": true, "failedWritePreservesText": true, "cancelDestinationKeepsInactiveTab": true, "failedCloseRollsBackTabsAndActiveID": true, "savedSessionContainsOnlyRemainingTab": true, "cancelPreservesTextAndUndo": true, "readFailureKeepsTab": true, "whitespaceCountsAsContent": true]

@@ -1,0 +1,2 @@
+Process exists but has not started -- it is launched-suspended (unknown error)
+vmmap[23166]: [fatal] posix_spawn: /Applications/Xcode.app/Contents/Developer/usr/bin/vmmap could not be launched as a 32-bit process with architecture i386: Bad CPU type in executable (86)

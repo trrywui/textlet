@@ -1,0 +1,138 @@
+{
+  "createdAt": "2026-09-28T16:16:37.932769+08:00",
+  "builds": {
+    "formal": {
+      "bundleIdentifier": "local.textlet.editor",
+      "name": "Textlet",
+      "renderer": "rows",
+      "sessionDirectory": "Textlet",
+      "version": "0.5.0"
+    },
+    "experimental": {
+      "bundleIdentifier": "local.textlet.rows-experiment",
+      "name": "Textlet 实验版",
+      "renderer": "rows",
+      "sessionDirectory": "Textlet-Rows-Experiment",
+      "version": "0.5.0"
+    }
+  },
+  "checks": {
+    "rows": {
+      "passed": 52,
+      "checks": {
+        "cacheBudgetBounded": true,
+        "cachePixels-composition-commit": true,
+        "cachePixels-delete-newline": true,
+        "cachePixels-font-layout": true,
+        "cachePixels-head-insert": true,
+        "cachePixels-marked-text": true,
+        "cachePixels-multiline-paste": true,
+        "cachePixels-partial-row-scroll": true,
+        "cachePixels-redo": true,
+        "cachePixels-resize-wrap": true,
+        "cachePixels-scroll-back": true,
+        "cachePixels-storage-color": true,
+        "cachePixels-switch-highlight": true,
+        "cachePixels-undo": true,
+        "cachePixels-unicode-edit-0": true,
+        "cachePixels-unicode-edit-1": true,
+        "cachePixels-unicode-edit-2": true,
+        "cachePixels-unicode-edit-3": true,
+        "cachePixels-unicode-edit-4": true,
+        "cachePixels-unicode-edit-5": true,
+        "cachePixels-unicode-edit-6": true,
+        "cachePixels-unicode-edit-7": true,
+        "cachePixels-unicode-edit-8": true,
+        "cachePixels-unicode-edit-9": true,
+        "cachePixels-unicode-edit-10": true,
+        "cachePixels-unicode-edit-11": true,
+        "cachePixels-unicode-edit-12": true,
+        "cachePixels-unicode-edit-13": true,
+        "cachePixels-unicode-edit-14": true,
+        "cachePixels-unicode-edit-15": true,
+        "cachePixels-unicode-edit-16": true,
+        "cachePixels-unicode-edit-17": true,
+        "cachePixels-unicode-edit-18": true,
+        "cachePixels-unicode-edit-19": true,
+        "cachePixels-unicode-edit-20": true,
+        "cachePixels-unicode-edit-21": true,
+        "cachePixels-unicode-edit-22": true,
+        "cachePixels-unicode-edit-23": true,
+        "compositionUndo": true,
+        "formalApplicationIdentity": true,
+        "glyphsActuallyPainted": true,
+        "headEditReusesUnaffectedRows": true,
+        "highlightChangesPixels": true,
+        "nativeChineseCommit": true,
+        "nativeFindBar": true,
+        "nativeMarkedText": true,
+        "plainModeChangesPixels": true,
+        "save": true,
+        "scrollRestored": true,
+        "touchBarItemsPreserved": true,
+        "visibleTilesBounded": true,
+        "windowMatchesEdition": true
+      }
+    },
+    "window-first": {
+      "passed": 4,
+      "checks": {
+        "exitFramePersisted": true,
+        "firstLaunchUsesDefaultSize": true,
+        "nativeZoomFillsScreen": true,
+        "quitSavesSession": true
+      }
+    },
+    "window-reopen": {
+      "passed": 3,
+      "checks": {
+        "exitFramePersisted": true,
+        "quitSavesSession": true,
+        "restoredFrameMatchesPreviousExit": true
+      }
+    },
+    "lifecycle": {
+      "passed": 20,
+      "checks": {
+        "allRequestedButtonsClicked": true,
+        "buttonsLeftToRight": true,
+        "cancelDestinationKeepsInactiveTab": true,
+        "cancelPreservesTextAndUndo": true,
+        "cancelRemainsDefault": true,
+        "clearedTabClosesWithoutDialog": true,
+        "closePromptExact": true,
+        "discardInactiveKeepsActiveText": true,
+        "escapeCancelsClose": true,
+        "failedCloseRollsBackTabsAndActiveID": true,
+        "failedWritePreservesText": true,
+        "lastEmptyTabClosesWithoutDialog": true,
+        "readFailureKeepsTab": true,
+        "returnKeepsCancelDefault": true,
+        "savedSessionContainsOnlyRemainingTab": true,
+        "saveFailureKeepsTabAndText": true,
+        "saveInactiveExportsCorrectTextThenCloses": true,
+        "saveLastActiveThenCreateEmptyTab": true,
+        "unloadedEmptyClosesWithoutDialog": true,
+        "whitespaceCountsAsContent": true
+      }
+    },
+    "restore": {
+      "restorePassed": true
+    },
+    "self-test": {
+      "passed": 88
+    },
+    "syntax-test": {
+      "passed": 7
+    }
+  },
+  "archiveEntriesVerified": 535,
+  "rendererUnchanged": true,
+  "rendererSha256": "081c675ab7b64f20975508cf530b4c4c7afa5e2435d2c5976650dd75ccb2eba8",
+  "signaturesVerified": true,
+  "shellSyntaxPassed": true,
+  "pythonSyntaxPassed": true,
+  "gitDiffWhitespacePassed": true,
+  "performanceRerun": false,
+  "installedAppsModified": false
+}
