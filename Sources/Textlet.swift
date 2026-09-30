@@ -130,6 +130,15 @@ final class TabBarView: NSView {
 }
 
 final class NoteTab: NSView {
+    private struct State: Equatable {
+        let title: String, path: String?
+        let dirty: Bool, missing: Bool, external: Bool, log: Bool
+    }
+    private static let unsavedImage = NSImage(systemSymbolName: "circle.fill", accessibilityDescription: "关闭文本")?
+        .withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 6, weight: .regular))
+    private static let savedImage = NSImage(systemSymbolName: "xmark", accessibilityDescription: "关闭文本")?
+        .withSymbolConfiguration(NSImage.SymbolConfiguration(pointSize: 8, weight: .regular))
+    private var displayedState: State?
     let id: UUID
     var onSelect: (() -> Void)?
     var onClose: (() -> Void)?
@@ -180,9 +189,12 @@ final class NoteTab: NSView {
         toolTip = title
     }
     func updateState(for note: Note) {
+        let next = State(title: note.displayName, path: note.record.file?.path, dirty: note.needsFileSave,
+            missing: note.fileMissing, external: note.fileChangedExternally, log: note.isLog)
+        guard displayedState != next else { return }
+        if displayedState?.dirty != next.dirty { close.image = next.dirty ? Self.unsavedImage : Self.savedImage }
+        displayedState = next
         updateTitle(for: note)
-        close.image = NSImage(systemSymbolName: note.needsFileSave ? "circle.fill" : "xmark", accessibilityDescription: "关闭文本")
-        close.symbolConfiguration = NSImage.SymbolConfiguration(pointSize: note.needsFileSave ? 6 : 8, weight: .regular)
         close.contentTintColor = note.fileMissing ? .systemRed : (note.needsFileSave ? Theme.accent : Theme.muted)
         let state = note.isLog ? "只读日志" : note.fileMissing ? "原文件已移走或删除，尚未保存"
             : note.fileChangedExternally ? "原文件已被外部修改" : note.needsFileSave ? "尚未保存到文件" : "已保存到文件"

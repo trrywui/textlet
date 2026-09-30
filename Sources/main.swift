@@ -1,5 +1,10 @@
 import AppKit
 
+if let output = Textlet.argument("--file-efficiency-benchmark") {
+    do { try runFileEfficiencyBenchmark(output: URL(fileURLWithPath: output)); exit(0) }
+    catch { fputs("\(error)\n", stderr); exit(1) }
+}
+
 // Inspect the built edition without launching a window or opening any session.
 if CommandLine.arguments.contains("--build-info") {
     let info = ["name": AppEdition.name, "version": AppEdition.version,

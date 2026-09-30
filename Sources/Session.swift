@@ -166,11 +166,13 @@ final class SessionStore {
         }
         // Validate all referenced files before accepting a generation; retain only the active buffer later.
         for index in session.notes.indices {
-            let text = try text(for: session.notes[index])
-            if session.notes[index].usesContentTitle {
-                session.notes[index].contentTitle = Note.titlePreview(in: text as NSString).title
+            try autoreleasepool {
+                let text = try text(for: session.notes[index])
+                if session.notes[index].usesContentTitle {
+                    session.notes[index].contentTitle = Note.titlePreview(in: text as NSString).title
+                }
+                if let file = session.notes[index].file { session.notes[index].fileModified = file.differs(from: text as NSString) }
             }
-            if let file = session.notes[index].file { session.notes[index].fileModified = file.differs(from: text as NSString) }
         }
         return session
     }
@@ -197,13 +199,18 @@ final class SessionStore {
         guard !notes.isEmpty else { throw SessionError.invalid("不能保存空会话") }
         var records = notes.map(\.record)
         for (index, note) in notes.enumerated() where !note.isLog && (note.dirty || note.record.draftFile.isEmpty) {
-            guard let storage = note.storage else { throw SessionError.invalid("草稿缓冲区缺失") }
-            let name = "\(note.record.id.uuidString)-\(UUID().uuidString).txt"
-            try Data(storage.string.utf8).write(to: drafts.appendingPathComponent(name), options: .atomic)
-            records[index].draftFile = name
-            if let file = records[index].file { records[index].fileModified = file.differs(from: storage.mutableString) }
-            if records[index].usesContentTitle {
-                records[index].contentTitle = Note.titlePreview(in: storage.mutableString).title
+            try autoreleasepool {
+                guard let storage = note.storage else { throw SessionError.invalid("草稿缓冲区缺失") }
+                let name = "\(note.record.id.uuidString)-\(UUID().uuidString).txt"
+                let data = Data(storage.string.utf8)
+                try data.write(to: drafts.appendingPathComponent(name), options: .atomic)
+                records[index].draftFile = name
+                if let file = records[index].file {
+                    records[index].fileModified = storage.length != file.textLength || DocumentFile.digest(data) != file.textDigest
+                }
+                if records[index].usesContentTitle {
+                    records[index].contentTitle = Note.titlePreview(in: storage.mutableString).title
+                }
             }
         }
         let snapshot = SessionRecord(activeID: activeID, notes: records, windowFrame: windowFrame)

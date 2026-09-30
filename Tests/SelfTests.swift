@@ -74,5 +74,6 @@ func runSelfTests() throws {
     print("All persistence tests passed.")
     try runTitleTests(root: root.appendingPathComponent("titles"))
     try runFileSavingTests(root: root.appendingPathComponent("file-saving"))
+    try runFileWatchTests(root: root.appendingPathComponent("file-watch"))
     try runFeatureTests(root: root.appendingPathComponent("features"))
 }

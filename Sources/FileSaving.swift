@@ -8,8 +8,8 @@ extension Textlet {
 
     func watchFile(_ note: Note) {
         guard let file = note.record.file else { note.fileWatch = nil; return }
-        note.refreshFileState()
         guard note.fileWatch?.url.path != file.path else { return }
+        note.refreshFileState()
         note.fileWatch = FileWatch(url: URL(fileURLWithPath: file.path)) { [weak self, weak note] in
             guard let self, let note else { return }
             note.refreshFileState()
@@ -18,7 +18,7 @@ extension Textlet {
         }
     }
     func updateTabState(_ note: Note) {
-        tabStack?.arrangedSubviews.compactMap { $0 as? NoteTab }.first { $0.id == note.record.id }?.updateState(for: note)
+        (tabStack?.arrangedSubviews.first { ($0 as? NoteTab)?.id == note.record.id } as? NoteTab)?.updateState(for: note)
     }
     func applicationDidBecomeActive(_ notification: Notification) {
         for note in notes { note.refreshFileState(); updateTabState(note) }
