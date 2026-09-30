@@ -87,6 +87,33 @@ func runLifecycleCheck(app: Textlet, output: URL) {
             app.newNote()
             let third = app.active
             checks["newTabsUseConsecutiveTextNames"] = second.record.name == "文本2" && third.record.name == "文本3"
+            let leftNeighborProbe = Note(name: "左侧标签测试")
+            let middleNeighborProbe = Note(name: "中间标签测试")
+            let rightNeighborProbe = Note(name: "右侧标签测试")
+            app.notes.append(contentsOf: [leftNeighborProbe, middleNeighborProbe, rightNeighborProbe])
+            app.renderTabs()
+            try app.selectNote(middleNeighborProbe.record.id)
+            app.closeNote(middleNeighborProbe.record.id)
+            checks["activeMiddleClosesToLeftTab"] = !contains(middleNeighborProbe) && app.active === leftNeighborProbe
+            app.closeNote(rightNeighborProbe.record.id)
+            app.closeNote(leftNeighborProbe.record.id)
+            checks["probeTabsCleanupReturnsToOriginal"] = !contains(leftNeighborProbe) && !contains(rightNeighborProbe)
+                && app.active === third
+
+            let firstNeighborProbe = Note(name: "最左侧标签测试")
+            app.notes.insert(firstNeighborProbe, at: 0)
+            app.renderTabs()
+            try app.selectNote(firstNeighborProbe.record.id)
+            app.closeNote(firstNeighborProbe.record.id)
+            checks["activeFirstClosesToRightTab"] = !contains(firstNeighborProbe) && app.active === empty
+
+            let lastNeighborProbe = Note(name: "最右侧标签测试")
+            app.notes.append(lastNeighborProbe)
+            app.renderTabs()
+            try app.selectNote(lastNeighborProbe.record.id)
+            app.closeNote(lastNeighborProbe.record.id)
+            checks["activeLastClosesToLeftTab"] = !contains(lastNeighborProbe) && app.active === third
+
             let thirdTab = app.tabStack.arrangedSubviews.compactMap { $0 as? NoteTab }.first { $0.id == third.record.id }!
             let thirdPoint = thirdTab.convert(NSPoint(x: 30, y: 16), to: nil)
             mouse(.otherMouseDown, at: thirdPoint, button: 3)

@@ -770,7 +770,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
     func makeCloseAlert() -> CloseNoteAlert { CloseNoteAlert() }
 
     func removeNote(_ id: UUID) throws {
-        guard notes.contains(where: { $0.record.id == id }) else { return }
+        guard let closingIndex = notes.firstIndex(where: { $0.record.id == id }) else { return }
         guard saveSession() else { throw SessionError.invalid(lastSaveError ?? "会话保存失败") }
         let closingActive = activeID == id
         let oldNotes = notes
@@ -778,7 +778,10 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         notes.removeAll { $0.record.id == id }
         if notes.isEmpty { notes = [Note(name: Note.nextName(in: notes), automaticTitle: true)] }
         do {
-            if closingActive { try selectNote(notes[0].record.id, saveCurrent: false) }
+            if closingActive {
+                let destinationIndex = max(0, min(closingIndex - 1, notes.count - 1))
+                try selectNote(notes[destinationIndex].record.id, saveCurrent: false)
+            }
             guard saveSession() else { throw SessionError.invalid(lastSaveError ?? "会话保存失败") }
             renderTabs()
         } catch {
