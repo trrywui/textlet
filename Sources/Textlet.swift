@@ -58,6 +58,14 @@ final class EditorView: EditorRenderingView {
     override func pasteAsRichText(_ sender: Any?) { paste(sender) }
 }
 
+// Keep the tab strip transient even when AppKit updates the system scroller style.
+final class TabScrollView: NSScrollView {
+    override var scrollerStyle: NSScroller.Style {
+        get { super.scrollerStyle }
+        set { super.scrollerStyle = .overlay }
+    }
+}
+
 // Keep AppKit's scrolling and fade timing; customize only the tab thumb's drawing.
 final class TabScroller: NSScroller {
     override class var isCompatibleWithOverlayScrollers: Bool { true }
@@ -295,7 +303,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         tabStack.spacing = 3
         tabStack.edgeInsets = NSEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
         tabStack.translatesAutoresizingMaskIntoConstraints = false
-        tabScroller = NSScrollView()
+        tabScroller = TabScrollView()
         tabScroller.drawsBackground = false
         tabScroller.hasHorizontalScroller = true
         tabScroller.horizontalScroller = TabScroller()

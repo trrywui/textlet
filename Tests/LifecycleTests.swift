@@ -59,6 +59,9 @@ func runLifecycleCheck(app: Textlet, output: URL) {
             checks["allRequestedButtonsClicked"] = (checks["allRequestedButtonsClicked"] ?? true) && remaining.isEmpty
         }
         do {
+            checks["tabScrollerUsesOverlayAfterLaunch"] = app.tabScroller.scrollerStyle == .overlay
+            app.tabScroller.scrollerStyle = .legacy
+            checks["systemStyleCannotMakeTabScrollerPermanent"] = app.tabScroller.scrollerStyle == .overlay
             let empty = app.active
             checks["firstLaunchStartsAtText1"] = empty.record.name == "文本1"
             app.newNote()
