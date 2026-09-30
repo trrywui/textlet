@@ -8,6 +8,19 @@ func runSelfTests() throws {
         if !condition() { throw SessionError.invalid("TEST FAILED: \(message)") }
         print("PASS \(message)")
     }
+    try expect(Note.nextName(in: []) == "文本1", "empty session starts at 文本1")
+    let numbered = ["文本1", "文本2", "文本3"].map { Note(name: $0) }
+    try expect(Note.nextName(in: numbered) == "文本4", "new text tabs increment the maximum number")
+    try expect(Note.nextName(in: [numbered[0], numbered[2]]) == "文本4", "closing a middle tab does not reuse its number")
+    try expect(Note.nextName(in: [numbered[0], numbered[1]]) == "文本3", "numbering uses the current maximum after closing the highest tab")
+    let mixed = ["临时笔记", "笔记 2", "自定义名称", "query.sql", "文本9", "文本10", "文本01", "文本 20", "文本20.txt"].map { Note(name: $0) }
+    try expect(Note.nextName(in: mixed) == "文本11", "only exact numbered text names contribute to the numeric maximum")
+    try expect(Note.nextName(in: [Note(name: "文本\(Int.max)"), numbered[0]]) == "文本2", "an extreme custom number cannot overflow or duplicate an existing name")
+    let namingStore = try SessionStore(directory: root.appendingPathComponent("naming"))
+    try namingStore.save(notes: mixed, activeID: mixed[0].record.id)
+    let restoredNames = try namingStore.load()!.notes.map { Note(record: $0) }
+    try expect(restoredNames.map { $0.record.name } == mixed.map { $0.record.name }, "old and custom tab names restore unchanged")
+    try expect(Note.nextName(in: restoredNames) == "文本11", "numbering resumes from restored tab names")
     let literal = "会议纪要\n\"quote\" --dash  two spaces\tTAB\r\n中文🙂\u{00a0}\n"
     let a = Note(name: "A", text: literal)
     let b = Note(name: "B", text: "第二个标签")

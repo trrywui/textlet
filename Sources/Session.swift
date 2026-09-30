@@ -19,6 +19,19 @@ struct SessionRecord: Codable {
 }
 
 final class Note {
+    static func nextName(in notes: [Note]) -> String {
+        let names = Set(notes.map { $0.record.name })
+        let maximum = names.compactMap { name -> Int? in
+            guard name.hasPrefix("文本"), let number = Int(name.dropFirst(2)),
+                  number > 0, name == "文本\(number)" else { return nil }
+            return number
+        }.max() ?? 0
+        // A manually entered Int.max must not overflow when creating a tab.
+        var number = maximum < Int.max ? maximum + 1 : 1
+        while names.contains("文本\(number)") { number += 1 }
+        return "文本\(number)"
+    }
+
     var isLog: Bool { record.logPath != nil }
     var language: TextLanguage {
         if isLog { return .plain }

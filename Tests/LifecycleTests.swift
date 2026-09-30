@@ -60,8 +60,22 @@ func runLifecycleCheck(app: Textlet, output: URL) {
         }
         do {
             let empty = app.active
+            checks["firstLaunchStartsAtText1"] = empty.record.name == "文本1"
+            app.newNote()
+            let second = app.active
+            app.newNote()
+            let third = app.active
+            checks["newTabsUseConsecutiveTextNames"] = second.record.name == "文本2" && third.record.name == "文本3"
+            close(second, buttons: [])
+            app.newNote()
+            let fourth = app.active
+            checks["newTabAfterClosingMiddleUsesMaximum"] = fourth.record.name == "文本4"
+            close(fourth, buttons: [])
+            close(third, buttons: [])
             close(empty, buttons: [])
             checks["lastEmptyTabClosesWithoutDialog"] = !contains(empty) && app.notes.count == 1 && app.editor.string.isEmpty
+
+            checks["lastTabReplacementStartsAtText1"] = app.active.record.name == "文本1"
 
             let primary = app.active
             app.editor.insertText("当前标签 中文🙂", replacementRange: NSRange(location: 0, length: 0))

@@ -138,14 +138,14 @@ final class NoteTab: NSView {
         label.lineBreakMode = .byTruncatingTail
         label.maximumNumberOfLines = 1
         label.translatesAutoresizingMaskIntoConstraints = false
-        close.image = NSImage(systemSymbolName: "xmark", accessibilityDescription: "关闭笔记")
+        close.image = NSImage(systemSymbolName: "xmark", accessibilityDescription: "关闭文本")
         close.bezelStyle = .inline
         close.isBordered = false
         close.imageScaling = .scaleProportionallyDown
         close.contentTintColor = Theme.muted
         close.target = self
         close.action = #selector(closeNote)
-        close.toolTip = note.isLog ? "关闭日志标签（不删除原文件）" : "关闭笔记（有内容时询问是否保存）"
+        close.toolTip = note.isLog ? "关闭日志标签（不删除原文件）" : "关闭文本（有内容时询问是否保存）"
         close.translatesAutoresizingMaskIntoConstraints = false
         addSubview(label)
         addSubview(close)
@@ -225,7 +225,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
                 activeID = session.activeID
                 restoredWindowFrame = session.windowFrame
             } else {
-                notes = [Note(name: "临时笔记")]
+                notes = [Note(name: Note.nextName(in: notes))]
                 activeID = notes[0].record.id
             }
             buildMenus()
@@ -304,10 +304,10 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         tabScroller.documentView = tabStack
         top.scroller = tabScroller
         tabScroller.translatesAutoresizingMaskIntoConstraints = false
-        let plus = NSButton(image: NSImage(systemSymbolName: "plus", accessibilityDescription: "新建笔记")!,
+        let plus = NSButton(image: NSImage(systemSymbolName: "plus", accessibilityDescription: "新建文本")!,
                             target: self, action: #selector(newNote))
         plus.isBordered = false
-        plus.toolTip = "新建笔记 ⌘N"
+        plus.toolTip = "新建文本 ⌘N"
         plus.translatesAutoresizingMaskIntoConstraints = false
         top.addSubview(tabScroller)
         top.addSubview(plus)
@@ -341,7 +341,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         editor.selectedTextAttributes = [.backgroundColor: Theme.selection, .foregroundColor: Theme.text]
         highlighter = SyntaxHighlighter(editor: editor)
         editor.delegate = self
-        editor.setAccessibilityLabel("笔记正文")
+        editor.setAccessibilityLabel("文本正文")
         scroller = EditorScrollView()
         scroller.hasVerticalScroller = true
         scroller.autohidesScrollers = true
@@ -434,13 +434,13 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         item(app, "隐藏 \(AppEdition.name)", #selector(NSApplication.hide(_:)), "h", NSApp)
         item(app, "退出 \(AppEdition.name)", #selector(NSApplication.terminate(_:)), "q", NSApp)
         let file = group("文件")
-        item(file, "新建笔记", #selector(newNote), "n", self)
+        item(file, "新建文本", #selector(newNote), "n", self)
         item(file, "打开文本…", #selector(openPanel), "o", self)
         item(file, "以只读日志模式打开…", #selector(openLogPanel), "", self)
         item(file, "导出文本…", #selector(exportText), "s", self)
-        item(file, "重命名笔记…", #selector(renameNote), "", self)
+        item(file, "重命名文本…", #selector(renameNote), "", self)
         file.addItem(.separator())
-        item(file, "关闭笔记…", #selector(closeCurrent), "w", self)
+        item(file, "关闭文本…", #selector(closeCurrent), "w", self)
         let edit = group("编辑")
         item(edit, "撤销", Selector(("undo:")), "z")
         item(edit, "重做", Selector(("redo:")), "Z")
@@ -667,16 +667,16 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
     }
 
     @objc func newNote() {
-        let note = Note(name: "笔记 \(notes.count + 1)")
+        let note = Note(name: Note.nextName(in: notes))
         notes.append(note)
-        do { try selectNote(note.record.id) } catch { showMessage("无法新建笔记", error.localizedDescription) }
+        do { try selectNote(note.record.id) } catch { showMessage("无法新建文本", error.localizedDescription) }
     }
     @objc func nextNote() { cycle(1) }
     @objc func previousNote() { cycle(-1) }
     func cycle(_ delta: Int) {
         guard let i = notes.firstIndex(where: { $0.record.id == activeID }) else { return }
         do { try selectNote(notes[(i + delta + notes.count) % notes.count].record.id) }
-        catch { showMessage("无法切换笔记", error.localizedDescription) }
+        catch { showMessage("无法切换文本", error.localizedDescription) }
     }
     @objc func closeCurrent() { closeNote(activeID) }
     func closeNote(_ id: UUID, save: ((Note) -> Bool)? = nil) {
@@ -687,7 +687,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
                 alert.messageText = "关闭“\(note.record.name)”？"
                 alert.informativeText = "这只会关闭日志标签，原文件不会被删除。"
                 alert.addButton(withTitle: "取消")
-                alert.addButton(withTitle: "关闭笔记")
+                alert.addButton(withTitle: "关闭文本")
                 guard alert.runModal() == .alertSecondButtonReturn else { return }
             } else if try !text(for: note).isEmpty {
                 let response = makeCloseAlert().runModal()
@@ -696,7 +696,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
                 } else if response != .alertThirdButtonReturn { return }
             }
             try removeNote(id)
-        } catch { showMessage("无法关闭笔记", error.localizedDescription) }
+        } catch { showMessage("无法关闭文本", error.localizedDescription) }
     }
 
     func makeCloseAlert() -> CloseNoteAlert { CloseNoteAlert() }
@@ -708,7 +708,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         let oldNotes = notes
         let oldActive = activeID
         notes.removeAll { $0.record.id == id }
-        if notes.isEmpty { notes = [Note(name: "临时笔记")] }
+        if notes.isEmpty { notes = [Note(name: Note.nextName(in: notes))] }
         do {
             if closingActive { try selectNote(notes[0].record.id, saveCurrent: false) }
             guard saveSession() else { throw SessionError.invalid(lastSaveError ?? "会话保存失败") }
@@ -721,7 +721,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
     }
     @objc func renameNote() {
         let alert = NSAlert()
-        alert.messageText = "重命名笔记"
+        alert.messageText = "重命名文本"
         let field = NSTextField(string: active.record.name)
         field.frame = NSRect(x: 0, y: 0, width: 280, height: 24)
         alert.accessoryView = field
