@@ -8,7 +8,15 @@ func runLifecycleCheck(app: Textlet, output: URL) {
         var capturedDialog = false
         func contains(_ note: Note) -> Bool { app.notes.contains { $0 === note } }
         func descendants(_ view: NSView) -> [NSView] { [view] + view.subviews.flatMap(descendants) }
-        func close(_ note: Note, buttons: [String], saveAs: String? = nil) {
+        func mouse(_ type: NSEvent.EventType, at point: NSPoint, button: Int = 2) {
+            let event = NSEvent.mouseEvent(with: type, location: point, modifierFlags: [],
+                timestamp: ProcessInfo.processInfo.systemUptime, windowNumber: app.window.windowNumber,
+                context: nil, eventNumber: 1, clickCount: 1, pressure: 0)!
+            let cg = event.cgEvent!
+            cg.setIntegerValueField(.mouseEventButtonNumber, value: Int64(button))
+            app.window.sendEvent(NSEvent(cgEvent: cg)!)
+        }
+        func close(_ note: Note, buttons: [String], saveAs: String? = nil, middleClick: Bool = false, onCloseButton: Bool = false) {
             print("Closing test: \(note.record.name), \(buttons), saveAs=\(saveAs ?? "cancel")"); fflush(stdout)
             var remaining = buttons
             let deadline = ProcessInfo.processInfo.systemUptime + 12
@@ -51,10 +59,19 @@ func runLifecycleCheck(app: Textlet, output: URL) {
             }
             RunLoop.main.add(timer, forMode: .modalPanel)
             RunLoop.main.add(timer, forMode: .common)
-            app.closeNote(note.record.id, save: { target in
-                guard let saveAs else { return false }
-                return app.exportNote(target, to: output.deletingLastPathComponent().appendingPathComponent(saveAs))
-            })
+            if middleClick, let tab = app.tabStack.arrangedSubviews.compactMap({ $0 as? NoteTab }).first(where: { $0.id == note.record.id }) {
+                let closeButton = tab.subviews.compactMap { $0 as? NSButton }.first!
+                let localPoint = onCloseButton ? NSPoint(x: closeButton.frame.midX, y: closeButton.frame.midY) : NSPoint(x: 30, y: 16)
+                let point = tab.convert(localPoint, to: nil)
+                for type in [NSEvent.EventType.otherMouseDown, .otherMouseUp] {
+                    mouse(type, at: point)
+                }
+            } else {
+                app.closeNote(note.record.id, save: { target in
+                    guard let saveAs else { return false }
+                    return app.exportNote(target, to: output.deletingLastPathComponent().appendingPathComponent(saveAs))
+                })
+            }
             timer.invalidate()
             checks["allRequestedButtonsClicked"] = (checks["allRequestedButtonsClicked"] ?? true) && remaining.isEmpty
         }
@@ -69,21 +86,30 @@ func runLifecycleCheck(app: Textlet, output: URL) {
             app.newNote()
             let third = app.active
             checks["newTabsUseConsecutiveTextNames"] = second.record.name == "文本2" && third.record.name == "文本3"
-            close(second, buttons: [])
+            let thirdTab = app.tabStack.arrangedSubviews.compactMap { $0 as? NoteTab }.first { $0.id == third.record.id }!
+            let thirdPoint = thirdTab.convert(NSPoint(x: 30, y: 16), to: nil)
+            mouse(.otherMouseDown, at: thirdPoint, button: 3)
+            mouse(.otherMouseUp, at: thirdPoint, button: 3)
+            checks["sideButtonDoesNotCloseTab"] = contains(third)
+            mouse(.otherMouseDown, at: thirdPoint)
+            mouse(.otherMouseUp, at: thirdTab.convert(NSPoint(x: 30, y: -30), to: nil))
+            checks["middleReleaseOutsideCancelsClose"] = contains(third)
+            close(second, buttons: [], middleClick: true)
+            checks["middleClickClosesPointedInactiveTab"] = !contains(second) && app.active === third
             app.newNote()
             let fourth = app.active
             checks["newTabAfterClosingMiddleUsesMaximum"] = fourth.record.name == "文本4"
-            close(fourth, buttons: [])
+            close(fourth, buttons: [], middleClick: true, onCloseButton: true)
+            checks["middleClickOnCloseButtonClosesTab"] = !contains(fourth)
             close(third, buttons: [])
-            close(empty, buttons: [])
+            close(empty, buttons: [], middleClick: true)
             checks["lastEmptyTabClosesWithoutDialog"] = !contains(empty) && app.notes.count == 1 && app.editor.string.isEmpty
-
             checks["lastTabReplacementStartsAtText1"] = app.active.record.name == "文本1"
 
             let primary = app.active
             app.editor.insertText("当前标签 中文🙂", replacementRange: NSRange(location: 0, length: 0))
             app.editor.breakUndoCoalescing()
-            close(primary, buttons: ["取消"])
+            close(primary, buttons: ["取消"], middleClick: true)
             checks["cancelPreservesTextAndUndo"] = contains(primary) && app.editor.string == "当前标签 中文🙂" && primary.undo.canUndo
             close(primary, buttons: ["__escape__"])
             checks["escapeCancelsClose"] = contains(primary) && app.editor.string == "当前标签 中文🙂"
@@ -101,7 +127,7 @@ func runLifecycleCheck(app: Textlet, output: URL) {
             app.notes.append(whitespace); app.renderTabs()
             close(whitespace, buttons: ["取消"])
             checks["whitespaceCountsAsContent"] = contains(whitespace)
-            close(whitespace, buttons: ["不保存"])
+            close(whitespace, buttons: ["不保存"], middleClick: true)
             checks["discardInactiveKeepsActiveText"] = !contains(whitespace) && app.active === primary && app.editor.string == "当前标签 中文🙂"
 
             let background = Note(name: "后台笔记", text: "后台正文\r\n中文🙂\t --literal")

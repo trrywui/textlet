@@ -135,6 +135,7 @@ final class NoteTab: NSView {
     var onClose: (() -> Void)?
     let label = NSTextField(labelWithString: "")
     private let close = NSButton()
+    private var middleMousePressed = false
     var selected = false { didSet { guard selected != oldValue else { return }; needsDisplay = true; label.textColor = selected ? Theme.text : Theme.muted } }
     init(note: Note) {
         id = note.record.id
@@ -177,6 +178,16 @@ final class NoteTab: NSView {
         return hit === label ? self : hit
     }
     override func mouseDown(with event: NSEvent) { onSelect?() }
+    override func otherMouseDown(with event: NSEvent) {
+        guard event.buttonNumber == 2 else { super.otherMouseDown(with: event); return }
+        middleMousePressed = true
+    }
+    override func otherMouseUp(with event: NSEvent) {
+        guard event.buttonNumber == 2 else { super.otherMouseUp(with: event); return }
+        let shouldClose = middleMousePressed && visibleRect.contains(convert(event.locationInWindow, from: nil))
+        middleMousePressed = false
+        if shouldClose { onClose?() }
+    }
     override func accessibilityPerformPress() -> Bool { onSelect?(); return true }
     @objc private func closeNote() { onClose?() }
     override func draw(_ dirtyRect: NSRect) {
