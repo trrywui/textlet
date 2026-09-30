@@ -13,4 +13,88 @@
   <key>NSHighResolutionCapable</key><true/>
   <key>NSPrincipalClass</key><string>NSApplication</string>
   <key>CFBundleIconFile</key><string>AppIcon</string>
+  <key>CFBundleDocumentTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleTypeName</key><string>Textlet 文本</string>
+      <key>CFBundleTypeRole</key><string>Editor</string>
+      <key>LSHandlerRank</key><string>Alternate</string>
+      <key>LSItemContentTypes</key>
+      <array>
+        <string>public.sql</string>
+        <string>public.rust-source</string>
+        <string>public.yaml</string>
+        <string>public.toml</string>
+        <string>public.java-source</string>
+        <string>public.plain-text</string>
+        <string>public.python-script</string>
+        <string>public.shell-script</string>
+        <string>public.json</string>
+        <string>net.daringfireball.markdown</string>
+        <string>public.log</string>
+        <string>public.ini</string>
+        <string>public.conf</string>
+      </array>
+    </dict>
+  </array>
+  <!-- Imported declarations describe existing public text formats; Textlet does not own them. -->
+  <key>UTImportedTypeDeclarations</key>
+  <array>
+    <dict>
+      <key>UTTypeIdentifier</key><string>public.sql</string>
+      <key>UTTypeDescription</key><string>SQL source code</string>
+      <key>UTTypeConformsTo</key><array><string>public.source-code</string></array>
+      <key>UTTypeTagSpecification</key>
+      <dict><key>public.filename-extension</key><array><string>sql</string></array></dict>
+    </dict>
+    <dict>
+      <key>UTTypeIdentifier</key><string>public.rust-source</string>
+      <key>UTTypeDescription</key><string>Rust source code</string>
+      <key>UTTypeConformsTo</key><array><string>public.source-code</string></array>
+      <key>UTTypeTagSpecification</key>
+      <dict><key>public.filename-extension</key><array><string>rs</string></array></dict>
+    </dict>
+    <dict>
+      <key>UTTypeIdentifier</key><string>public.toml</string>
+      <key>UTTypeDescription</key><string>TOML text</string>
+      <key>UTTypeConformsTo</key><array><string>public.plain-text</string></array>
+      <key>UTTypeTagSpecification</key>
+      <dict><key>public.filename-extension</key><array><string>toml</string></array></dict>
+    </dict>
+    <dict>
+      <key>UTTypeIdentifier</key><string>public.java-source</string>
+      <key>UTTypeDescription</key><string>Java source code</string>
+      <key>UTTypeConformsTo</key><array><string>public.source-code</string></array>
+      <key>UTTypeTagSpecification</key>
+      <dict><key>public.filename-extension</key><array><string>java</string></array></dict>
+    </dict>
+    <dict>
+      <key>UTTypeIdentifier</key><string>net.daringfireball.markdown</string>
+      <key>UTTypeDescription</key><string>Markdown text</string>
+      <key>UTTypeConformsTo</key><array><string>public.plain-text</string></array>
+      <key>UTTypeTagSpecification</key>
+      <dict><key>public.filename-extension</key><array><string>md</string></array></dict>
+    </dict>
+    <dict>
+      <key>UTTypeIdentifier</key><string>public.log</string>
+      <key>UTTypeDescription</key><string>Log text</string>
+      <key>UTTypeConformsTo</key><array><string>public.plain-text</string></array>
+      <key>UTTypeTagSpecification</key>
+      <dict><key>public.filename-extension</key><array><string>log</string></array></dict>
+    </dict>
+    <dict>
+      <key>UTTypeIdentifier</key><string>public.ini</string>
+      <key>UTTypeDescription</key><string>INI text</string>
+      <key>UTTypeConformsTo</key><array><string>public.plain-text</string></array>
+      <key>UTTypeTagSpecification</key>
+      <dict><key>public.filename-extension</key><array><string>ini</string></array></dict>
+    </dict>
+    <dict>
+      <key>UTTypeIdentifier</key><string>public.conf</string>
+      <key>UTTypeDescription</key><string>Configuration text</string>
+      <key>UTTypeConformsTo</key><array><string>public.plain-text</string></array>
+      <key>UTTypeTagSpecification</key>
+      <dict><key>public.filename-extension</key><array><string>conf</string></array></dict>
+    </dict>
+  </array>
 </dict></plist>

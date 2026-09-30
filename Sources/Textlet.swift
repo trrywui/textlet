@@ -251,6 +251,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
     var benchmark: Benchmark?
     var featureBenchmark: FeatureBenchmark?
     var interactionBenchmark: InteractionBenchmark?
+    var fileAssociationWindowController: FileAssociationWindowController?
     var lastSaveError: String?
     var restoredWindowFrame: NSRect?
     var active: Note { notes.first(where: { $0.record.id == activeID })! }
@@ -479,6 +480,8 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         }
         let app = group(AppEdition.name)
         item(app, "关于 \(AppEdition.name)", #selector(about), "", self)
+        app.addItem(.separator())
+        item(app, "文件关联…", #selector(showFileAssociations), "", self)
         app.addItem(.separator())
         item(app, "隐藏 \(AppEdition.name)", #selector(NSApplication.hide(_:)), "h", NSApp)
         item(app, "退出 \(AppEdition.name)", #selector(NSApplication.terminate(_:)), "q", NSApp)
@@ -718,7 +721,11 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
     }
     func application(_ sender: NSApplication, openFiles filenames: [String]) {
         if editor == nil { pendingOpen.append(contentsOf: filenames) }
-        else { for path in filenames { openText(URL(fileURLWithPath: path)) } }
+        else {
+            window?.makeKeyAndOrderFront(nil)
+            sender.activate(ignoringOtherApps: true)
+            for path in filenames { openText(URL(fileURLWithPath: path)) }
+        }
         sender.reply(toOpenOrPrint: .success)
     }
 
@@ -913,6 +920,20 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
             return activeID != nil && !active.isLog
         }
         return true
+    }
+    @objc func showFileAssociations() {
+        if let controller = fileAssociationWindowController {
+            controller.showWindow(nil)
+            return
+        }
+        do {
+            let controller = try FileAssociationWindowController(service: FileAssociationService())
+            controller.onClose = { [weak self] in self?.fileAssociationWindowController = nil }
+            fileAssociationWindowController = controller
+            controller.showWindow(nil)
+        } catch {
+            showMessage("文件关联", error.localizedDescription)
+        }
     }
     @objc func showDraftFolder() { NSWorkspace.shared.open(store.directory) }
     @objc func performance() {

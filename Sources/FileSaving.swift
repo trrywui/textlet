@@ -21,6 +21,7 @@ extension Textlet {
         (tabStack?.arrangedSubviews.first { ($0 as? NoteTab)?.id == note.record.id } as? NoteTab)?.updateState(for: note)
     }
     func applicationDidBecomeActive(_ notification: Notification) {
+        fileAssociationWindowController?.refreshFromApplicationActivation()
         for note in notes { note.refreshFileState(); updateTabState(note) }
         if editor != nil { updateStatus() }
     }
