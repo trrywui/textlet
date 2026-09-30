@@ -141,7 +141,7 @@ final class NoteTab: NSView {
         id = note.record.id
         super.init(frame: NSRect(x: 0, y: 0, width: 160, height: 32))
         translatesAutoresizingMaskIntoConstraints = false
-        label.stringValue = note.record.name
+        label.stringValue = note.displayName
         label.textColor = Theme.muted
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.lineBreakMode = .byTruncatingTail
@@ -169,10 +169,17 @@ final class NoteTab: NSView {
         ])
         setAccessibilityElement(true)
         setAccessibilityRole(.button)
-        setAccessibilityLabel(note.record.name)
-        toolTip = note.record.name
+        setAccessibilityLabel(note.displayName)
+        toolTip = note.displayName
     }
     required init?(coder: NSCoder) { fatalError() }
+    func updateTitle(for note: Note) {
+        let title = note.displayName
+        guard label.stringValue != title else { return }
+        label.stringValue = title
+        setAccessibilityLabel(title)
+        toolTip = title
+    }
     override func hitTest(_ point: NSPoint) -> NSView? {
         let hit = super.hitTest(point)
         return hit === label ? self : hit
@@ -244,7 +251,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
                 activeID = session.activeID
                 restoredWindowFrame = session.windowFrame
             } else {
-                notes = [Note(name: Note.nextName(in: notes))]
+                notes = [Note(name: Note.nextName(in: notes), automaticTitle: true)]
                 activeID = notes[0].record.id
             }
             buildMenus()
@@ -518,6 +525,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
             guard saveSession() else { return }
         }
         if !next.isLog, next.storage == nil { next.storage = NSTextStorage(string: try store.text(for: next.record)) }
+        next.refreshContentTitle()
         highlighter.reset(.plain)
         switching = true
         editor.textStorage?.delegate = nil
@@ -592,11 +600,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
                 if tab.superview != nil { tabStack.removeArrangedSubview(tab); tab.removeFromSuperview() }
                 tabStack.insertArrangedSubview(tab, at: index)
             }
-            if tab.label.stringValue != note.record.name {
-                tab.label.stringValue = note.record.name
-                tab.setAccessibilityLabel(note.record.name)
-                tab.toolTip = note.record.name
-            }
+            tab.updateTitle(for: note)
             tab.selected = id == activeID
         }
         tabStack.layoutSubtreeIfNeeded()
@@ -623,6 +627,9 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         if editedMask.contains(.editedCharacters) {
             ruler.counter.invalidate(from: editedRange.location); ruler.needsDisplay = true
             highlighter?.invalidate(from: editedRange.location)
+            if !switching, activeID != nil, active.refreshContentTitle(editedFrom: editedRange.location) {
+                tabStack.arrangedSubviews.compactMap { $0 as? NoteTab }.first { $0.id == activeID }?.updateTitle(for: active)
+            }
         }
     }
     @objc func viewportChanged() { ruler?.needsDisplay = true; highlighter?.schedule() }
@@ -686,7 +693,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
     }
 
     @objc func newNote() {
-        let note = Note(name: Note.nextName(in: notes))
+        let note = Note(name: Note.nextName(in: notes), automaticTitle: true)
         notes.append(note)
         do { try selectNote(note.record.id) } catch { showMessage("无法新建文本", error.localizedDescription) }
     }
@@ -727,7 +734,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         let oldNotes = notes
         let oldActive = activeID
         notes.removeAll { $0.record.id == id }
-        if notes.isEmpty { notes = [Note(name: Note.nextName(in: notes))] }
+        if notes.isEmpty { notes = [Note(name: Note.nextName(in: notes), automaticTitle: true)] }
         do {
             if closingActive { try selectNote(notes[0].record.id, saveCurrent: false) }
             guard saveSession() else { throw SessionError.invalid(lastSaveError ?? "会话保存失败") }
@@ -749,7 +756,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         alert.window.initialFirstResponder = field
         if alert.runModal() == .alertFirstButtonReturn {
             let name = field.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
-            if !name.isEmpty { active.record.name = name; highlighter.reset(active.language); renderTabs(); _ = saveSession() }
+            if !name.isEmpty { active.rename(to: name); highlighter.reset(active.language); renderTabs(); _ = saveSession() }
         }
     }
     @objc func openPanel() {

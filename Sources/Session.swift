@@ -9,6 +9,10 @@ struct NoteRecord: Codable {
     var logPath: String? = nil
     var logOffset: Int64? = nil
     var syntax: String? = nil // nil: infer from name; "plain": explicitly disable highlighting
+    var automaticTitle: Bool? = nil // nil: older sessions keep their original titles
+    var contentTitle: String? = nil
+
+    var usesContentTitle: Bool { logPath == nil && automaticTitle == true }
 }
 
 struct SessionRecord: Codable {
@@ -19,6 +23,22 @@ struct SessionRecord: Codable {
 }
 
 final class Note {
+    // Only retain a short preview, including for an extremely long first line.
+    static func titlePreview(in text: NSString) -> (title: String?, scannedThrough: Int) {
+        let first = text.rangeOfCharacter(from: CharacterSet.whitespacesAndNewlines.inverted)
+        guard first.location != NSNotFound else { return (nil, text.length) }
+        let range = text.rangeOfComposedCharacterSequences(for:
+            NSRange(location: first.location, length: min(160, text.length - first.location)))
+        let sample = text.substring(with: range) as NSString
+        let newline = sample.rangeOfCharacter(from: .newlines)
+        if newline.location != NSNotFound {
+            return (sample.substring(to: newline.location).trimmingCharacters(in: .whitespaces), first.location + newline.location)
+        }
+        let end = NSMaxRange(range)
+        let hasMore = end < text.length && text.rangeOfCharacter(from: .newlines, range: NSRange(location: end, length: 1)).location == NSNotFound
+        return ((sample as String).trimmingCharacters(in: .whitespaces) + (hasMore ? "…" : ""), end)
+    }
+
     static func nextName(in notes: [Note]) -> String {
         let names = Set(notes.map { $0.record.name })
         let maximum = names.compactMap { name -> Int? in
@@ -33,6 +53,26 @@ final class Note {
     }
 
     var isLog: Bool { record.logPath != nil }
+    var displayName: String { record.usesContentTitle ? record.contentTitle ?? record.name : record.name }
+    private var titleScannedThrough: Int?
+
+    @discardableResult func refreshContentTitle(editedFrom offset: Int = 0) -> Bool {
+        guard record.usesContentTitle, let storage,
+              titleScannedThrough == nil || offset <= titleScannedThrough! else { return false }
+        let oldTitle = displayName
+        let preview = Self.titlePreview(in: storage.mutableString)
+        record.contentTitle = preview.title
+        titleScannedThrough = preview.scannedThrough
+        return displayName != oldTitle
+    }
+
+    func rename(to name: String) {
+        record.name = name
+        record.automaticTitle = false
+        record.contentTitle = nil
+        titleScannedThrough = nil
+    }
+
     var language: TextLanguage {
         if isLog { return .plain }
         return record.syntax.flatMap(TextLanguage.init(rawValue:)) ?? TextLanguage.detect(record.name)
@@ -48,9 +88,10 @@ final class Note {
         self.storage = storage
         self.dirty = dirty
         undo.levelsOfUndo = 100
+        refreshContentTitle()
     }
-    convenience init(name: String, text: String = "") {
-        self.init(record: NoteRecord(id: UUID(), name: name, draftFile: "", selection: 0, scrollY: 0),
+    convenience init(name: String, text: String = "", automaticTitle: Bool = false) {
+        self.init(record: NoteRecord(id: UUID(), name: name, draftFile: "", selection: 0, scrollY: 0, automaticTitle: automaticTitle),
                   storage: NSTextStorage(string: text), dirty: true)
     }
 }
@@ -93,14 +134,19 @@ final class SessionStore {
     }
 
     private func read(_ url: URL) throws -> SessionRecord {
-        let session = try JSONDecoder().decode(SessionRecord.self, from: Data(contentsOf: url))
+        var session = try JSONDecoder().decode(SessionRecord.self, from: Data(contentsOf: url))
         guard (1...2).contains(session.version), !session.notes.isEmpty,
               Set(session.notes.map(\.id)).count == session.notes.count,
               session.notes.contains(where: { $0.id == session.activeID }) else {
             throw SessionError.invalid("会话格式无效")
         }
         // Validate all referenced files before accepting a generation; retain only the active buffer later.
-        for record in session.notes { _ = try text(for: record) }
+        for index in session.notes.indices {
+            let text = try text(for: session.notes[index])
+            if session.notes[index].usesContentTitle {
+                session.notes[index].contentTitle = Note.titlePreview(in: text as NSString).title
+            }
+        }
         return session
     }
 
@@ -130,6 +176,9 @@ final class SessionStore {
             let name = "\(note.record.id.uuidString)-\(UUID().uuidString).txt"
             try Data(storage.string.utf8).write(to: drafts.appendingPathComponent(name), options: .atomic)
             records[index].draftFile = name
+            if records[index].usesContentTitle {
+                records[index].contentTitle = Note.titlePreview(in: storage.mutableString).title
+            }
         }
         let snapshot = SessionRecord(activeID: activeID, notes: records, windowFrame: windowFrame)
         let encoder = JSONEncoder()

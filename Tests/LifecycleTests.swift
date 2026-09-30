@@ -107,6 +107,7 @@ func runLifecycleCheck(app: Textlet, output: URL) {
             checks["lastTabReplacementStartsAtText1"] = app.active.record.name == "文本1"
 
             let primary = app.active
+            checks.merge(try checkTitleEditing(app: app)) { _, new in new }
             app.editor.insertText("当前标签 中文🙂", replacementRange: NSRange(location: 0, length: 0))
             app.editor.breakUndoCoalescing()
             close(primary, buttons: ["取消"], middleClick: true)

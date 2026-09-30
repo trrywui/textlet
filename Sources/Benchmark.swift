@@ -201,6 +201,10 @@ func checkRestoredUI(app: Textlet, expectedURL: URL) {
                 try app.selectNote(id)
                 correct = correct && app.editor.string == entry["text"] as! String
                 correct = correct && app.active.record.name == entry["name"] as! String
+                if let title = entry["displayName"] as? String {
+                    let tab = app.tabStack.arrangedSubviews.compactMap { $0 as? NoteTab }.first { $0.id == id }
+                    correct = correct && tab?.label.stringValue == title
+                }
                 correct = correct && app.editor.selectedRange().location == entry["selection"] as! Int
                 if let offset = entry["scrollY"] as? Double {
                     correct = correct && abs(app.scroller.contentView.bounds.origin.y - offset) < 2

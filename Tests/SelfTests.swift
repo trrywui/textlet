@@ -72,5 +72,6 @@ func runSelfTests() throws {
     try expect(Textlet.visibleWindowFrame(NSRect(x: 0, y: 0, width: -1, height: 600), screens: [screen], minimum: minimum) == nil,
                "invalid window dimensions use default")
     print("All persistence tests passed.")
+    try runTitleTests(root: root.appendingPathComponent("titles"))
     try runFeatureTests(root: root.appendingPathComponent("features"))
 }
