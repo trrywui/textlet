@@ -201,6 +201,9 @@ func checkRestoredUI(app: Textlet, expectedURL: URL) {
                 try app.selectNote(id)
                 correct = correct && app.editor.string == entry["text"] as! String
                 correct = correct && app.active.record.name == entry["name"] as! String
+                if let modified = entry["needsFileSave"] as? Bool { correct = correct && app.active.needsFileSave == modified }
+                if let missing = entry["fileMissing"] as? Bool { correct = correct && app.active.fileMissing == missing }
+                if let path = entry["filePath"] as? String { correct = correct && (app.active.record.file?.path ?? "") == path }
                 if let title = entry["displayName"] as? String {
                     let tab = app.tabStack.arrangedSubviews.compactMap { $0 as? NoteTab }.first { $0.id == id }
                     correct = correct && tab?.label.stringValue == title

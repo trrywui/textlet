@@ -147,14 +147,12 @@ final class NoteTab: NSView {
         label.lineBreakMode = .byTruncatingTail
         label.maximumNumberOfLines = 1
         label.translatesAutoresizingMaskIntoConstraints = false
-        close.image = NSImage(systemSymbolName: "xmark", accessibilityDescription: "关闭文本")
         close.bezelStyle = .inline
         close.isBordered = false
         close.imageScaling = .scaleProportionallyDown
         close.contentTintColor = Theme.muted
         close.target = self
         close.action = #selector(closeNote)
-        close.toolTip = note.isLog ? "关闭日志标签（不删除原文件）" : "关闭文本（有内容时询问是否保存）"
         close.translatesAutoresizingMaskIntoConstraints = false
         addSubview(label)
         addSubview(close)
@@ -171,6 +169,7 @@ final class NoteTab: NSView {
         setAccessibilityRole(.button)
         setAccessibilityLabel(note.displayName)
         toolTip = note.displayName
+        updateState(for: note)
     }
     required init?(coder: NSCoder) { fatalError() }
     func updateTitle(for note: Note) {
@@ -179,6 +178,16 @@ final class NoteTab: NSView {
         label.stringValue = title
         setAccessibilityLabel(title)
         toolTip = title
+    }
+    func updateState(for note: Note) {
+        updateTitle(for: note)
+        close.image = NSImage(systemSymbolName: note.needsFileSave ? "circle.fill" : "xmark", accessibilityDescription: "关闭文本")
+        close.contentTintColor = note.fileMissing ? .systemRed : (note.needsFileSave ? Theme.accent : Theme.muted)
+        let state = note.isLog ? "只读日志" : note.fileMissing ? "原文件已移走或删除，尚未保存"
+            : note.fileChangedExternally ? "原文件已被外部修改" : note.needsFileSave ? "尚未保存到文件" : "已保存到文件"
+        close.toolTip = "关闭文本（\(state)）"
+        close.setAccessibilityLabel("关闭\(note.displayName)，\(state)")
+        toolTip = [note.displayName, note.record.file?.path, state].compactMap { $0 }.joined(separator: "\n")
     }
     override func hitTest(_ point: NSPoint) -> NSView? {
         let hit = super.hitTest(point)
@@ -271,6 +280,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
             if let output = Self.argument("--rows-check") { runRowsIntegrationCheck(app: self, output: URL(fileURLWithPath: output)) }
 #endif
             if let output = Self.argument("--lifecycle-check") { runLifecycleCheck(app: self, output: URL(fileURLWithPath: output)) }
+            if let output = Self.argument("--file-session-check") { runFileSessionCheck(app: self, output: URL(fileURLWithPath: output)) }
             if let output = Self.argument("--window-check") { runWindowCheck(app: self, output: URL(fileURLWithPath: output)) }
             if let output = Self.argument("--appearance-check") { runAppearanceCheck(app: self, output: URL(fileURLWithPath: output)) }
             if let output = Self.argument("--benchmark") {
@@ -463,7 +473,9 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         item(file, "新建文本", #selector(newNote), "n", self)
         item(file, "打开文本…", #selector(openPanel), "o", self)
         item(file, "以只读日志模式打开…", #selector(openLogPanel), "", self)
-        item(file, "导出文本…", #selector(exportText), "s", self)
+        item(file, "保存", #selector(saveText), "s", self)
+        item(file, "另存为…", #selector(saveTextAs), "S", self)
+        item(file, "导出副本…", #selector(exportText), "", self)
         item(file, "重命名文本…", #selector(renameNote), "", self)
         file.addItem(.separator())
         item(file, "关闭文本…", #selector(closeCurrent), "w", self)
@@ -600,7 +612,8 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
                 if tab.superview != nil { tabStack.removeArrangedSubview(tab); tab.removeFromSuperview() }
                 tabStack.insertArrangedSubview(tab, at: index)
             }
-            tab.updateTitle(for: note)
+            watchFile(note)
+            tab.updateState(for: note)
             tab.selected = id == activeID
         }
         tabStack.layoutSubtreeIfNeeded()
@@ -613,14 +626,16 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
     func textDidChange(_ notification: Notification) {
         guard !switching, !active.isLog else { return }
         active.dirty = true
-        status.stringValue = "正在保存草稿…"
+        active.refreshFileModification()
+        updateTabState(active)
+        status.stringValue = "正在备份编辑内容…"
         scheduleSave()
     }
     func textViewDidChangeSelection(_ notification: Notification) {
         guard !switching, activeID != nil else { return }
         if active.isLog { return }
         highlighter?.schedule()
-        position.stringValue = "\(active.language.title) · 第 \(ruler.counter.line(at: editor.selectedRange().location, in: editor.textStorage!.mutableString)) 行 · UTF-8"
+        position.stringValue = "\(active.language.title) · 第 \(ruler.counter.line(at: editor.selectedRange().location, in: editor.textStorage!.mutableString)) 行 · \(active.encodingTitle)"
     }
     func textStorage(_ textStorage: NSTextStorage, didProcessEditing editedMask: NSTextStorageEditActions,
                      range editedRange: NSRange, changeInLength delta: Int) {
@@ -661,8 +676,10 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
     func updateStatus() {
         guard editor != nil else { return }
         if active.isLog { logViewer.updateStatus(); return }
-        status.stringValue = lastSaveError == nil ? "草稿已保存在本机" : "草稿保存失败，请导出备份"
-        position.stringValue = "\(active.language.title) · UTF-8"
+        status.stringValue = lastSaveError != nil ? "编辑内容备份失败，请保存文件" : active.fileMissing ? "原文件已移走或删除 · 编辑内容已备份"
+            : active.fileChangedExternally ? "原文件已被外部修改 · 编辑内容已备份"
+            : active.needsFileSave ? "尚未保存到文件 · 编辑内容已备份" : "文件已保存"
+        position.stringValue = "\(active.language.title) · \(active.encodingTitle)"
     }
     func applicationDidResignActive(_ notification: Notification) {
         guard saveSession() else { return }
@@ -715,11 +732,16 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
                 alert.addButton(withTitle: "取消")
                 alert.addButton(withTitle: "关闭文本")
                 guard alert.runModal() == .alertSecondButtonReturn else { return }
-            } else if try !text(for: note).isEmpty {
-                let response = makeCloseAlert().runModal()
-                if response == .alertSecondButtonReturn {
-                    guard save?(note) ?? exportNote(note) else { return }
-                } else if response != .alertThirdButtonReturn { return }
+            } else {
+                note.refreshFileState()
+                let content = try text(for: note)
+                if let file = note.record.file { note.record.fileModified = file.differs(from: content as NSString) }
+                if note.needsFileSave && (note.record.file != nil || !content.isEmpty) {
+                    let response = makeCloseAlert().runModal()
+                    if response == .alertSecondButtonReturn {
+                        guard save?(note) ?? saveNote(note) else { return }
+                    } else if response != .alertThirdButtonReturn { return }
+                }
             }
             try removeNote(id)
         } catch { showMessage("无法关闭文本", error.localizedDescription) }
@@ -746,6 +768,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         }
     }
     @objc func renameNote() {
+        guard active.record.file == nil, !active.isLog else { return }
         let alert = NSAlert()
         alert.messageText = "重命名文本"
         let field = NSTextField(string: active.record.name)
@@ -774,6 +797,11 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
     func openText(_ url: URL) { openText(url, asLog: false) }
     func openText(_ url: URL, asLog: Bool) {
         do {
+            let path = DocumentFile.canonical(url).path
+            if let existing = notes.first(where: { $0.record.file?.path == path }) {
+                try selectNote(existing.record.id)
+                return
+            }
             let size = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
             if asLog || size > 8 * 1_048_576 {
                 let note = Note(record: NoteRecord(id: UUID(), name: url.lastPathComponent,
@@ -783,9 +811,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
                 _ = saveSession()
                 return
             }
-            var encoding = String.Encoding.utf8
-            let text = try String(contentsOf: url, usedEncoding: &encoding)
-            let note = Note(name: url.lastPathComponent, text: text)
+            let note = try DocumentFile.open(url)
             notes.append(note)
             try selectNote(note.record.id)
             _ = saveSession()
@@ -869,7 +895,8 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
             menuItem.state = (menuItem.representedObject as? String) == (active.record.syntax ?? "auto") ? .on : .off
             return !active.isLog
         }
-        if menuItem.action == #selector(formatJSON) || menuItem.action == #selector(exportText) || menuItem.action == #selector(showReplace) {
+        if menuItem.action == #selector(renameNote) { return activeID != nil && !active.isLog && active.record.file == nil }
+        if menuItem.action == #selector(formatJSON) || menuItem.action == #selector(exportText) || menuItem.action == #selector(saveText) || menuItem.action == #selector(saveTextAs) || menuItem.action == #selector(showReplace) {
             return activeID != nil && !active.isLog
         }
         return true

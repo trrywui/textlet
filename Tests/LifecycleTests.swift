@@ -68,8 +68,9 @@ func runLifecycleCheck(app: Textlet, output: URL) {
                 }
             } else {
                 app.closeNote(note.record.id, save: { target in
-                    guard let saveAs else { return false }
-                    return app.exportNote(target, to: output.deletingLastPathComponent().appendingPathComponent(saveAs))
+                    app.saveNote(target, chooseDestination: { _ in
+                        saveAs.map { output.deletingLastPathComponent().appendingPathComponent($0) }
+                    })
                 })
             }
             timer.invalidate()
@@ -108,6 +109,28 @@ func runLifecycleCheck(app: Textlet, output: URL) {
 
             let primary = app.active
             checks.merge(try checkTitleEditing(app: app)) { _, new in new }
+            checks.merge(try checkFileSaving(app: app)) { _, new in new }
+            let linkedURL = output.deletingLastPathComponent().appendingPathComponent("close-linked.txt")
+            try Data("原文件内容".utf8).write(to: linkedURL)
+            app.openText(linkedURL)
+            let linked = app.active
+            app.editor.insertText("", replacementRange: NSRange(location: 0, length: app.editor.string.utf16.count))
+            close(linked, buttons: ["取消"])
+            checks["closingClearedLinkedFileStillPrompts"] = contains(linked) && linked.needsFileSave
+            close(linked, buttons: ["保存"])
+            let linkedBytes = try Data(contentsOf: linkedURL)
+            checks["closeSaveWritesBackWithoutSavePanel"] = !contains(linked) && linkedBytes.isEmpty
+            try Data("文件移走后也必须保留".utf8).write(to: linkedURL)
+            app.openText(linkedURL)
+            let lost = app.active
+            try FileManager.default.removeItem(at: linkedURL)
+            close(lost, buttons: ["取消"])
+            checks["closingMissingUneditedFilePrompts"] = contains(lost) && lost.fileMissing
+            close(lost, buttons: ["保存"], saveAs: "close-recovered.txt")
+            let recoveredFile = try String(contentsOf: output.deletingLastPathComponent().appendingPathComponent("close-recovered.txt"), encoding: .utf8)
+            checks["closeMissingFileSavesToChosenPath"] = !contains(lost) && recoveredFile == "文件移走后也必须保留"
+                && !FileManager.default.fileExists(atPath: linkedURL.path)
+            try app.selectNote(primary.record.id)
             app.editor.insertText("当前标签 中文🙂", replacementRange: NSRange(location: 0, length: 0))
             app.editor.breakUndoCoalescing()
             close(primary, buttons: ["取消"], middleClick: true)

@@ -11,8 +11,10 @@ struct NoteRecord: Codable {
     var syntax: String? = nil // nil: infer from name; "plain": explicitly disable highlighting
     var automaticTitle: Bool? = nil // nil: older sessions keep their original titles
     var contentTitle: String? = nil
+    var file: FileReference? = nil
+    var fileModified: Bool? = nil
 
-    var usesContentTitle: Bool { logPath == nil && automaticTitle == true }
+    var usesContentTitle: Bool { logPath == nil && file == nil && automaticTitle == true }
 }
 
 struct SessionRecord: Codable {
@@ -53,6 +55,26 @@ final class Note {
     }
 
     var isLog: Bool { record.logPath != nil }
+    var encodingTitle: String { record.file.map { String.localizedName(of: String.Encoding(rawValue: $0.encoding)) } ?? "UTF-8" }
+    var fileMissing = false
+    var fileChangedExternally = false
+    var fileWatch: FileWatch?
+    var needsFileSave: Bool { !isLog && (record.file == nil || record.fileModified != false || fileMissing || fileChangedExternally) }
+    func refreshFileModification() {
+        guard let file = record.file, let storage else { return }
+        record.fileModified = file.differs(from: storage.mutableString)
+    }
+    func refreshFileState() {
+        guard let file = record.file else { return }
+        do {
+            let attributes = try FileManager.default.attributesOfItem(atPath: file.path)
+            fileMissing = false
+            fileChangedExternally = (attributes[.modificationDate] as? Date) != file.modifiedAt || (attributes[.size] as? Int) != file.size
+        } catch {
+            fileMissing = DocumentFile.isMissing(error)
+            fileChangedExternally = !fileMissing
+        }
+    }
     var displayName: String { record.usesContentTitle ? record.contentTitle ?? record.name : record.name }
     private var titleScannedThrough: Int?
 
@@ -89,6 +111,8 @@ final class Note {
         self.dirty = dirty
         undo.levelsOfUndo = 100
         refreshContentTitle()
+        refreshFileModification()
+        refreshFileState()
     }
     convenience init(name: String, text: String = "", automaticTitle: Bool = false) {
         self.init(record: NoteRecord(id: UUID(), name: name, draftFile: "", selection: 0, scrollY: 0, automaticTitle: automaticTitle),
@@ -146,6 +170,7 @@ final class SessionStore {
             if session.notes[index].usesContentTitle {
                 session.notes[index].contentTitle = Note.titlePreview(in: text as NSString).title
             }
+            if let file = session.notes[index].file { session.notes[index].fileModified = file.differs(from: text as NSString) }
         }
         return session
     }
@@ -176,6 +201,7 @@ final class SessionStore {
             let name = "\(note.record.id.uuidString)-\(UUID().uuidString).txt"
             try Data(storage.string.utf8).write(to: drafts.appendingPathComponent(name), options: .atomic)
             records[index].draftFile = name
+            if let file = records[index].file { records[index].fileModified = file.differs(from: storage.mutableString) }
             if records[index].usesContentTitle {
                 records[index].contentTitle = Note.titlePreview(in: storage.mutableString).title
             }
