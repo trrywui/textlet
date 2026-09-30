@@ -182,6 +182,7 @@ final class NoteTab: NSView {
     func updateState(for note: Note) {
         updateTitle(for: note)
         close.image = NSImage(systemSymbolName: note.needsFileSave ? "circle.fill" : "xmark", accessibilityDescription: "关闭文本")
+        close.symbolConfiguration = NSImage.SymbolConfiguration(pointSize: note.needsFileSave ? 6 : 8, weight: .regular)
         close.contentTintColor = note.fileMissing ? .systemRed : (note.needsFileSave ? Theme.accent : Theme.muted)
         let state = note.isLog ? "只读日志" : note.fileMissing ? "原文件已移走或删除，尚未保存"
             : note.fileChangedExternally ? "原文件已被外部修改" : note.needsFileSave ? "尚未保存到文件" : "已保存到文件"
