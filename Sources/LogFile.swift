@@ -54,7 +54,9 @@ final class LogFile {
         }
         var head = [UInt8](repeating: 0, count: 4)
         let n = pread(descriptor, &head, 4, 0)
-        if n >= 2 && ((head[0] == 0xff && head[1] == 0xfe) || (head[0] == 0xfe && head[1] == 0xff)) {
+        let utf32 = n >= 4 && (head == [0, 0, 0xfe, 0xff] || head == [0xff, 0xfe, 0, 0])
+        let utf16 = n >= 2 && ((head[0] == 0xff && head[1] == 0xfe) || (head[0] == 0xfe && head[1] == 0xff))
+        if utf32 || utf16 {
             close(descriptor); throw LogError.message("大日志模式支持 UTF-8 / ASCII。这个文件带有 UTF-16/32 标记，请先转为 UTF-8。")
         }
         fd = descriptor; size = info.st_size; modified = info.st_mtimespec
@@ -105,6 +107,27 @@ final class LogFile {
         try validate()
         return LogIndex(points: points, lines: line)
     }
+    // Move a boundary only when it splits a complete, valid UTF-8 scalar.
+    // Stray continuation bytes must remain in the page for replacement decoding.
+    private func alignedBoundary(_ boundary: Int, in bytes: [UInt8]) -> Int {
+        guard boundary > 0, boundary < bytes.count, bytes[boundary] & 0xc0 == 0x80 else { return boundary }
+        for start in max(0, boundary - 3)..<boundary {
+            let lead = bytes[start]
+            let length: Int
+            switch lead {
+            case 0xc2...0xdf: length = 2
+            case 0xe0...0xef: length = 3
+            case 0xf0...0xf4: length = 4
+            default: continue
+            }
+            let end = start + length
+            if end > boundary, end <= bytes.count, String(bytes: bytes[start..<end], encoding: .utf8) != nil {
+                return start
+            }
+        }
+        return boundary
+    }
+
     func page(at target: Int64, index: LogIndex?) throws -> LogPage {
         try validate()
         let target = min(max(0, target), max(0, size - 1))
@@ -116,14 +139,14 @@ final class LogFile {
         while start > 0 && bytes[start - 1] != 10 && bytes[start - 1] != 13 { start -= 1 }
         if start == 0 && lower > 0 { start = Int(target - lower) }
         if start < bytes.count, bytes[start] == 10, start > 0, bytes[start - 1] == 13 { start += 1 }
-        while start < bytes.count && (bytes[start] & 0xc0) == 0x80 { start += 1 }
+        start = alignedBoundary(start, in: bytes)
         var end = min(bytes.count, start + Self.pageSize)
         if lower + Int64(end) < size {
             var boundary = end
             while boundary > start + Self.pageSize / 2 && bytes[boundary - 1] != 10 && bytes[boundary - 1] != 13 { boundary -= 1 }
             if boundary > start + Self.pageSize / 2 { end = boundary }
             if end > start, bytes[end - 1] == 13, end < bytes.count, bytes[end] == 10 { end += 1 }
-            while end > start && end < bytes.count && (bytes[end] & 0xc0) == 0x80 { end -= 1 }
+            end = alignedBoundary(end, in: bytes)
         }
         let absoluteStart = lower + Int64(start)
         let checkpoint = index?.before(absoluteStart) ?? LogCheckpoint(offset: 0, line: 1, previousCR: false)

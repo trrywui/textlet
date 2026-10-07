@@ -127,7 +127,7 @@ enum SessionError: LocalizedError {
     }
 }
 
-final class SessionStore {
+class SessionStore {
     let directory: URL
     let drafts: URL
     var recoveryNotice: String?

@@ -254,6 +254,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
     var fileAssociationWindowController: FileAssociationWindowController?
     var lastSaveError: String?
     var restoredWindowFrame: NSRect?
+    var activationRefreshPending = false
     var active: Note { notes.first(where: { $0.record.id == activeID })! }
 
     static func argument(_ name: String) -> String? {
@@ -546,11 +547,11 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
     }
 
     func selectNote(_ id: UUID, saveCurrent: Bool = true) throws {
-        guard let next = notes.first(where: { $0.record.id == id }) else { return }
+        guard let next = notes.first(where: { $0.record.id == id }) else { throw SessionError.invalid("标签不存在") }
         if saveCurrent {
             capturePosition()
             editor.breakUndoCoalescing()
-            guard saveSession() else { return }
+            guard saveSession() else { throw SessionError.invalid(lastSaveError ?? "会话保存失败") }
         }
         if !next.isLog, next.storage == nil { next.storage = NSTextStorage(string: try store.text(for: next.record)) }
         next.refreshContentTitle()
@@ -730,9 +731,23 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
     }
 
     @objc func newNote() {
+        let oldActiveID = activeID
         let note = Note(name: Note.nextName(in: notes), automaticTitle: true)
         notes.append(note)
-        do { try selectNote(note.record.id) } catch { showMessage("无法新建文本", error.localizedDescription) }
+        // Render the model change before selecting so a failed save/load cannot
+        // leave a tab that exists only in `notes` until the next switch.
+        renderTabs()
+        do {
+            try selectNote(note.record.id)
+        } catch {
+            notes.removeAll { $0 === note }
+            if let oldActiveID, notes.contains(where: { $0.record.id == oldActiveID }) {
+                activeID = oldActiveID
+                try? selectNote(oldActiveID, saveCurrent: false)
+            }
+            renderTabs()
+            showMessage("无法新建文本", error.localizedDescription)
+        }
     }
     @objc func nextNote() { cycle(1) }
     @objc func previousNote() { cycle(-1) }
@@ -820,25 +835,37 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
     func openText(_ url: URL) { openText(url, asLog: false) }
     func openText(_ url: URL, asLog: Bool) {
         do {
-            let path = DocumentFile.canonical(url).path
-            if let existing = notes.first(where: { $0.record.file?.path == path }) {
-                try selectNote(existing.record.id)
-                return
+            if try !openDocument(url, asLog: asLog) {
+                showMessage("文件已打开，但编辑内容备份失败", lastSaveError ?? "请保存文件后重试备份。")
             }
-            let size = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
-            if asLog || size > 8 * 1_048_576 {
-                let note = Note(record: NoteRecord(id: UUID(), name: url.lastPathComponent,
-                    draftFile: "", selection: 0, scrollY: 0, logPath: url.path, logOffset: 0))
-                notes.append(note)
-                try selectNote(note.record.id)
-                _ = saveSession()
-                return
-            }
-            let note = try DocumentFile.open(url)
-            notes.append(note)
-            try selectNote(note.record.id)
-            _ = saveSession()
         } catch { showMessage("无法打开文本", error.localizedDescription) }
+    }
+
+    // A thrown error means selection failed; false means the visible document is
+    // open but its final session backup failed and must be retried.
+    @discardableResult func openDocument(_ source: URL, asLog: Bool = false) throws -> Bool {
+        let url = DocumentFile.canonical(source)
+        let isLog = try asLog || (url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0) > 8 * 1_048_576
+        if let existing = notes.first(where: { note in
+            guard note.isLog == isLog, let path = isLog ? note.record.logPath : note.record.file?.path else { return false }
+            return DocumentFile.canonical(URL(fileURLWithPath: path)).path == url.path
+        }) {
+            try selectNote(existing.record.id)
+            return saveSession()
+        }
+        let note = try isLog
+            ? Note(record: NoteRecord(id: UUID(), name: url.lastPathComponent,
+                draftFile: "", selection: 0, scrollY: 0, logPath: url.path, logOffset: 0))
+            : DocumentFile.open(url)
+        notes.append(note)
+        do {
+            try selectNote(note.record.id)
+        } catch {
+            notes.removeAll { $0 === note }
+            renderTabs()
+            throw error
+        }
+        return saveSession()
     }
     @objc func exportText() {
         _ = exportNote(active)

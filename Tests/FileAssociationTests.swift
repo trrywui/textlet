@@ -1,4 +1,4 @@
-import Foundation
+import AppKit
 
 func runFileAssociationTests() throws {
     func expect(_ condition: @autoclosure () -> Bool, _ message: String) throws {
@@ -26,4 +26,66 @@ func runFileAssociationTests() throws {
         && ($0["LSHandlerRank"] as? String) == "Alternate" },
                "document declaration uses Editor and Alternate")
     print("All file association tests passed.")
+}
+
+private final class FakeFileAssociationService: FileAssociationServicing {
+    let items = Array(FileAssociationCatalog.items().prefix(3))
+    var defaults = Set<String>()
+    var attempts: [String: Int] = [:]
+    var failuresRemaining: [String: Int] = [:]
+    init() {
+        for item in items.prefix(2) { failuresRemaining[item.identifier] = 1 }
+    }
+    func currentStates() -> [String: Bool] {
+        Dictionary(uniqueKeysWithValues: items.map { ($0.identifier, defaults.contains($0.identifier)) })
+    }
+    func isTextletDefault(for item: FileAssociationItem) -> Bool { defaults.contains(item.identifier) }
+    func setDefault(for item: FileAssociationItem, completion: @escaping (Result<Void, FileAssociationFailure>) -> Void) {
+        attempts[item.identifier, default: 0] += 1
+        if failuresRemaining[item.identifier, default: 0] > 0 {
+            failuresRemaining[item.identifier, default: 0] -= 1
+            completion(.failure(.system("模拟设置失败")))
+        } else {
+            defaults.insert(item.identifier)
+            completion(.success(()))
+        }
+    }
+}
+
+func checkFileAssociationRetry() throws -> [String: Bool] {
+    func descendants(_ view: NSView) -> [NSView] { [view] + view.subviews.flatMap(descendants) }
+    var checks: [String: Bool] = [:]
+    for cancelFirst in [false, true] {
+        let service = FakeFileAssociationService()
+        let controller = FileAssociationWindowController(service: service)
+        defer { controller.close() }
+        let buttons = descendants(controller.window!.contentView!).compactMap { $0 as? NSButton }
+        func click(_ title: String) throws {
+            guard let button = buttons.first(where: { $0.title == title }), button.isEnabled else {
+                throw SessionError.invalid("TEST FAILED: association button unavailable: \(title)")
+            }
+            button.performClick(nil)
+        }
+        // Match by type, since the UI presents rows in alphabetical order.
+        let toggles = service.items.compactMap { item in
+            buttons.first { $0.action == NSSelectorFromString("toggle:")
+                && $0.accessibilityLabel() == "选择\(item.title)" }
+        }
+        guard toggles.count == service.items.count else { throw SessionError.invalid("TEST FAILED: association checkboxes missing") }
+        try click("全选")
+        try click("设为默认")
+        controller.refreshFromApplicationActivation()
+        checks["failedAssociationSelectionSurvivesRefresh-\(cancelFirst)"] = toggles.allSatisfy { $0.state == .on }
+            && service.items.allSatisfy { service.attempts[$0.identifier] == 1 }
+        if cancelFirst { toggles[0].performClick(nil) }
+        try click("重试失败项")
+        let first = service.items[0].identifier, second = service.items[1].identifier, third = service.items[2].identifier
+        checks["associationRetryCallsOnlyPendingFailures-\(cancelFirst)"] = service.attempts[first] == (cancelFirst ? 1 : 2)
+            && service.attempts[second] == 2 && service.attempts[third] == 1
+            && service.defaults.contains(second) && service.defaults.contains(third)
+            && service.defaults.contains(first) == !cancelFirst
+        checks["associationRetryRespectsManualDeselection-\(cancelFirst)"] = toggles[0].state == (cancelFirst ? .off : .on)
+            && buttons.first { $0.title == "重试失败项" }?.isHidden == true
+    }
+    return checks
 }

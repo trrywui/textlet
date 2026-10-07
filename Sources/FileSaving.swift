@@ -23,7 +23,26 @@ extension Textlet {
     func applicationDidBecomeActive(_ notification: Notification) {
         fileAssociationWindowController?.refreshFromApplicationActivation()
         for note in notes { note.refreshFileState(); updateTabState(note) }
-        if editor != nil { updateStatus() }
+        guard editor != nil else { return }
+        updateStatus()
+        guard !activationRefreshPending else { return }
+        activationRefreshPending = true
+        // AppKit can restore the window before it has rebuilt its layer/layout
+        // tree. Defer one pass so tabs and the shared editor repaint after a
+        // long inactive period instead of waiting for the next tab click.
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.activationRefreshPending = false
+            self.window.contentView?.layoutSubtreeIfNeeded()
+            self.renderTabs()
+            self.editor.needsDisplay = true
+            self.ruler.needsDisplay = true
+#if ROW_RENDERER
+            self.editor.invalidateRows()
+#endif
+            self.editor.displayIfNeeded()
+            self.tabStack.displayIfNeeded()
+        }
     }
 
     func makeSavePanel(for note: Note) -> NSSavePanel {

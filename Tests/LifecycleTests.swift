@@ -137,6 +137,8 @@ func runLifecycleCheck(app: Textlet, output: URL) {
             let primary = app.active
             checks.merge(try checkTitleEditing(app: app)) { _, new in new }
             checks.merge(try checkFileSaving(app: app)) { _, new in new }
+            checks.merge(try checkOpening(app: app)) { _, new in new }
+            checks.merge(try checkFileAssociationRetry()) { _, new in new }
             let linkedURL = output.deletingLastPathComponent().appendingPathComponent("close-linked.txt")
             try Data("原文件内容".utf8).write(to: linkedURL)
             app.openText(linkedURL)

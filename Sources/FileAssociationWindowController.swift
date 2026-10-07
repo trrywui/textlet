@@ -1,5 +1,9 @@
 import AppKit
 
+private final class FileAssociationListView: NSStackView {
+    override var isFlipped: Bool { true }
+}
+
 private final class FileAssociationRowView: NSView {
     private let checkbox = NSButton(checkboxWithTitle: "", target: nil, action: nil)
     private let titleLabel = NSTextField(labelWithString: "")
@@ -17,12 +21,13 @@ private final class FileAssociationRowView: NSView {
         checkbox.translatesAutoresizingMaskIntoConstraints = false
 
         titleLabel.stringValue = item.title
-        titleLabel.font = .systemFont(ofSize: 13, weight: .medium)
+        titleLabel.font = .systemFont(ofSize: 13)
         titleLabel.textColor = Theme.text
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
 
         detailLabel.stringValue = item.extensions.count > 1
-            ? "这些扩展名共用系统文件类型，设置将同时生效。" : ""
+            ? "这些扩展名将同时生效。" : ""
+        detailLabel.isHidden = item.extensions.count <= 1
         detailLabel.font = .systemFont(ofSize: 11)
         detailLabel.textColor = Theme.muted
         detailLabel.maximumNumberOfLines = 0
@@ -33,6 +38,7 @@ private final class FileAssociationRowView: NSView {
         resultLabel.maximumNumberOfLines = 0
         resultLabel.lineBreakMode = .byWordWrapping
         resultLabel.translatesAutoresizingMaskIntoConstraints = false
+        resultLabel.isHidden = true
 
         let labels = NSStackView(views: [titleLabel, detailLabel, resultLabel])
         labels.orientation = .vertical
@@ -44,13 +50,15 @@ private final class FileAssociationRowView: NSView {
         addSubview(labels)
         NSLayoutConstraint.activate([
             checkbox.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
-            checkbox.topAnchor.constraint(equalTo: topAnchor, constant: 9),
+            checkbox.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
             checkbox.widthAnchor.constraint(equalToConstant: 18),
-            labels.leadingAnchor.constraint(equalTo: checkbox.trailingAnchor, constant: 10),
-            labels.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
+            labels.leadingAnchor.constraint(equalTo: checkbox.trailingAnchor, constant: 8),
+            labels.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -12),
             labels.topAnchor.constraint(equalTo: topAnchor, constant: 8),
             labels.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8),
-            heightAnchor.constraint(greaterThanOrEqualToConstant: 48)
+            detailLabel.widthAnchor.constraint(equalTo: labels.widthAnchor),
+            resultLabel.widthAnchor.constraint(equalTo: labels.widthAnchor),
+            heightAnchor.constraint(greaterThanOrEqualToConstant: 34)
         ])
     }
 
@@ -96,7 +104,7 @@ final class FileAssociationWindowController: NSWindowController, NSWindowDelegat
         var result: RowResult?
     }
 
-    private let service: FileAssociationService
+    private let service: FileAssociationServicing
     private var rows: [RowState]
     private var rowViews: [FileAssociationRowView] = []
     private var failedItemIDs = Set<String>()
@@ -107,21 +115,22 @@ final class FileAssociationWindowController: NSWindowController, NSWindowDelegat
     private let allButton = NSButton(title: "全选", target: nil, action: nil)
     private let noneButton = NSButton(title: "取消全选", target: nil, action: nil)
 
-    init(service: FileAssociationService) {
+    init(service: FileAssociationServicing) {
         self.service = service
         let states = service.currentStates()
-        self.rows = service.items.map { item in
+        self.rows = service.items.sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }.map { item in
             let actual = states[item.identifier] ?? false
             return RowState(item: item, actualDefault: actual, checked: actual, result: nil)
         }
         super.init(window: nil)
 
-        let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 700, height: 560),
+        let listHeight = rows.reduce(CGFloat(12)) { $0 + ($1.item.extensions.count > 1 ? 50 : 34) }
+        let window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 560, height: min(560, max(400, listHeight + 168))),
                               styleMask: [.titled, .closable, .miniaturizable, .resizable],
                               backing: .buffered, defer: false)
         window.title = "文件关联"
         window.backgroundColor = Theme.chrome
-        window.minSize = NSSize(width: 560, height: 400)
+        window.contentMinSize = NSSize(width: 520, height: 400)
         window.isReleasedWhenClosed = false
         window.delegate = self
         window.center()
@@ -174,12 +183,20 @@ final class FileAssociationWindowController: NSWindowController, NSWindowDelegat
         content.wantsLayer = true
         content.layer?.backgroundColor = Theme.chrome.cgColor
 
-        let intro = NSTextField(wrappingLabelWithString:
-            "勾选需要由 Textlet 默认打开的类型，再点击“设为默认”。取消勾选不会更改现有默认应用。")
-        intro.font = .systemFont(ofSize: 12)
+        let intro = NSTextField(labelWithString: "选择需要由 Textlet 默认打开的文件类型。")
+        intro.font = .systemFont(ofSize: 13)
         intro.textColor = Theme.text
-        intro.maximumNumberOfLines = 0
         intro.translatesAutoresizingMaskIntoConstraints = false
+
+        let hint = NSTextField(labelWithString: "取消勾选不会更改现有默认应用。")
+        hint.font = .systemFont(ofSize: 11)
+        hint.textColor = Theme.muted
+        hint.translatesAutoresizingMaskIntoConstraints = false
+
+        let listTitle = NSTextField(labelWithString: "文件类型")
+        listTitle.font = .systemFont(ofSize: 12, weight: .medium)
+        listTitle.textColor = Theme.text
+        listTitle.translatesAutoresizingMaskIntoConstraints = false
 
         for button in [allButton, noneButton, retryButton, applyButton] {
             button.bezelStyle = .rounded
@@ -189,22 +206,21 @@ final class FileAssociationWindowController: NSWindowController, NSWindowDelegat
         noneButton.target = self; noneButton.action = #selector(selectNoRows)
         retryButton.target = self; retryButton.action = #selector(retryFailed)
         applyButton.target = self; applyButton.action = #selector(applySelection)
+        applyButton.keyEquivalent = "\r"
+        for button in [allButton, noneButton] {
+            button.controlSize = .small
+            button.font = .systemFont(ofSize: 11)
+        }
 
         let selectionButtons = NSStackView(views: [allButton, noneButton])
         selectionButtons.orientation = .horizontal
         selectionButtons.spacing = 8
         selectionButtons.translatesAutoresizingMaskIntoConstraints = false
 
-        let top = NSStackView(views: [intro, selectionButtons])
-        top.orientation = .vertical
-        top.alignment = .leading
-        top.spacing = 10
-        top.translatesAutoresizingMaskIntoConstraints = false
-
-        let rowStack = NSStackView()
+        let rowStack = FileAssociationListView()
         rowStack.orientation = .vertical
-        rowStack.alignment = .width
-        rowStack.spacing = 2
+        rowStack.alignment = .leading
+        rowStack.spacing = 0
         rowStack.edgeInsets = NSEdgeInsets(top: 6, left: 0, bottom: 6, right: 0)
         rowStack.translatesAutoresizingMaskIntoConstraints = false
         for (index, row) in rows.enumerated() {
@@ -212,6 +228,7 @@ final class FileAssociationWindowController: NSWindowController, NSWindowDelegat
             view.onToggle = { [weak self] checked in self?.setChecked(checked, at: index) }
             rowViews.append(view)
             rowStack.addArrangedSubview(view)
+            view.widthAnchor.constraint(equalTo: rowStack.widthAnchor).isActive = true
         }
 
         let scroll = NSScrollView()
@@ -219,7 +236,7 @@ final class FileAssociationWindowController: NSWindowController, NSWindowDelegat
         scroll.autohidesScrollers = true
         scroll.drawsBackground = true
         scroll.backgroundColor = Theme.canvas
-        scroll.borderType = .bezelBorder
+        scroll.borderType = .lineBorder
         scroll.documentView = rowStack
         scroll.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -235,28 +252,42 @@ final class FileAssociationWindowController: NSWindowController, NSWindowDelegat
         statusLabel.lineBreakMode = .byTruncatingTail
         statusLabel.translatesAutoresizingMaskIntoConstraints = false
 
-        let footer = NSStackView(views: [statusLabel, retryButton, applyButton])
-        footer.orientation = .horizontal
-        footer.alignment = .centerY
-        footer.spacing = 8
-        footer.translatesAutoresizingMaskIntoConstraints = false
+        let actions = NSStackView(views: [retryButton, applyButton])
+        actions.orientation = .horizontal
+        actions.alignment = .centerY
+        actions.spacing = 8
+        actions.translatesAutoresizingMaskIntoConstraints = false
+        actions.setHuggingPriority(.required, for: .horizontal)
         statusLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
         statusLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         retryButton.setContentHuggingPriority(.required, for: .horizontal)
         applyButton.setContentHuggingPriority(.required, for: .horizontal)
 
-        let root = NSStackView(views: [top, scroll, footer])
-        root.orientation = .vertical
-        root.alignment = .width
-        root.spacing = 12
-        root.edgeInsets = NSEdgeInsets(top: 20, left: 20, bottom: 18, right: 20)
-        root.translatesAutoresizingMaskIntoConstraints = false
-        content.addSubview(root)
+        for view in [intro, hint, listTitle, selectionButtons, scroll, statusLabel, actions] {
+            content.addSubview(view)
+        }
         NSLayoutConstraint.activate([
-            root.leadingAnchor.constraint(equalTo: content.leadingAnchor),
-            root.trailingAnchor.constraint(equalTo: content.trailingAnchor),
-            root.topAnchor.constraint(equalTo: content.topAnchor),
-            root.bottomAnchor.constraint(equalTo: content.bottomAnchor),
+            intro.leadingAnchor.constraint(equalTo: content.leadingAnchor, constant: 24),
+            intro.trailingAnchor.constraint(equalTo: content.trailingAnchor, constant: -24),
+            intro.topAnchor.constraint(equalTo: content.topAnchor, constant: 24),
+            hint.leadingAnchor.constraint(equalTo: intro.leadingAnchor),
+            hint.trailingAnchor.constraint(equalTo: intro.trailingAnchor),
+            hint.topAnchor.constraint(equalTo: intro.bottomAnchor, constant: 6),
+            selectionButtons.topAnchor.constraint(equalTo: hint.bottomAnchor, constant: 16),
+            selectionButtons.trailingAnchor.constraint(equalTo: intro.trailingAnchor),
+            listTitle.leadingAnchor.constraint(equalTo: intro.leadingAnchor),
+            listTitle.centerYAnchor.constraint(equalTo: selectionButtons.centerYAnchor),
+            listTitle.trailingAnchor.constraint(lessThanOrEqualTo: selectionButtons.leadingAnchor, constant: -12),
+            scroll.leadingAnchor.constraint(equalTo: intro.leadingAnchor),
+            scroll.trailingAnchor.constraint(equalTo: intro.trailingAnchor),
+            scroll.topAnchor.constraint(equalTo: selectionButtons.bottomAnchor, constant: 8),
+            scroll.bottomAnchor.constraint(equalTo: content.bottomAnchor, constant: -68),
+            actions.trailingAnchor.constraint(equalTo: intro.trailingAnchor),
+            actions.centerYAnchor.constraint(equalTo: statusLabel.centerYAnchor),
+            statusLabel.leadingAnchor.constraint(equalTo: intro.leadingAnchor),
+            statusLabel.trailingAnchor.constraint(equalTo: actions.leadingAnchor, constant: -12),
+            statusLabel.topAnchor.constraint(equalTo: scroll.bottomAnchor, constant: 12),
+            statusLabel.bottomAnchor.constraint(equalTo: content.bottomAnchor, constant: -20),
             scroll.heightAnchor.constraint(greaterThanOrEqualToConstant: 220)
         ])
     }
@@ -355,7 +386,7 @@ final class FileAssociationWindowController: NSWindowController, NSWindowDelegat
                 self.rows[index].result = .success("设置成功，已核验生效。")
                 self.failedItemIDs.remove(item.identifier)
             } else {
-                self.rows[index].checked = false
+                // Keep the user's selection so a failed item remains retryable.
                 let message: String
                 switch result {
                 case .success:
@@ -372,11 +403,11 @@ final class FileAssociationWindowController: NSWindowController, NSWindowDelegat
     }
 
     private func refreshAllActualStatesAfterProcessing() {
+        // Actual defaults and the user's pending selections are independent.
         let states = service.currentStates()
         for index in rows.indices {
             let actual = states[rows[index].item.identifier] ?? false
             rows[index].actualDefault = actual
-            rows[index].checked = actual
             if actual { failedItemIDs.remove(rows[index].item.identifier) }
         }
     }
@@ -393,5 +424,21 @@ final class FileAssociationWindowController: NSWindowController, NSWindowDelegat
         noneButton.isEnabled = !applying && rows.contains { $0.checked }
         retryButton.isHidden = failedItemIDs.isEmpty
         retryButton.isEnabled = !applying && !failedItemIDs.isEmpty
+        if !applying {
+            let selected = rows.filter { $0.checked }
+            let count = "已选择 \(selected.count) 项"
+            if !failedItemIDs.isEmpty {
+                statusLabel.stringValue = "\(count) · \(failedItemIDs.count) 项设置失败，可重试。"
+            } else if selected.isEmpty {
+                statusLabel.stringValue = "请选择需要设置的文件类型。"
+            } else if selected.allSatisfy({ $0.actualDefault }) {
+                statusLabel.stringValue = "\(count)\n所选类型均已由 Textlet 默认打开。"
+            } else if !hasPending {
+                statusLabel.stringValue = "\(count)\n所选类型暂时无法设置，请查看列表提示。"
+            } else {
+                statusLabel.stringValue = count
+            }
+        }
+        statusLabel.toolTip = statusLabel.stringValue
     }
 }

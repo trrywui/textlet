@@ -114,7 +114,14 @@ enum FileAssociationCatalog {
     }
 }
 
-final class FileAssociationService {
+protocol FileAssociationServicing: AnyObject {
+    var items: [FileAssociationItem] { get }
+    func currentStates() -> [String: Bool]
+    func isTextletDefault(for item: FileAssociationItem) -> Bool
+    func setDefault(for item: FileAssociationItem, completion: @escaping (Result<Void, FileAssociationFailure>) -> Void)
+}
+
+final class FileAssociationService: FileAssociationServicing {
     static let formalBundleIdentifier = "io.github.trrywui.textlet"
 
     let items: [FileAssociationItem]

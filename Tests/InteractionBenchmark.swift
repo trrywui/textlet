@@ -141,6 +141,23 @@ final class InteractionBenchmark {
         let hit = bar.hitTest(bar.convert(NSPoint(x: plus.frame.midX, y: plus.frame.midY), to: bar.superview))
         checks["plusRemainsClickable"] = hit === plus || hit?.isDescendant(of: plus) == true
         app.notes.removeLast(); app.renderTabs(); _ = app.saveSession()
+
+        // Recreate the foreground/background boundary before creating a tab.
+        // In the affected case the note was added to the model, but its tab
+        // view stayed absent until a later selection caused another render.
+        let firstID = app.notes[0].record.id
+        let firstText = app.notes[0].storage?.string ?? ""
+        app.applicationDidResignActive(Notification(name: NSApplication.didResignActiveNotification))
+        app.applicationDidBecomeActive(Notification(name: NSApplication.didBecomeActiveNotification))
+        let resumedBefore = app.notes.count
+        app.newNote()
+        let resumedNote = app.active
+        let resumedTab = app.tabStack.arrangedSubviews.compactMap { $0 as? NoteTab }.first { $0.id == resumedNote.record.id }
+        checks["backgroundResumeNewTabIsVisible"] = app.notes.count == resumedBefore + 1
+            && app.activeID == resumedNote.record.id && app.editor.string.isEmpty && resumedTab != nil
+            && app.notes.first(where: { $0.record.id == firstID })?.storage?.string == firstText
+        try? app.selectNote(firstID, saveCurrent: false)
+        app.notes.removeLast(); app.renderTabs(); _ = app.saveSession()
     }
     func prepareReplace() {
         guard let bar = app.scroller.findBarView else { checks["replaceFieldsVisible"] = false; return }

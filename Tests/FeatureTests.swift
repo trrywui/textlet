@@ -83,6 +83,8 @@ func runFeatureTests(root: URL) throws {
     do { _ = try crossFile.page(at: 0, index: crossIndex) } catch { changeRejected = true }
     try expect(changeRejected, "changed or truncated logs require explicit reload")
 
+    try runLogBoundaryTests(root: root.appendingPathComponent("boundaries"))
+
     let emptyURL = root.appendingPathComponent("empty.log")
     try Data().write(to: emptyURL)
     let emptyFile = try LogFile(url: emptyURL)
