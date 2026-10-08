@@ -137,6 +137,7 @@ func runLifecycleCheck(app: Textlet, output: URL) {
             let primary = app.active
             checks.merge(try checkTitleEditing(app: app)) { _, new in new }
             checks.merge(try checkFileSaving(app: app)) { _, new in new }
+            checks.merge(try checkLineNumberCache(app: app)) { _, new in new }
             checks.merge(try checkOpening(app: app)) { _, new in new }
             checks.merge(try checkFileAssociationRetry()) { _, new in new }
             let linkedURL = output.deletingLastPathComponent().appendingPathComponent("close-linked.txt")

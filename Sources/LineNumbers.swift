@@ -49,6 +49,39 @@ final class LineNumberRuler: NSView {
     var firstLine = 1
     var startsMidLine = false
     let ruleThickness: CGFloat = 64
+    // Reuse label measurements without retaining a bitmap for each document line.
+    private struct Label { let text: NSString; let size: NSSize; var lastUsed: UInt64 }
+    private var labels: [String: Label] = [:]
+    private var labelGeneration: UInt64 = 0
+    private let labelAttributes: [NSAttributedString.Key: Any] = [
+        .font: NSFont.monospacedDigitSystemFont(ofSize: 10, weight: .regular), .foregroundColor: Theme.comment
+    ]
+    var usesLabelCache = ProcessInfo.processInfo.environment["TEXTLET_NATIVE_LINE_NUMBERS"] != "1"
+    var cachedLabelCount: Int { labels.count }
+    private(set) var labelCacheHits = 0
+    private(set) var labelMeasurements = 0
+    override func viewDidChangeBackingProperties() {
+        super.viewDidChangeBackingProperties(); labels.removeAll(); needsDisplay = true
+    }
+    override func viewDidMoveToWindow() { super.viewDidMoveToWindow(); labels.removeAll() }
+
+    private func drawLabel(_ string: String, y: CGFloat) {
+        labelGeneration &+= 1
+        let label: Label
+        if usesLabelCache, var cached = labels[string] {
+            cached.lastUsed = labelGeneration; labels[string] = cached
+            labelCacheHits += 1; label = cached
+        } else {
+            let text = string as NSString
+            label = Label(text: text, size: text.size(withAttributes: labelAttributes), lastUsed: labelGeneration)
+            labelMeasurements += 1
+            if usesLabelCache {
+                if labels.count >= 128 { labels.removeValue(forKey: labels.min { $0.value.lastUsed < $1.value.lastUsed }!.key) }
+                labels[string] = label
+            }
+        }
+        label.text.draw(at: NSPoint(x: ruleThickness - label.size.width - 9, y: y), withAttributes: labelAttributes)
+    }
     override var isFlipped: Bool { true }
     override var isOpaque: Bool { true }
     init(scrollView: NSScrollView, editor: NSTextView) {
@@ -86,15 +119,9 @@ final class LineNumberRuler: NSView {
         visible.origin.x -= origin.x; visible.origin.y -= origin.y
         layout.ensureLayout(forBoundingRect: visible, in: container)
         let glyphs = layout.glyphRange(forBoundingRectWithoutAdditionalLayout: visible, in: container)
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: NSFont.monospacedDigitSystemFont(ofSize: 10, weight: .regular),
-            .foregroundColor: Theme.comment
-        ]
         func drawNumber(_ number: Int, y: CGFloat, continuation: Bool = false) {
-            let string = (continuation ? "↳" : String(number)) as NSString
-            let size = string.size(withAttributes: attributes)
             let point = convert(NSPoint(x: 0, y: y + origin.y), from: editor)
-            string.draw(at: NSPoint(x: ruleThickness - size.width - 9, y: point.y + 2), withAttributes: attributes)
+            drawLabel(continuation ? "↳" : String(number), y: point.y + 2)
         }
         // Read only fragments already laid out for this viewport. Avoid enumeration
         // helpers that can request layout for the enclosing text container.

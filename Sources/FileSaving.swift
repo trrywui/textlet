@@ -107,6 +107,7 @@ extension Textlet {
                             let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
                             note.record.file?.modifiedAt = attributes[.modificationDate] as? Date
                             note.record.file?.size = attributes[.size] as? Int
+                            note.record.file?.signature = try DocumentFile.signature(at: url)
                             note.record.fileModified = false
                             note.fileMissing = false; note.fileChangedExternally = false
                             updateTabState(note)

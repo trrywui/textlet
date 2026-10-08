@@ -15,6 +15,19 @@ func runFileSavingTests(root: URL) throws {
     let malformed = NSString(characters: &malformedUnits, length: malformedUnits.count)
     try expect(DocumentFile.textDigest(malformed) == DocumentFile.digest(Data((malformed as String).utf8)),
         "malformed UTF-16 retains prior fingerprint behavior")
+    // Exercise every UTF-16 code unit and surrogate pairs at both chunk edges.
+    var allUnits = (0...65535).map { unichar($0) }
+    let exhaustive = NSString(characters: &allUnits, length: allUnits.count)
+    try expect(DocumentFile.textDigest(exhaustive) == DocumentFile.digest(Data((exhaustive as String).utf8)),
+        "fingerprint covers all UTF-16 units including malformed sequences")
+    for position in [0, 32766, 32767, 32768, 65535] {
+        for suffix: [unichar] in [[0xd83d, 0xde42], [0xd800], [0xdc00], [0xd800, 0xd800, 0xdc00], [0xdc00, 0xd800], [0xd800, 0x61, 0xdc00]] {
+            var units = [unichar](repeating: 0x61, count: position) + suffix + [0x62]
+            let sample = NSString(characters: &units, length: units.count)
+            try expect(DocumentFile.textDigest(sample) == DocumentFile.digest(Data((sample as String).utf8)),
+                "fingerprint preserves UTF-16 boundary \(position), \(suffix)")
+        }
+    }
     let source = root.appendingPathComponent("script.sh")
     let original = "#!/bin/sh\r\necho '中文🙂'\r\n"
     try Data(original.utf8).write(to: source)
@@ -173,6 +186,15 @@ func checkFileSaving(app: Textlet) throws -> [String: Bool] {
     let count = app.notes.count
     app.openText(destination)
     checks["openingLinkedFileReusesTab"] = app.notes.count == count && app.active === note
+    try replacingContentsKeepingMtime(destination, with: "SELECT 3;\r\n")
+    let end = Date(timeIntervalSinceNow: 2)
+    while !note.fileChangedExternally && Date() < end { RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.01)) }
+    checks["sameMetadataReplacementUpdatesTabWithoutPolling"] = note.fileChangedExternally && note.needsFileSave
+    var metadataConflicts = 0
+    checks["sameMetadataConflictCanCancel"] = !app.saveNote(note, resolveConflict: { _ in metadataConflicts += 1; return .cancel }) && metadataConflicts == 1
+    let metadataExternal = try String(contentsOf: destination, encoding: .utf8)
+    checks["sameMetadataCancelPreservesBothVersions"] = metadataExternal == "SELECT 3;\r\n" && app.editor.string == saved
+    checks["sameMetadataOverwriteUpdatesBaseline"] = app.saveNote(note, resolveConflict: { _ in .overwrite }) && !note.needsFileSave
     edit("local pending")
     try Data("external contents".utf8).write(to: destination)
     var conflicts = 0

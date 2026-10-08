@@ -107,6 +107,9 @@ private final class RealUsageBenchmark {
         value["scale"] = Double(app.window.backingScaleFactor)
         value["textUTF16Length"] = app.editor.textStorage!.length
         value["scrollY"] = Double(app.scroller.contentView.bounds.origin.y)
+        value["lineNumberLabelCount"] = app.ruler.cachedLabelCount
+        value["lineNumberCacheHits"] = app.ruler.labelCacheHits
+        value["lineNumberMeasurements"] = app.ruler.labelMeasurements
 #if ROW_RENDERER
         value["tiles"] = app.editor.renderedTileCount
         value["bitmapBytes"] = app.editor.renderedBitmapBytes

@@ -58,6 +58,9 @@ final class Note {
     var encodingTitle: String { record.file.map { String.localizedName(of: String.Encoding(rawValue: $0.encoding)) } ?? "UTF-8" }
     var fileMissing = false
     var fileChangedExternally = false
+    private var inspectedFileSignature: FileSignature?
+    private var inspectedFileDigest: String?
+    private var inspectedFileChangedExternally = false
     var fileWatch: FileWatch?
     var needsFileSave: Bool { !isLog && (record.file == nil || record.fileModified != false || fileMissing || fileChangedExternally) }
     func refreshFileModification() {
@@ -67,10 +70,25 @@ final class Note {
     func refreshFileState() {
         guard let file = record.file else { return }
         do {
-            let attributes = try FileManager.default.attributesOfItem(atPath: file.path)
+            let url = URL(fileURLWithPath: file.path)
+            let signature = try DocumentFile.signature(at: url)
             fileMissing = false
-            fileChangedExternally = (attributes[.modificationDate] as? Date) != file.modifiedAt || (attributes[.size] as? Int) != file.size
+            if let saved = file.signature {
+                fileChangedExternally = signature != saved
+            } else if signature != inspectedFileSignature || file.diskDigest != inspectedFileDigest {
+                // Older sessions have no inode/ctime baseline. Verify once per disk
+                // version before adopting it, so a pre-launch change is not missed.
+                fileChangedExternally = try DocumentFile.version(at: url) != .present(file.diskDigest)
+                inspectedFileSignature = signature
+                inspectedFileDigest = file.diskDigest
+                inspectedFileChangedExternally = fileChangedExternally
+                if !fileChangedExternally { record.file?.signature = signature }
+            } else {
+                fileChangedExternally = inspectedFileChangedExternally
+            }
         } catch {
+            inspectedFileSignature = nil
+            inspectedFileDigest = nil
             fileMissing = DocumentFile.isMissing(error)
             fileChangedExternally = !fileMissing
         }
@@ -179,7 +197,12 @@ class SessionStore {
 
     func load() throws -> SessionRecord? {
         guard fm.fileExists(atPath: manifest.path) else {
-            if fm.fileExists(atPath: previous.path) { return try read(previous) }
+            if fm.fileExists(atPath: previous.path) {
+                let recovered = try read(previous)
+                let archive = try archiveRecovery()
+                recoveryNotice = "已从上一份完整快照恢复草稿；原有清单和草稿已保留在 \(archive.path)。"
+                return recovered
+            }
             return nil
         }
         do { return try read(manifest) }
@@ -187,12 +210,27 @@ class SessionStore {
             guard let recovered = try? read(previous) else {
                 throw SessionError.invalid("当前会话和备份都无法读取；数据位于 \(directory.path)")
             }
-            let archive = directory.appendingPathComponent("session.damaged-\(UUID().uuidString).json")
-            try fm.copyItem(at: manifest, to: archive)
+            let archive = try archiveRecovery()
             try Data(contentsOf: previous).write(to: manifest, options: .atomic)
-            recoveryNotice = "已从上一份完整快照恢复草稿；损坏的会话文件已保留。"
+            recoveryNotice = "已从上一份完整快照恢复草稿；原有清单和草稿已保留在 \(archive.path)。"
             return recovered
         }
+    }
+
+    // An unreadable manifest cannot tell us which draft revisions are recoverable.
+    // Archive every body before falling back; normal generation cleanup never
+    // enters this directory. Any copy failure leaves the live session untouched.
+    func archiveRecovery() throws -> URL {
+        let archive = directory.appendingPathComponent("recovery-\(UUID().uuidString)", isDirectory: true)
+        let bodies = archive.appendingPathComponent("drafts", isDirectory: true)
+        try fm.createDirectory(at: bodies, withIntermediateDirectories: true)
+        for source in [manifest, previous] where fm.fileExists(atPath: source.path) {
+            try fm.copyItem(at: source, to: archive.appendingPathComponent(source.lastPathComponent))
+        }
+        for source in try fm.contentsOfDirectory(at: drafts, includingPropertiesForKeys: nil) where source.pathExtension == "txt" {
+            try fm.copyItem(at: source, to: bodies.appendingPathComponent(source.lastPathComponent))
+        }
+        return archive
     }
 
     func save(notes: [Note], activeID: UUID, windowFrame: NSRect? = nil) throws {

@@ -1,6 +1,13 @@
 import AppKit
 import CryptoKit
 
+struct FileSignature: Codable, Equatable {
+    struct Identity: Codable, Equatable { let device: dev_t, inode: ino_t }
+    let identity: Identity
+    let size: off_t
+    let modifiedSeconds: Int, modifiedNanos: Int, changedSeconds: Int, changedNanos: Int
+}
+
 struct FileReference: Codable {
     var path: String
     var encoding: UInt
@@ -10,6 +17,7 @@ struct FileReference: Codable {
     var textLength: Int
     var modifiedAt: Date?
     var size: Int?
+    var signature: FileSignature? = nil
 
     func differs(from text: NSString) -> Bool {
         text.length != textLength || DocumentFile.textDigest(text) != textDigest
@@ -35,25 +43,43 @@ enum DocumentFile {
     static func digest(_ data: Data) -> String { hex(SHA256.hash(data: data)) }
     // Read the existing NSString in bounded chunks; never bridge/copy the entire editor buffer.
     static func textDigest(_ text: NSString) -> String {
-        var hash = SHA256()
-        let capacity = 64 * 1024
-        let buffer = UnsafeMutableRawPointer.allocate(byteCount: capacity, alignment: 1)
-        defer { buffer.deallocate() }
-        var remaining = NSRange(location: 0, length: text.length)
-        while remaining.length > 0 {
-            var used = 0, next = NSRange()
-            let converted = text.getBytes(buffer, maxLength: capacity, usedLength: &used,
-                encoding: String.Encoding.utf8.rawValue, options: [], range: remaining, remaining: &next)
-            guard converted, used > 0, next.location > remaining.location else {
-                // Preserve Swift's replacement behavior for a malformed UTF-16 NSString.
-                return digest(Data((text as String).utf8))
+        var hash = SHA256(), offset = 0
+        // UTF-8 uses at most three bytes per UTF-16 unit (a pair uses four).
+        let capacity = 32768
+        let units = UnsafeMutablePointer<unichar>.allocate(capacity: capacity)
+        let bytes = UnsafeMutablePointer<UInt8>.allocate(capacity: capacity * 3)
+        defer { units.deallocate(); bytes.deallocate() }
+        while offset < text.length {
+            var count = min(capacity, text.length - offset)
+            text.getCharacters(units, range: NSRange(location: offset, length: count))
+            // Leave a split surrogate pair together in the next chunk.
+            if offset + count < text.length && (0xd800...0xdbff).contains(units[count - 1]) && (0xdc00...0xdfff).contains(text.character(at: offset + count)) { count -= 1 }
+            var input = 0, output = 0
+            while input < count {
+                let c = UInt32(units[input]); input += 1
+                if c < 0x80 { bytes[output] = UInt8(c); output += 1 }
+                else if c < 0x800 {
+                    bytes[output] = UInt8(0xc0 | (c >> 6)); bytes[output + 1] = UInt8(0x80 | (c & 0x3f)); output += 2
+                } else if c < 0xd800 || c > 0xdfff {
+                    bytes[output] = UInt8(0xe0 | (c >> 12)); bytes[output + 1] = UInt8(0x80 | ((c >> 6) & 0x3f)); bytes[output + 2] = UInt8(0x80 | (c & 0x3f)); output += 3
+                } else if c < 0xdc00 && input < count && (0xdc00...0xdfff).contains(units[input]) {
+                    let scalar = 0x10000 + ((c - 0xd800) << 10) + UInt32(units[input] - 0xdc00); input += 1
+                    bytes[output] = UInt8(0xf0 | (scalar >> 18)); bytes[output + 1] = UInt8(0x80 | ((scalar >> 12) & 0x3f)); bytes[output + 2] = UInt8(0x80 | ((scalar >> 6) & 0x3f)); bytes[output + 3] = UInt8(0x80 | (scalar & 0x3f)); output += 4
+                // Match Swift UTF-8 replacement of an unpaired surrogate.
+                } else { bytes[output] = 0xef; bytes[output + 1] = 0xbf; bytes[output + 2] = 0xbd; output += 3 }
             }
-            hash.update(bufferPointer: UnsafeRawBufferPointer(start: buffer, count: used))
-            remaining = next
+            hash.update(bufferPointer: UnsafeRawBufferPointer(start: bytes, count: output)); offset += count
         }
         return hex(hash.finalize())
     }
     static func canonical(_ url: URL) -> URL { url.standardizedFileURL.resolvingSymlinksInPath() }
+    static func signature(at url: URL) throws -> FileSignature {
+        var info = stat()
+        guard stat(url.path, &info) == 0 else { throw POSIXError(POSIXErrorCode(rawValue: errno) ?? .EIO) }
+        return FileSignature(identity: .init(device: info.st_dev, inode: info.st_ino), size: info.st_size,
+            modifiedSeconds: info.st_mtimespec.tv_sec, modifiedNanos: info.st_mtimespec.tv_nsec,
+            changedSeconds: info.st_ctimespec.tv_sec, changedNanos: info.st_ctimespec.tv_nsec)
+    }
     static func isMissing(_ error: Error) -> Bool {
         let error = error as NSError
         return (error.domain == NSCocoaErrorDomain && [NSFileNoSuchFileError, NSFileReadNoSuchFileError].contains(error.code))
@@ -76,7 +102,7 @@ enum DocumentFile {
         let diskDigest = digest(data)
         return FileReference(path: url.path, encoding: encoding.rawValue, byteOrderMark: bom,
             diskDigest: diskDigest, textDigest: encoding == .utf8 && bom.isEmpty ? diskDigest : textDigest(text as NSString), textLength: (text as NSString).length,
-            modifiedAt: attributes?[.modificationDate] as? Date, size: attributes?[.size] as? Int)
+            modifiedAt: attributes?[.modificationDate] as? Date, size: attributes?[.size] as? Int, signature: try? signature(at: url))
     }
     static func open(_ source: URL) throws -> Note {
         let url = canonical(source)
@@ -126,14 +152,7 @@ enum DocumentFile {
 // One directory source is shared by all tabs in that directory. File sources stay
 // attached until their inode changes; unrelated directory writes do not rebuild them.
 final class FileWatch {
-    private struct Identity: Equatable {
-        let device: dev_t, inode: ino_t
-    }
-    private struct Signature: Equatable {
-        let identity: Identity
-        let size: off_t
-        let modifiedSeconds: Int, modifiedNanos: Int, changedSeconds: Int, changedNanos: Int
-    }
+    private typealias Signature = FileSignature
     private final class DirectorySource {
         let source: DispatchSourceFileSystemObject
         var invalidated = false
@@ -176,11 +195,7 @@ final class FileWatch {
         directorySource = nil
     }
     private func readSignature() -> Signature? {
-        var info = stat()
-        guard stat(url.path, &info) == 0 else { return nil }
-        return Signature(identity: Identity(device: info.st_dev, inode: info.st_ino), size: info.st_size,
-            modifiedSeconds: info.st_mtimespec.tv_sec, modifiedNanos: info.st_mtimespec.tv_nsec,
-            changedSeconds: info.st_ctimespec.tv_sec, changedNanos: info.st_ctimespec.tv_nsec)
+        try? DocumentFile.signature(at: url)
     }
     private func reconcile(notify: Bool = true) {
         let next = readSignature()

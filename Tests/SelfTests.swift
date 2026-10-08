@@ -73,6 +73,8 @@ func runSelfTests() throws {
                "invalid window dimensions use default")
     print("All persistence tests passed.")
     try runTitleTests(root: root.appendingPathComponent("titles"))
+    try runRecoveryTests(root: root.appendingPathComponent("recovery"))
+    try runFileStateTests(root: root.appendingPathComponent("file-state"))
     try runFileSavingTests(root: root.appendingPathComponent("file-saving"))
     try runFileWatchTests(root: root.appendingPathComponent("file-watch"))
     try runFeatureTests(root: root.appendingPathComponent("features"))
