@@ -52,12 +52,25 @@ final class LogFile {
         guard fstat(descriptor, &info) == 0, (info.st_mode & S_IFMT) == S_IFREG else {
             close(descriptor); throw LogError.message("大日志查看只支持普通文件")
         }
-        var head = [UInt8](repeating: 0, count: 4)
-        let n = pread(descriptor, &head, 4, 0)
-        let utf32 = n >= 4 && (head == [0, 0, 0xfe, 0xff] || head == [0xff, 0xfe, 0, 0])
-        let utf16 = n >= 2 && ((head[0] == 0xff && head[1] == 0xfe) || (head[0] == 0xfe && head[1] == 0xff))
-        if utf32 || utf16 {
-            close(descriptor); throw LogError.message("大日志模式支持 UTF-8 / ASCII。这个文件带有 UTF-16/32 标记，请先转为 UTF-8。")
+        do {
+            var head = Data(count: Int(min(info.st_size, Int64(TextFileContent.sampleLimit))))
+            try head.withUnsafeMutableBytes { bytes in
+                var total = 0
+                while total < bytes.count {
+                    let got = pread(descriptor, bytes.baseAddress!.advanced(by: total), bytes.count - total, off_t(total))
+                    if got < 0 && errno == EINTR { continue }
+                    guard got > 0 else { throw LogError.message("读取失败，文件可能已截断；请重新载入。") }
+                    total += got
+                }
+            }
+            let utf32 = head.starts(with: [0, 0, 0xfe, 0xff]) || head.starts(with: [0xff, 0xfe, 0, 0])
+            let utf16 = head.starts(with: [0xff, 0xfe]) || head.starts(with: [0xfe, 0xff])
+            if utf32 || utf16 {
+                throw LogError.message("大日志模式支持 UTF-8 / ASCII。这个文件带有 UTF-16/32 标记，请先转为 UTF-8。")
+            }
+            try TextFileContent.inspect(head).validate(encoding: .utf8)
+        } catch {
+            close(descriptor); throw error
         }
         fd = descriptor; size = info.st_size; modified = info.st_mtimespec
         // Avoid filling the filesystem cache during a complete background scan.

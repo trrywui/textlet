@@ -26,6 +26,51 @@ func checkOpening(app: Textlet) throws -> [String: Bool] {
     app.notes = [original]
     try app.selectNote(original.record.id, saveCurrent: false)
     var checks: [String: Bool] = [:]
+    let binary = store.directory.appendingPathComponent("binary.txt")
+    try Data("%PDF-1.7\n".utf8).write(to: binary)
+    for mode in [false, true] {
+        let ids = app.notes.map { $0.record.id }
+        var rejected = false
+        do { try app.openDocument(binary, asLog: mode) }
+        catch { rejected = error.localizedDescription == "此文件不是受支持的文本文件" }
+        checks["binaryRejectedBeforeCreatingTab-\(mode)"] = rejected && app.notes.map { $0.record.id } == ids
+            && app.active === original && app.editor.string == "preserve unsaved text"
+    }
+    let binaryHandle = try FileHandle(forWritingTo: binary)
+    try binaryHandle.truncate(atOffset: 1_073_741_824); try binaryHandle.close()
+    let beforeLargeBinary = app.notes.map { $0.record.id }
+    var rejectedLargeBinary = false
+    do { try app.openDocument(binary) }
+    catch { rejectedLargeBinary = error.localizedDescription == "此文件不是受支持的文本文件" }
+    checks["largeBinaryRejectedWithoutTabOrIndex"] = rejectedLargeBinary && app.notes.map { $0.record.id } == beforeLargeBinary
+        && app.active === original && app.active.logFile == nil && app.active.logIndex == nil
+
+    let first = store.directory.appendingPathComponent("first.custom")
+    let last = store.directory.appendingPathComponent("last.custom")
+    for url in [first, last] { try Data("plain text 中文\n".utf8).write(to: url) }
+    let countBeforeBatch = app.notes.count
+    var sawBinaryAlert = false
+    func descendants(_ view: NSView) -> [NSView] { [view] + view.subviews.flatMap(descendants) }
+    let deadline = Date().addingTimeInterval(3)
+    let dismiss = Timer(timeInterval: 0.02, repeats: true) { _ in
+        if let content = NSApp.modalWindow?.contentView {
+            let views = descendants(content)
+            sawBinaryAlert = sawBinaryAlert || views.compactMap { $0 as? NSTextField }
+                .contains { $0.stringValue == "此文件不是受支持的文本文件" }
+            views.compactMap { $0 as? NSButton }.first { $0.title == "好" }?.performClick(nil)
+        }
+        if Date() > deadline { NSApp.abortModal() }
+        if let event = NSEvent.otherEvent(with: .applicationDefined, location: .zero, modifierFlags: [],
+            timestamp: 0, windowNumber: 0, context: nil, subtype: 0, data1: 0, data2: 0) {
+            NSApp.postEvent(event, atStart: false)
+        }
+    }
+    RunLoop.main.add(dismiss, forMode: .modalPanel); RunLoop.main.add(dismiss, forMode: .common)
+    app.application(NSApplication.shared, openFiles: [first.path, binary.path, last.path])
+    dismiss.invalidate()
+    checks["finderBatchContinuesAfterBinaryFailure"] = sawBinaryAlert && app.notes.count == countBeforeBatch + 2
+        && app.active.record.file?.path == DocumentFile.canonical(last).path
+    checks["finderBatchPreservesUnsavedText"] = original.storage?.string == "preserve unsaved text"
     let url = store.directory.appendingPathComponent("source.txt")
     try Data("disk text".utf8).write(to: url)
     try app.openDocument(url)
@@ -75,7 +120,10 @@ func checkOpening(app: Textlet) throws -> [String: Bool] {
     checks["selectionReportsBackupFailure"] = selectionFailed && app.active === editable
     store.savesUntilFailure = nil
     try app.openDocument(another)
-    checks["openingRecoversAfterBackupFailure"] = app.active.record.file?.path == another.path && app.lastSaveError == nil
+    checks["openingRecoversAfterBackupFailure"] = app.active.record.file?.path == DocumentFile.canonical(another).path && app.lastSaveError == nil
+    if checks["openingRecoversAfterBackupFailure"] != true {
+        print("Recovery diagnostic: source=\(another.path), opened=\(app.active.record.file?.path ?? "nil"), backup=\(app.lastSaveError ?? "none")")
+    }
 
     for mode in [false, true] {
         let finalURL = store.directory.appendingPathComponent("final-\(mode).txt")
@@ -93,4 +141,18 @@ func checkOpening(app: Textlet) throws -> [String: Bool] {
             && restored?.notes.contains { $0.id == visible.record.id } == true
     }
     return checks
+}
+
+func runOpeningCheck(app: Textlet, output: URL) {
+    Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { _ in
+        do {
+            let checks = try checkOpening(app: app)
+            let failures = checks.filter { !$0.value }.keys.sorted()
+            let report: [String: Any] = ["checks": checks, "failures": failures]
+            try JSONSerialization.data(withJSONObject: report, options: [.prettyPrinted, .sortedKeys]).write(to: output)
+            print("Opening checks: \(checks.count), failures: \(failures)"); fflush(stdout)
+            if !failures.isEmpty { exit(1) }
+            NSApp.terminate(nil)
+        } catch { fputs("\(error)\n", stderr); exit(1) }
+    }
 }

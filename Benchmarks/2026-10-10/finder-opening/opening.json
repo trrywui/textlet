@@ -1,0 +1,26 @@
+{
+  "checks" : {
+    "automaticAndExplicitLogModesShareTab" : true,
+    "binaryRejectedBeforeCreatingTab-false" : true,
+    "binaryRejectedBeforeCreatingTab-true" : true,
+    "editableModeReusesOwnTab" : true,
+    "explicitLogOpenIsReadOnly" : true,
+    "failedOpenRollsBack-false" : true,
+    "failedOpenRollsBack-true" : true,
+    "finalBackupCanBeRetried-false" : true,
+    "finalBackupCanBeRetried-true" : true,
+    "finalBackupFailureKeepsVisibleTab-false" : true,
+    "finalBackupFailureKeepsVisibleTab-true" : true,
+    "finderBatchContinuesAfterBinaryFailure" : true,
+    "finderBatchPreservesUnsavedText" : true,
+    "largeBinaryRejectedWithoutTabOrIndex" : true,
+    "logAliasesAndLegacyPathsReuseTab" : true,
+    "logOpenPreservesUnsavedEditorAndSource" : true,
+    "openingRecoversAfterBackupFailure" : true,
+    "repeatedLogOpenReusesTab" : true,
+    "selectionReportsBackupFailure" : true
+  },
+  "failures" : [
+
+  ]
+}

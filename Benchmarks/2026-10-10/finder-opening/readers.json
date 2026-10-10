@@ -1,0 +1,1819 @@
+{
+  "baseline": "3778696ddcdf18e1413a77df12ff436923572a30",
+  "environment": {
+    "macOS": "14.8.9",
+    "architecture": "x86_64",
+    "swift": "6.0.3"
+  },
+  "scope": "reader constructors; excludes existing log indexing and GUI rendering; log fixtures have identical 16KiB text prefixes and sparse tails",
+  "cases": [
+    {
+      "name": "document-16KiB",
+      "kind": "document",
+      "size": 16384,
+      "iterations": 200,
+      "trials": {
+        "baseline": [
+          {
+            "accepted": 200,
+            "after": {
+              "footprintMiB": 1.8984375,
+              "peakFootprintMiB": 1.8984375,
+              "peakResidentMiB": 5.3203125,
+              "residentMiB": 5.3203125
+            },
+            "before": {
+              "footprintMiB": 1.5546875,
+              "peakFootprintMiB": 1.5546875,
+              "peakResidentMiB": 4.96875,
+              "residentMiB": 4.96875
+            },
+            "cpuMillisecondsPerOpen": 0.91449,
+            "iterations": 200,
+            "kind": "document",
+            "medianMilliseconds": 0.896990008186549,
+            "size": 16384
+          },
+          {
+            "accepted": 200,
+            "after": {
+              "footprintMiB": 1.8203125,
+              "peakFootprintMiB": 1.8203125,
+              "peakResidentMiB": 5.2421875,
+              "residentMiB": 5.2421875
+            },
+            "before": {
+              "footprintMiB": 1.5625,
+              "peakFootprintMiB": 1.5625,
+              "peakResidentMiB": 4.9765625,
+              "residentMiB": 4.9765625
+            },
+            "cpuMillisecondsPerOpen": 0.91357,
+            "iterations": 200,
+            "kind": "document",
+            "medianMilliseconds": 0.887353002326563,
+            "size": 16384
+          },
+          {
+            "accepted": 200,
+            "after": {
+              "footprintMiB": 1.7421875,
+              "peakFootprintMiB": 1.7421875,
+              "peakResidentMiB": 5.1640625,
+              "residentMiB": 5.1640625
+            },
+            "before": {
+              "footprintMiB": 1.546875,
+              "peakFootprintMiB": 1.546875,
+              "peakResidentMiB": 4.9609375,
+              "residentMiB": 4.9609375
+            },
+            "cpuMillisecondsPerOpen": 0.8691300000000001,
+            "iterations": 200,
+            "kind": "document",
+            "medianMilliseconds": 0.8366180118173361,
+            "size": 16384
+          },
+          {
+            "accepted": 200,
+            "after": {
+              "footprintMiB": 1.8828125,
+              "peakFootprintMiB": 1.8828125,
+              "peakResidentMiB": 5.30859375,
+              "residentMiB": 5.30859375
+            },
+            "before": {
+              "footprintMiB": 1.57421875,
+              "peakFootprintMiB": 1.57421875,
+              "peakResidentMiB": 4.9921875,
+              "residentMiB": 4.9921875
+            },
+            "cpuMillisecondsPerOpen": 0.8777250000000001,
+            "iterations": 200,
+            "kind": "document",
+            "medianMilliseconds": 0.8510499901603907,
+            "size": 16384
+          },
+          {
+            "accepted": 200,
+            "after": {
+              "footprintMiB": 1.859375,
+              "peakFootprintMiB": 1.859375,
+              "peakResidentMiB": 5.28125,
+              "residentMiB": 5.28125
+            },
+            "before": {
+              "footprintMiB": 1.46484375,
+              "peakFootprintMiB": 1.46484375,
+              "peakResidentMiB": 4.87890625,
+              "residentMiB": 4.87890625
+            },
+            "cpuMillisecondsPerOpen": 0.8765999999999999,
+            "iterations": 200,
+            "kind": "document",
+            "medianMilliseconds": 0.8512649947078899,
+            "size": 16384
+          }
+        ],
+        "current": [
+          {
+            "accepted": 200,
+            "after": {
+              "footprintMiB": 1.8125,
+              "peakFootprintMiB": 1.8125,
+              "peakResidentMiB": 5.29296875,
+              "residentMiB": 5.29296875
+            },
+            "before": {
+              "footprintMiB": 1.50390625,
+              "peakFootprintMiB": 1.50390625,
+              "peakResidentMiB": 4.9765625,
+              "residentMiB": 4.9765625
+            },
+            "cpuMillisecondsPerOpen": 0.9264049999999999,
+            "iterations": 200,
+            "kind": "document",
+            "medianMilliseconds": 0.8818419883027673,
+            "size": 16384
+          },
+          {
+            "accepted": 200,
+            "after": {
+              "footprintMiB": 1.75390625,
+              "peakFootprintMiB": 1.75390625,
+              "peakResidentMiB": 5.234375,
+              "residentMiB": 5.234375
+            },
+            "before": {
+              "footprintMiB": 1.46875,
+              "peakFootprintMiB": 1.46875,
+              "peakResidentMiB": 4.94140625,
+              "residentMiB": 4.94140625
+            },
+            "cpuMillisecondsPerOpen": 1.02529,
+            "iterations": 200,
+            "kind": "document",
+            "medianMilliseconds": 1.033117005135864,
+            "size": 16384
+          },
+          {
+            "accepted": 200,
+            "after": {
+              "footprintMiB": 1.9140625,
+              "peakFootprintMiB": 1.9140625,
+              "peakResidentMiB": 5.39453125,
+              "residentMiB": 5.39453125
+            },
+            "before": {
+              "footprintMiB": 1.45703125,
+              "peakFootprintMiB": 1.45703125,
+              "peakResidentMiB": 4.9296875,
+              "residentMiB": 4.9296875
+            },
+            "cpuMillisecondsPerOpen": 1.183355,
+            "iterations": 200,
+            "kind": "document",
+            "medianMilliseconds": 1.1742729984689504,
+            "size": 16384
+          },
+          {
+            "accepted": 200,
+            "after": {
+              "footprintMiB": 1.78515625,
+              "peakFootprintMiB": 1.78515625,
+              "peakResidentMiB": 5.265625,
+              "residentMiB": 5.265625
+            },
+            "before": {
+              "footprintMiB": 1.5,
+              "peakFootprintMiB": 1.5,
+              "peakResidentMiB": 4.97265625,
+              "residentMiB": 4.97265625
+            },
+            "cpuMillisecondsPerOpen": 1.06336,
+            "iterations": 200,
+            "kind": "document",
+            "medianMilliseconds": 1.0557370114838704,
+            "size": 16384
+          },
+          {
+            "accepted": 200,
+            "after": {
+              "footprintMiB": 2.05078125,
+              "peakFootprintMiB": 2.05078125,
+              "peakResidentMiB": 5.53125,
+              "residentMiB": 5.53125
+            },
+            "before": {
+              "footprintMiB": 1.46484375,
+              "peakFootprintMiB": 1.46484375,
+              "peakResidentMiB": 4.9375,
+              "residentMiB": 4.9375
+            },
+            "cpuMillisecondsPerOpen": 1.1648249999999998,
+            "iterations": 200,
+            "kind": "document",
+            "medianMilliseconds": 1.163719003670849,
+            "size": 16384
+          }
+        ]
+      },
+      "summary": {
+        "baseline": {
+          "medianMilliseconds": 0.8512649947078899,
+          "cpuMillisecondsPerOpen": 0.8777250000000001,
+          "peakFootprintMiB": 1.859375,
+          "residentMiB": 5.28125
+        },
+        "current": {
+          "medianMilliseconds": 1.0557370114838704,
+          "cpuMillisecondsPerOpen": 1.06336,
+          "peakFootprintMiB": 1.8125,
+          "residentMiB": 5.29296875
+        }
+      }
+    },
+    {
+      "name": "document-1MiB",
+      "kind": "document",
+      "size": 1048576,
+      "iterations": 20,
+      "trials": {
+        "baseline": [
+          {
+            "accepted": 20,
+            "after": {
+              "footprintMiB": 9.15234375,
+              "peakFootprintMiB": 9.15234375,
+              "peakResidentMiB": 11.46875,
+              "residentMiB": 11.46875
+            },
+            "before": {
+              "footprintMiB": 4.8828125,
+              "peakFootprintMiB": 4.8828125,
+              "peakResidentMiB": 7.19140625,
+              "residentMiB": 7.19140625
+            },
+            "cpuMillisecondsPerOpen": 7.31255,
+            "iterations": 20,
+            "kind": "document",
+            "medianMilliseconds": 7.298431999515742,
+            "size": 1048576
+          },
+          {
+            "accepted": 20,
+            "after": {
+              "footprintMiB": 9.4609375,
+              "peakFootprintMiB": 9.4609375,
+              "peakResidentMiB": 11.77734375,
+              "residentMiB": 11.77734375
+            },
+            "before": {
+              "footprintMiB": 6.19140625,
+              "peakFootprintMiB": 6.19140625,
+              "peakResidentMiB": 8.5,
+              "residentMiB": 8.5
+            },
+            "cpuMillisecondsPerOpen": 7.032849999999999,
+            "iterations": 20,
+            "kind": "document",
+            "medianMilliseconds": 7.007124004303478,
+            "size": 1048576
+          },
+          {
+            "accepted": 20,
+            "after": {
+              "footprintMiB": 9.0078125,
+              "peakFootprintMiB": 9.0078125,
+              "peakResidentMiB": 11.328125,
+              "residentMiB": 11.328125
+            },
+            "before": {
+              "footprintMiB": 5.234375,
+              "peakFootprintMiB": 5.234375,
+              "peakResidentMiB": 7.546875,
+              "residentMiB": 7.546875
+            },
+            "cpuMillisecondsPerOpen": 7.19905,
+            "iterations": 20,
+            "kind": "document",
+            "medianMilliseconds": 7.230631003039889,
+            "size": 1048576
+          },
+          {
+            "accepted": 20,
+            "after": {
+              "footprintMiB": 9.2109375,
+              "peakFootprintMiB": 9.2109375,
+              "peakResidentMiB": 11.5234375,
+              "residentMiB": 11.5234375
+            },
+            "before": {
+              "footprintMiB": 5.171875,
+              "peakFootprintMiB": 5.171875,
+              "peakResidentMiB": 7.4765625,
+              "residentMiB": 7.4765625
+            },
+            "cpuMillisecondsPerOpen": 6.880800000000001,
+            "iterations": 20,
+            "kind": "document",
+            "medianMilliseconds": 6.885940005304292,
+            "size": 1048576
+          },
+          {
+            "accepted": 20,
+            "after": {
+              "footprintMiB": 9.26953125,
+              "peakFootprintMiB": 9.26953125,
+              "peakResidentMiB": 11.5859375,
+              "residentMiB": 11.5859375
+            },
+            "before": {
+              "footprintMiB": 6.1796875,
+              "peakFootprintMiB": 6.1796875,
+              "peakResidentMiB": 8.48828125,
+              "residentMiB": 8.48828125
+            },
+            "cpuMillisecondsPerOpen": 6.40705,
+            "iterations": 20,
+            "kind": "document",
+            "medianMilliseconds": 6.589410986634903,
+            "size": 1048576
+          }
+        ],
+        "current": [
+          {
+            "accepted": 20,
+            "after": {
+              "footprintMiB": 9.65625,
+              "peakFootprintMiB": 9.65625,
+              "peakResidentMiB": 12.06640625,
+              "residentMiB": 12.06640625
+            },
+            "before": {
+              "footprintMiB": 6.19140625,
+              "peakFootprintMiB": 6.19140625,
+              "peakResidentMiB": 8.59375,
+              "residentMiB": 8.59375
+            },
+            "cpuMillisecondsPerOpen": 6.87135,
+            "iterations": 20,
+            "kind": "document",
+            "medianMilliseconds": 6.841979993623681,
+            "size": 1048576
+          },
+          {
+            "accepted": 20,
+            "after": {
+              "footprintMiB": 8.9609375,
+              "peakFootprintMiB": 8.9609375,
+              "peakResidentMiB": 11.37890625,
+              "residentMiB": 11.37890625
+            },
+            "before": {
+              "footprintMiB": 4.7421875,
+              "peakFootprintMiB": 4.7421875,
+              "peakResidentMiB": 7.15234375,
+              "residentMiB": 7.15234375
+            },
+            "cpuMillisecondsPerOpen": 7.24545,
+            "iterations": 20,
+            "kind": "document",
+            "medianMilliseconds": 7.151750003686175,
+            "size": 1048576
+          },
+          {
+            "accepted": 20,
+            "after": {
+              "footprintMiB": 9.49609375,
+              "peakFootprintMiB": 9.49609375,
+              "peakResidentMiB": 11.91015625,
+              "residentMiB": 11.91015625
+            },
+            "before": {
+              "footprintMiB": 5.88671875,
+              "peakFootprintMiB": 5.88671875,
+              "peakResidentMiB": 8.29296875,
+              "residentMiB": 8.29296875
+            },
+            "cpuMillisecondsPerOpen": 6.79865,
+            "iterations": 20,
+            "kind": "document",
+            "medianMilliseconds": 6.994559997110628,
+            "size": 1048576
+          },
+          {
+            "accepted": 20,
+            "after": {
+              "footprintMiB": 9.28125,
+              "peakFootprintMiB": 9.28125,
+              "peakResidentMiB": 11.69140625,
+              "residentMiB": 11.69140625
+            },
+            "before": {
+              "footprintMiB": 5.171875,
+              "peakFootprintMiB": 5.171875,
+              "peakResidentMiB": 7.57421875,
+              "residentMiB": 7.57421875
+            },
+            "cpuMillisecondsPerOpen": 6.612,
+            "iterations": 20,
+            "kind": "document",
+            "medianMilliseconds": 6.863952003186569,
+            "size": 1048576
+          },
+          {
+            "accepted": 20,
+            "after": {
+              "footprintMiB": 8.859375,
+              "peakFootprintMiB": 8.859375,
+              "peakResidentMiB": 11.2734375,
+              "residentMiB": 11.2734375
+            },
+            "before": {
+              "footprintMiB": 4.75,
+              "peakFootprintMiB": 4.75,
+              "peakResidentMiB": 7.15625,
+              "residentMiB": 7.15625
+            },
+            "cpuMillisecondsPerOpen": 6.6819999999999995,
+            "iterations": 20,
+            "kind": "document",
+            "medianMilliseconds": 6.940380000742152,
+            "size": 1048576
+          }
+        ]
+      },
+      "summary": {
+        "baseline": {
+          "medianMilliseconds": 7.007124004303478,
+          "cpuMillisecondsPerOpen": 7.032849999999999,
+          "peakFootprintMiB": 9.2109375,
+          "residentMiB": 11.5234375
+        },
+        "current": {
+          "medianMilliseconds": 6.940380000742152,
+          "cpuMillisecondsPerOpen": 6.79865,
+          "peakFootprintMiB": 9.28125,
+          "residentMiB": 11.69140625
+        }
+      }
+    },
+    {
+      "name": "document-8MiB",
+      "kind": "document",
+      "size": 8388608,
+      "iterations": 8,
+      "trials": {
+        "baseline": [
+          {
+            "accepted": 8,
+            "after": {
+              "footprintMiB": 34.73046875,
+              "peakFootprintMiB": 34.73046875,
+              "peakResidentMiB": 45.03515625,
+              "residentMiB": 45.03515625
+            },
+            "before": {
+              "footprintMiB": 27.83984375,
+              "peakFootprintMiB": 27.83984375,
+              "peakResidentMiB": 38.13671875,
+              "residentMiB": 38.13671875
+            },
+            "cpuMillisecondsPerOpen": 52.008750000000006,
+            "iterations": 8,
+            "kind": "document",
+            "medianMilliseconds": 52.06835499848239,
+            "size": 8388608
+          },
+          {
+            "accepted": 8,
+            "after": {
+              "footprintMiB": 28.7890625,
+              "peakFootprintMiB": 28.7890625,
+              "peakResidentMiB": 39.09375,
+              "residentMiB": 39.09375
+            },
+            "before": {
+              "footprintMiB": 21.8984375,
+              "peakFootprintMiB": 25.25,
+              "peakResidentMiB": 32.1953125,
+              "residentMiB": 32.1953125
+            },
+            "cpuMillisecondsPerOpen": 57.706,
+            "iterations": 8,
+            "kind": "document",
+            "medianMilliseconds": 59.13221900118515,
+            "size": 8388608
+          },
+          {
+            "accepted": 8,
+            "after": {
+              "footprintMiB": 31.25,
+              "peakFootprintMiB": 31.25,
+              "peakResidentMiB": 41.5546875,
+              "residentMiB": 41.5546875
+            },
+            "before": {
+              "footprintMiB": 23.23046875,
+              "peakFootprintMiB": 25.34375,
+              "peakResidentMiB": 33.52734375,
+              "residentMiB": 33.52734375
+            },
+            "cpuMillisecondsPerOpen": 56.141,
+            "iterations": 8,
+            "kind": "document",
+            "medianMilliseconds": 56.17445999814663,
+            "size": 8388608
+          },
+          {
+            "accepted": 8,
+            "after": {
+              "footprintMiB": 31.26171875,
+              "peakFootprintMiB": 31.26171875,
+              "peakResidentMiB": 41.56640625,
+              "residentMiB": 41.56640625
+            },
+            "before": {
+              "footprintMiB": 25.2109375,
+              "peakFootprintMiB": 25.2578125,
+              "peakResidentMiB": 35.5078125,
+              "residentMiB": 35.5078125
+            },
+            "cpuMillisecondsPerOpen": 51.39562500000001,
+            "iterations": 8,
+            "kind": "document",
+            "medianMilliseconds": 52.61406100180466,
+            "size": 8388608
+          },
+          {
+            "accepted": 8,
+            "after": {
+              "footprintMiB": 34.40625,
+              "peakFootprintMiB": 34.40625,
+              "peakResidentMiB": 44.7109375,
+              "residentMiB": 44.7109375
+            },
+            "before": {
+              "footprintMiB": 26.4921875,
+              "peakFootprintMiB": 26.4921875,
+              "peakResidentMiB": 36.7890625,
+              "residentMiB": 36.7890625
+            },
+            "cpuMillisecondsPerOpen": 52.781124999999996,
+            "iterations": 8,
+            "kind": "document",
+            "medianMilliseconds": 53.02889400627464,
+            "size": 8388608
+          }
+        ],
+        "current": [
+          {
+            "accepted": 8,
+            "after": {
+              "footprintMiB": 32.1484375,
+              "peakFootprintMiB": 32.1484375,
+              "peakResidentMiB": 42.55859375,
+              "residentMiB": 42.55859375
+            },
+            "before": {
+              "footprintMiB": 24.3203125,
+              "peakFootprintMiB": 25.25,
+              "peakResidentMiB": 34.72265625,
+              "residentMiB": 34.72265625
+            },
+            "cpuMillisecondsPerOpen": 52.307375,
+            "iterations": 8,
+            "kind": "document",
+            "medianMilliseconds": 52.946752999559976,
+            "size": 8388608
+          },
+          {
+            "accepted": 8,
+            "after": {
+              "footprintMiB": 33.46484375,
+              "peakFootprintMiB": 33.46484375,
+              "peakResidentMiB": 43.875,
+              "residentMiB": 43.875
+            },
+            "before": {
+              "footprintMiB": 22.88671875,
+              "peakFootprintMiB": 25.21875,
+              "peakResidentMiB": 33.2890625,
+              "residentMiB": 33.2890625
+            },
+            "cpuMillisecondsPerOpen": 51.85037499999999,
+            "iterations": 8,
+            "kind": "document",
+            "medianMilliseconds": 52.465578992269,
+            "size": 8388608
+          },
+          {
+            "accepted": 8,
+            "after": {
+              "footprintMiB": 30.45703125,
+              "peakFootprintMiB": 30.45703125,
+              "peakResidentMiB": 40.8671875,
+              "residentMiB": 40.8671875
+            },
+            "before": {
+              "footprintMiB": 23.796875,
+              "peakFootprintMiB": 25.23828125,
+              "peakResidentMiB": 34.19921875,
+              "residentMiB": 34.19921875
+            },
+            "cpuMillisecondsPerOpen": 56.305625,
+            "iterations": 8,
+            "kind": "document",
+            "medianMilliseconds": 56.935885004349984,
+            "size": 8388608
+          },
+          {
+            "accepted": 8,
+            "after": {
+              "footprintMiB": 33.546875,
+              "peakFootprintMiB": 33.546875,
+              "peakResidentMiB": 43.96484375,
+              "residentMiB": 43.96484375
+            },
+            "before": {
+              "footprintMiB": 23.96875,
+              "peakFootprintMiB": 25.2578125,
+              "peakResidentMiB": 34.37890625,
+              "residentMiB": 34.37890625
+            },
+            "cpuMillisecondsPerOpen": 55.2395,
+            "iterations": 8,
+            "kind": "document",
+            "medianMilliseconds": 55.39453399251215,
+            "size": 8388608
+          },
+          {
+            "accepted": 8,
+            "after": {
+              "footprintMiB": 32.7578125,
+              "peakFootprintMiB": 32.7578125,
+              "peakResidentMiB": 43.16796875,
+              "residentMiB": 43.16796875
+            },
+            "before": {
+              "footprintMiB": 24.640625,
+              "peakFootprintMiB": 25.26171875,
+              "peakResidentMiB": 35.04296875,
+              "residentMiB": 35.04296875
+            },
+            "cpuMillisecondsPerOpen": 59.38975000000001,
+            "iterations": 8,
+            "kind": "document",
+            "medianMilliseconds": 58.18005099717993,
+            "size": 8388608
+          }
+        ]
+      },
+      "summary": {
+        "baseline": {
+          "medianMilliseconds": 53.02889400627464,
+          "cpuMillisecondsPerOpen": 52.781124999999996,
+          "peakFootprintMiB": 31.26171875,
+          "residentMiB": 41.56640625
+        },
+        "current": {
+          "medianMilliseconds": 55.39453399251215,
+          "cpuMillisecondsPerOpen": 55.2395,
+          "peakFootprintMiB": 32.7578125,
+          "residentMiB": 43.16796875
+        }
+      }
+    },
+    {
+      "name": "log-16KiB",
+      "kind": "log",
+      "size": 16384,
+      "iterations": 1000,
+      "trials": {
+        "baseline": [
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.87109375,
+              "peakFootprintMiB": 0.87109375,
+              "peakResidentMiB": 2.5234375,
+              "residentMiB": 2.5234375
+            },
+            "before": {
+              "footprintMiB": 0.76171875,
+              "peakFootprintMiB": 0.76171875,
+              "peakResidentMiB": 2.3828125,
+              "residentMiB": 2.3828125
+            },
+            "cpuMillisecondsPerOpen": 0.021744999999999997,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.019136001355946064,
+            "size": 16384
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.859375,
+              "peakFootprintMiB": 0.859375,
+              "peakResidentMiB": 2.51171875,
+              "residentMiB": 2.51171875
+            },
+            "before": {
+              "footprintMiB": 0.75,
+              "peakFootprintMiB": 0.75,
+              "peakResidentMiB": 2.37109375,
+              "residentMiB": 2.37109375
+            },
+            "cpuMillisecondsPerOpen": 0.020012000000000002,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.01837599847931415,
+            "size": 16384
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.83984375,
+              "peakFootprintMiB": 0.83984375,
+              "peakResidentMiB": 2.5,
+              "residentMiB": 2.5
+            },
+            "before": {
+              "footprintMiB": 0.78125,
+              "peakFootprintMiB": 0.78125,
+              "peakResidentMiB": 2.41015625,
+              "residentMiB": 2.41015625
+            },
+            "cpuMillisecondsPerOpen": 0.020719,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.01910599530674517,
+            "size": 16384
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.82421875,
+              "peakFootprintMiB": 0.82421875,
+              "peakResidentMiB": 2.484375,
+              "residentMiB": 2.484375
+            },
+            "before": {
+              "footprintMiB": 0.78515625,
+              "peakFootprintMiB": 0.78515625,
+              "peakResidentMiB": 2.4140625,
+              "residentMiB": 2.4140625
+            },
+            "cpuMillisecondsPerOpen": 0.018608,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.018412989447824657,
+            "size": 16384
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.83203125,
+              "peakFootprintMiB": 0.83203125,
+              "peakResidentMiB": 2.4921875,
+              "residentMiB": 2.4921875
+            },
+            "before": {
+              "footprintMiB": 0.76953125,
+              "peakFootprintMiB": 0.76953125,
+              "peakResidentMiB": 2.3984375,
+              "residentMiB": 2.3984375
+            },
+            "cpuMillisecondsPerOpen": 0.019813,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.018371996702626348,
+            "size": 16384
+          }
+        ],
+        "current": [
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 1.078125,
+              "peakFootprintMiB": 1.078125,
+              "peakResidentMiB": 2.87890625,
+              "residentMiB": 2.87890625
+            },
+            "before": {
+              "footprintMiB": 0.81640625,
+              "peakFootprintMiB": 0.81640625,
+              "peakResidentMiB": 2.59375,
+              "residentMiB": 2.59375
+            },
+            "cpuMillisecondsPerOpen": 0.064076,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.061431986978277564,
+            "size": 16384
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 1.0234375,
+              "peakFootprintMiB": 1.0234375,
+              "peakResidentMiB": 2.82421875,
+              "residentMiB": 2.82421875
+            },
+            "before": {
+              "footprintMiB": 0.79296875,
+              "peakFootprintMiB": 0.79296875,
+              "peakResidentMiB": 2.5703125,
+              "residentMiB": 2.5703125
+            },
+            "cpuMillisecondsPerOpen": 0.061418,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.05853400216437876,
+            "size": 16384
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.96484375,
+              "peakFootprintMiB": 0.96484375,
+              "peakResidentMiB": 2.76171875,
+              "residentMiB": 2.76171875
+            },
+            "before": {
+              "footprintMiB": 0.80078125,
+              "peakFootprintMiB": 0.80078125,
+              "peakResidentMiB": 2.57421875,
+              "residentMiB": 2.57421875
+            },
+            "cpuMillisecondsPerOpen": 0.060059999999999995,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.057761993957683444,
+            "size": 16384
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.96484375,
+              "peakFootprintMiB": 0.96484375,
+              "peakResidentMiB": 2.765625,
+              "residentMiB": 2.765625
+            },
+            "before": {
+              "footprintMiB": 0.80859375,
+              "peakFootprintMiB": 0.80859375,
+              "peakResidentMiB": 2.5859375,
+              "residentMiB": 2.5859375
+            },
+            "cpuMillisecondsPerOpen": 0.057982000000000006,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.05613898974843323,
+            "size": 16384
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 1.0859375,
+              "peakFootprintMiB": 1.0859375,
+              "peakResidentMiB": 2.87890625,
+              "residentMiB": 2.87890625
+            },
+            "before": {
+              "footprintMiB": 0.8046875,
+              "peakFootprintMiB": 0.8046875,
+              "peakResidentMiB": 2.57421875,
+              "residentMiB": 2.57421875
+            },
+            "cpuMillisecondsPerOpen": 0.060813,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.05785800749436021,
+            "size": 16384
+          }
+        ]
+      },
+      "summary": {
+        "baseline": {
+          "medianMilliseconds": 0.018412989447824657,
+          "cpuMillisecondsPerOpen": 0.020012000000000002,
+          "peakFootprintMiB": 0.83984375,
+          "residentMiB": 2.5
+        },
+        "current": {
+          "medianMilliseconds": 0.05785800749436021,
+          "cpuMillisecondsPerOpen": 0.060813,
+          "peakFootprintMiB": 1.0234375,
+          "residentMiB": 2.82421875
+        }
+      }
+    },
+    {
+      "name": "log-1MiB",
+      "kind": "log",
+      "size": 1048576,
+      "iterations": 1000,
+      "trials": {
+        "baseline": [
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.8125,
+              "peakFootprintMiB": 0.8125,
+              "peakResidentMiB": 2.484375,
+              "residentMiB": 2.484375
+            },
+            "before": {
+              "footprintMiB": 0.74609375,
+              "peakFootprintMiB": 0.74609375,
+              "peakResidentMiB": 2.38671875,
+              "residentMiB": 2.38671875
+            },
+            "cpuMillisecondsPerOpen": 0.018973999999999998,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.018215010641142726,
+            "size": 1048576
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.8046875,
+              "peakFootprintMiB": 0.8046875,
+              "peakResidentMiB": 2.47265625,
+              "residentMiB": 2.47265625
+            },
+            "before": {
+              "footprintMiB": 0.7421875,
+              "peakFootprintMiB": 0.7421875,
+              "peakResidentMiB": 2.37890625,
+              "residentMiB": 2.37890625
+            },
+            "cpuMillisecondsPerOpen": 0.017910000000000002,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.01716900442261249,
+            "size": 1048576
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.84765625,
+              "peakFootprintMiB": 0.84765625,
+              "peakResidentMiB": 2.51171875,
+              "residentMiB": 2.51171875
+            },
+            "before": {
+              "footprintMiB": 0.75390625,
+              "peakFootprintMiB": 0.75390625,
+              "peakResidentMiB": 2.38671875,
+              "residentMiB": 2.38671875
+            },
+            "cpuMillisecondsPerOpen": 0.018782,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.01739799336064607,
+            "size": 1048576
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.80859375,
+              "peakFootprintMiB": 0.80859375,
+              "peakResidentMiB": 2.46875,
+              "residentMiB": 2.46875
+            },
+            "before": {
+              "footprintMiB": 0.765625,
+              "peakFootprintMiB": 0.765625,
+              "peakResidentMiB": 2.39453125,
+              "residentMiB": 2.39453125
+            },
+            "cpuMillisecondsPerOpen": 0.017186,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.01677899854257703,
+            "size": 1048576
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.8125,
+              "peakFootprintMiB": 0.8125,
+              "peakResidentMiB": 2.48046875,
+              "residentMiB": 2.48046875
+            },
+            "before": {
+              "footprintMiB": 0.7421875,
+              "peakFootprintMiB": 0.7421875,
+              "peakResidentMiB": 2.37890625,
+              "residentMiB": 2.37890625
+            },
+            "cpuMillisecondsPerOpen": 0.017575,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.0169749982887879,
+            "size": 1048576
+          }
+        ],
+        "current": [
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 1.0390625,
+              "peakFootprintMiB": 1.0390625,
+              "peakResidentMiB": 2.8515625,
+              "residentMiB": 2.8515625
+            },
+            "before": {
+              "footprintMiB": 0.80078125,
+              "peakFootprintMiB": 0.80078125,
+              "peakResidentMiB": 2.58984375,
+              "residentMiB": 2.58984375
+            },
+            "cpuMillisecondsPerOpen": 0.059674000000000005,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.05684499046765268,
+            "size": 1048576
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 1.015625,
+              "peakFootprintMiB": 1.015625,
+              "peakResidentMiB": 2.8203125,
+              "residentMiB": 2.8203125
+            },
+            "before": {
+              "footprintMiB": 0.80078125,
+              "peakFootprintMiB": 0.80078125,
+              "peakResidentMiB": 2.58203125,
+              "residentMiB": 2.58203125
+            },
+            "cpuMillisecondsPerOpen": 0.05692599999999999,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.05635900015477091,
+            "size": 1048576
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 1.0234375,
+              "peakFootprintMiB": 1.0234375,
+              "peakResidentMiB": 2.82421875,
+              "residentMiB": 2.82421875
+            },
+            "before": {
+              "footprintMiB": 0.796875,
+              "peakFootprintMiB": 0.796875,
+              "peakResidentMiB": 2.57421875,
+              "residentMiB": 2.57421875
+            },
+            "cpuMillisecondsPerOpen": 0.059945,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.05671899998560548,
+            "size": 1048576
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.96484375,
+              "peakFootprintMiB": 0.96484375,
+              "peakResidentMiB": 2.76171875,
+              "residentMiB": 2.76171875
+            },
+            "before": {
+              "footprintMiB": 0.80078125,
+              "peakFootprintMiB": 0.80078125,
+              "peakResidentMiB": 2.57421875,
+              "residentMiB": 2.57421875
+            },
+            "cpuMillisecondsPerOpen": 0.058709000000000004,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.05704499199055135,
+            "size": 1048576
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.96875,
+              "peakFootprintMiB": 0.96875,
+              "peakResidentMiB": 2.765625,
+              "residentMiB": 2.765625
+            },
+            "before": {
+              "footprintMiB": 0.79296875,
+              "peakFootprintMiB": 0.79296875,
+              "peakResidentMiB": 2.56640625,
+              "residentMiB": 2.56640625
+            },
+            "cpuMillisecondsPerOpen": 0.057906000000000006,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.056240009143948555,
+            "size": 1048576
+          }
+        ]
+      },
+      "summary": {
+        "baseline": {
+          "medianMilliseconds": 0.01716900442261249,
+          "cpuMillisecondsPerOpen": 0.017910000000000002,
+          "peakFootprintMiB": 0.8125,
+          "residentMiB": 2.48046875
+        },
+        "current": {
+          "medianMilliseconds": 0.05671899998560548,
+          "cpuMillisecondsPerOpen": 0.058709000000000004,
+          "peakFootprintMiB": 1.015625,
+          "residentMiB": 2.8203125
+        }
+      }
+    },
+    {
+      "name": "log-1GiB",
+      "kind": "log",
+      "size": 1073741824,
+      "iterations": 1000,
+      "trials": {
+        "baseline": [
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.87890625,
+              "peakFootprintMiB": 0.87890625,
+              "peakResidentMiB": 2.5390625,
+              "residentMiB": 2.5390625
+            },
+            "before": {
+              "footprintMiB": 0.77734375,
+              "peakFootprintMiB": 0.77734375,
+              "peakResidentMiB": 2.40625,
+              "residentMiB": 2.40625
+            },
+            "cpuMillisecondsPerOpen": 0.018106999999999998,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.01727599010337144,
+            "size": 1073741824
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.859375,
+              "peakFootprintMiB": 0.859375,
+              "peakResidentMiB": 2.52734375,
+              "residentMiB": 2.52734375
+            },
+            "before": {
+              "footprintMiB": 0.7734375,
+              "peakFootprintMiB": 0.7734375,
+              "peakResidentMiB": 2.41015625,
+              "residentMiB": 2.41015625
+            },
+            "cpuMillisecondsPerOpen": 0.017515000000000003,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.01697598781902343,
+            "size": 1073741824
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.8515625,
+              "peakFootprintMiB": 0.8515625,
+              "peakResidentMiB": 2.51953125,
+              "residentMiB": 2.51953125
+            },
+            "before": {
+              "footprintMiB": 0.75390625,
+              "peakFootprintMiB": 0.75390625,
+              "peakResidentMiB": 2.390625,
+              "residentMiB": 2.390625
+            },
+            "cpuMillisecondsPerOpen": 0.01921,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.018121994799003005,
+            "size": 1073741824
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.8046875,
+              "peakFootprintMiB": 0.8046875,
+              "peakResidentMiB": 2.46484375,
+              "residentMiB": 2.46484375
+            },
+            "before": {
+              "footprintMiB": 0.7578125,
+              "peakFootprintMiB": 0.7578125,
+              "peakResidentMiB": 2.38671875,
+              "residentMiB": 2.38671875
+            },
+            "cpuMillisecondsPerOpen": 0.019118,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.018176011508330703,
+            "size": 1073741824
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.85546875,
+              "peakFootprintMiB": 0.85546875,
+              "peakResidentMiB": 2.515625,
+              "residentMiB": 2.515625
+            },
+            "before": {
+              "footprintMiB": 0.78125,
+              "peakFootprintMiB": 0.78125,
+              "peakResidentMiB": 2.41015625,
+              "residentMiB": 2.41015625
+            },
+            "cpuMillisecondsPerOpen": 0.01892,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.018057995475828648,
+            "size": 1073741824
+          }
+        ],
+        "current": [
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 1.1328125,
+              "peakFootprintMiB": 1.1328125,
+              "peakResidentMiB": 2.93359375,
+              "residentMiB": 2.93359375
+            },
+            "before": {
+              "footprintMiB": 0.77734375,
+              "peakFootprintMiB": 0.77734375,
+              "peakResidentMiB": 2.5546875,
+              "residentMiB": 2.5546875
+            },
+            "cpuMillisecondsPerOpen": 0.059545,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.056634991778992116,
+            "size": 1073741824
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.99609375,
+              "peakFootprintMiB": 0.99609375,
+              "peakResidentMiB": 2.7890625,
+              "residentMiB": 2.7890625
+            },
+            "before": {
+              "footprintMiB": 0.76171875,
+              "peakFootprintMiB": 0.76171875,
+              "peakResidentMiB": 2.53125,
+              "residentMiB": 2.53125
+            },
+            "cpuMillisecondsPerOpen": 0.057801000000000005,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.056321994634345174,
+            "size": 1073741824
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 1.08984375,
+              "peakFootprintMiB": 1.08984375,
+              "peakResidentMiB": 2.8828125,
+              "residentMiB": 2.8828125
+            },
+            "before": {
+              "footprintMiB": 0.796875,
+              "peakFootprintMiB": 0.796875,
+              "peakResidentMiB": 2.56640625,
+              "residentMiB": 2.56640625
+            },
+            "cpuMillisecondsPerOpen": 0.060718999999999995,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.05823199171572924,
+            "size": 1073741824
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.98046875,
+              "peakFootprintMiB": 0.98046875,
+              "peakResidentMiB": 2.7890625,
+              "residentMiB": 2.7890625
+            },
+            "before": {
+              "footprintMiB": 0.8203125,
+              "peakFootprintMiB": 0.8203125,
+              "peakResidentMiB": 2.60546875,
+              "residentMiB": 2.60546875
+            },
+            "cpuMillisecondsPerOpen": 0.06031100000000001,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.05774600140284747,
+            "size": 1073741824
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 1.109375,
+              "peakFootprintMiB": 1.109375,
+              "peakResidentMiB": 2.91015625,
+              "residentMiB": 2.91015625
+            },
+            "before": {
+              "footprintMiB": 0.8046875,
+              "peakFootprintMiB": 0.8046875,
+              "peakResidentMiB": 2.58203125,
+              "residentMiB": 2.58203125
+            },
+            "cpuMillisecondsPerOpen": 0.061986,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.057976008974947035,
+            "size": 1073741824
+          }
+        ]
+      },
+      "summary": {
+        "baseline": {
+          "medianMilliseconds": 0.018057995475828648,
+          "cpuMillisecondsPerOpen": 0.01892,
+          "peakFootprintMiB": 0.85546875,
+          "residentMiB": 2.51953125
+        },
+        "current": {
+          "medianMilliseconds": 0.05774600140284747,
+          "cpuMillisecondsPerOpen": 0.06031100000000001,
+          "peakFootprintMiB": 1.08984375,
+          "residentMiB": 2.8828125
+        }
+      }
+    },
+    {
+      "name": "binary-8MiB",
+      "kind": "document",
+      "size": 8388608,
+      "iterations": 8,
+      "trials": {
+        "baseline": [
+          {
+            "accepted": 8,
+            "after": {
+              "footprintMiB": 32.70703125,
+              "peakFootprintMiB": 32.70703125,
+              "peakResidentMiB": 43.01171875,
+              "residentMiB": 43.01171875
+            },
+            "before": {
+              "footprintMiB": 22.4921875,
+              "peakFootprintMiB": 25.27734375,
+              "peakResidentMiB": 32.7890625,
+              "residentMiB": 32.7890625
+            },
+            "cpuMillisecondsPerOpen": 54.513,
+            "iterations": 8,
+            "kind": "document",
+            "medianMilliseconds": 55.746417987393215,
+            "size": 8388608
+          },
+          {
+            "accepted": 8,
+            "after": {
+              "footprintMiB": 36.51953125,
+              "peakFootprintMiB": 40.0078125,
+              "peakResidentMiB": 54.78125,
+              "residentMiB": 54.78125
+            },
+            "before": {
+              "footprintMiB": 23.7421875,
+              "peakFootprintMiB": 25.27734375,
+              "peakResidentMiB": 34.0390625,
+              "residentMiB": 34.0390625
+            },
+            "cpuMillisecondsPerOpen": 53.821875000000006,
+            "iterations": 8,
+            "kind": "document",
+            "medianMilliseconds": 53.02208199282177,
+            "size": 8388608
+          },
+          {
+            "accepted": 8,
+            "after": {
+              "footprintMiB": 35.26953125,
+              "peakFootprintMiB": 35.26953125,
+              "peakResidentMiB": 61.48046875,
+              "residentMiB": 61.48046875
+            },
+            "before": {
+              "footprintMiB": 23.81640625,
+              "peakFootprintMiB": 25.25,
+              "peakResidentMiB": 42.0546875,
+              "residentMiB": 42.0546875
+            },
+            "cpuMillisecondsPerOpen": 54.169374999999995,
+            "iterations": 8,
+            "kind": "document",
+            "medianMilliseconds": 55.8280300028855,
+            "size": 8388608
+          },
+          {
+            "accepted": 8,
+            "after": {
+              "footprintMiB": 29.34375,
+              "peakFootprintMiB": 32.3984375,
+              "peakResidentMiB": 47.546875,
+              "residentMiB": 47.546875
+            },
+            "before": {
+              "footprintMiB": 23.9453125,
+              "peakFootprintMiB": 25.25390625,
+              "peakResidentMiB": 34.2421875,
+              "residentMiB": 34.2421875
+            },
+            "cpuMillisecondsPerOpen": 53.55875,
+            "iterations": 8,
+            "kind": "document",
+            "medianMilliseconds": 53.82582699530758,
+            "size": 8388608
+          },
+          {
+            "accepted": 8,
+            "after": {
+              "footprintMiB": 36.10546875,
+              "peakFootprintMiB": 42.78125,
+              "peakResidentMiB": 62.30859375,
+              "residentMiB": 62.30859375
+            },
+            "before": {
+              "footprintMiB": 28.1171875,
+              "peakFootprintMiB": 28.1171875,
+              "peakResidentMiB": 38.41796875,
+              "residentMiB": 38.41796875
+            },
+            "cpuMillisecondsPerOpen": 49.565,
+            "iterations": 8,
+            "kind": "document",
+            "medianMilliseconds": 49.992950007435866,
+            "size": 8388608
+          }
+        ],
+        "current": [
+          {
+            "accepted": 0,
+            "after": {
+              "footprintMiB": 8.8125,
+              "peakFootprintMiB": 8.8125,
+              "peakResidentMiB": 10.65234375,
+              "residentMiB": 10.65234375
+            },
+            "before": {
+              "footprintMiB": 8.78125,
+              "peakFootprintMiB": 8.78125,
+              "peakResidentMiB": 10.59375,
+              "residentMiB": 10.59375
+            },
+            "cpuMillisecondsPerOpen": 1.7573750000000004,
+            "iterations": 8,
+            "kind": "document",
+            "medianMilliseconds": 1.6947490075835958,
+            "size": 8388608
+          },
+          {
+            "accepted": 0,
+            "after": {
+              "footprintMiB": 8.8125,
+              "peakFootprintMiB": 8.8125,
+              "peakResidentMiB": 10.6484375,
+              "residentMiB": 10.6484375
+            },
+            "before": {
+              "footprintMiB": 8.80859375,
+              "peakFootprintMiB": 8.80859375,
+              "peakResidentMiB": 10.6171875,
+              "residentMiB": 10.6171875
+            },
+            "cpuMillisecondsPerOpen": 1.4032499999999999,
+            "iterations": 8,
+            "kind": "document",
+            "medianMilliseconds": 1.3910069974372163,
+            "size": 8388608
+          },
+          {
+            "accepted": 0,
+            "after": {
+              "footprintMiB": 8.7734375,
+              "peakFootprintMiB": 8.7734375,
+              "peakResidentMiB": 10.609375,
+              "residentMiB": 10.609375
+            },
+            "before": {
+              "footprintMiB": 8.76953125,
+              "peakFootprintMiB": 8.76953125,
+              "peakResidentMiB": 10.578125,
+              "residentMiB": 10.578125
+            },
+            "cpuMillisecondsPerOpen": 1.402375,
+            "iterations": 8,
+            "kind": "document",
+            "medianMilliseconds": 1.3918670010752976,
+            "size": 8388608
+          },
+          {
+            "accepted": 0,
+            "after": {
+              "footprintMiB": 8.81640625,
+              "peakFootprintMiB": 8.81640625,
+              "peakResidentMiB": 10.66015625,
+              "residentMiB": 10.66015625
+            },
+            "before": {
+              "footprintMiB": 8.80078125,
+              "peakFootprintMiB": 8.80078125,
+              "peakResidentMiB": 10.6171875,
+              "residentMiB": 10.6171875
+            },
+            "cpuMillisecondsPerOpen": 1.66225,
+            "iterations": 8,
+            "kind": "document",
+            "medianMilliseconds": 1.7766800010576844,
+            "size": 8388608
+          },
+          {
+            "accepted": 0,
+            "after": {
+              "footprintMiB": 8.78125,
+              "peakFootprintMiB": 8.78125,
+              "peakResidentMiB": 10.6171875,
+              "residentMiB": 10.6171875
+            },
+            "before": {
+              "footprintMiB": 8.7734375,
+              "peakFootprintMiB": 8.7734375,
+              "peakResidentMiB": 10.58203125,
+              "residentMiB": 10.58203125
+            },
+            "cpuMillisecondsPerOpen": 1.5130000000000001,
+            "iterations": 8,
+            "kind": "document",
+            "medianMilliseconds": 1.5251909935614094,
+            "size": 8388608
+          }
+        ]
+      },
+      "summary": {
+        "baseline": {
+          "medianMilliseconds": 53.82582699530758,
+          "cpuMillisecondsPerOpen": 53.821875000000006,
+          "peakFootprintMiB": 35.26953125,
+          "residentMiB": 54.78125
+        },
+        "current": {
+          "medianMilliseconds": 1.5251909935614094,
+          "cpuMillisecondsPerOpen": 1.5130000000000001,
+          "peakFootprintMiB": 8.8125,
+          "residentMiB": 10.6484375
+        }
+      }
+    },
+    {
+      "name": "binary-1GiB",
+      "kind": "log",
+      "size": 1073741824,
+      "iterations": 1000,
+      "trials": {
+        "baseline": [
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.78125,
+              "peakFootprintMiB": 0.78125,
+              "peakResidentMiB": 2.44140625,
+              "residentMiB": 2.44140625
+            },
+            "before": {
+              "footprintMiB": 0.7578125,
+              "peakFootprintMiB": 0.7578125,
+              "peakResidentMiB": 2.38671875,
+              "residentMiB": 2.38671875
+            },
+            "cpuMillisecondsPerOpen": 0.019332000000000002,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.019033992430195212,
+            "size": 1073741824
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.8046875,
+              "peakFootprintMiB": 0.8046875,
+              "peakResidentMiB": 2.46484375,
+              "residentMiB": 2.46484375
+            },
+            "before": {
+              "footprintMiB": 0.78515625,
+              "peakFootprintMiB": 0.78515625,
+              "peakResidentMiB": 2.4140625,
+              "residentMiB": 2.4140625
+            },
+            "cpuMillisecondsPerOpen": 0.019622999999999998,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.019027997041121125,
+            "size": 1073741824
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.8125,
+              "peakFootprintMiB": 0.8125,
+              "peakResidentMiB": 2.47265625,
+              "residentMiB": 2.47265625
+            },
+            "before": {
+              "footprintMiB": 0.72265625,
+              "peakFootprintMiB": 0.72265625,
+              "peakResidentMiB": 2.3515625,
+              "residentMiB": 2.3515625
+            },
+            "cpuMillisecondsPerOpen": 0.017889000000000002,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.01706001057755202,
+            "size": 1073741824
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.80859375,
+              "peakFootprintMiB": 0.80859375,
+              "peakResidentMiB": 2.47265625,
+              "residentMiB": 2.47265625
+            },
+            "before": {
+              "footprintMiB": 0.75390625,
+              "peakFootprintMiB": 0.75390625,
+              "peakResidentMiB": 2.38671875,
+              "residentMiB": 2.38671875
+            },
+            "cpuMillisecondsPerOpen": 0.017179,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.016883001080714166,
+            "size": 1073741824
+          },
+          {
+            "accepted": 1000,
+            "after": {
+              "footprintMiB": 0.78125,
+              "peakFootprintMiB": 0.78125,
+              "peakResidentMiB": 2.44140625,
+              "residentMiB": 2.44140625
+            },
+            "before": {
+              "footprintMiB": 0.7578125,
+              "peakFootprintMiB": 0.7578125,
+              "peakResidentMiB": 2.38671875,
+              "residentMiB": 2.38671875
+            },
+            "cpuMillisecondsPerOpen": 0.016969,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.016655001672916114,
+            "size": 1073741824
+          }
+        ],
+        "current": [
+          {
+            "accepted": 0,
+            "after": {
+              "footprintMiB": 0.8671875,
+              "peakFootprintMiB": 0.8671875,
+              "peakResidentMiB": 2.6796875,
+              "residentMiB": 2.6796875
+            },
+            "before": {
+              "footprintMiB": 0.75,
+              "peakFootprintMiB": 0.75,
+              "peakResidentMiB": 2.5390625,
+              "residentMiB": 2.5390625
+            },
+            "cpuMillisecondsPerOpen": 0.021773,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.021041007130406797,
+            "size": 1073741824
+          },
+          {
+            "accepted": 0,
+            "after": {
+              "footprintMiB": 0.91015625,
+              "peakFootprintMiB": 0.91015625,
+              "peakResidentMiB": 2.7265625,
+              "residentMiB": 2.7265625
+            },
+            "before": {
+              "footprintMiB": 0.765625,
+              "peakFootprintMiB": 0.765625,
+              "peakResidentMiB": 2.55859375,
+              "residentMiB": 2.55859375
+            },
+            "cpuMillisecondsPerOpen": 0.020891,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.020505001884885132,
+            "size": 1073741824
+          },
+          {
+            "accepted": 0,
+            "after": {
+              "footprintMiB": 0.95703125,
+              "peakFootprintMiB": 0.95703125,
+              "peakResidentMiB": 2.77734375,
+              "residentMiB": 2.77734375
+            },
+            "before": {
+              "footprintMiB": 0.765625,
+              "peakFootprintMiB": 0.765625,
+              "peakResidentMiB": 2.5625,
+              "residentMiB": 2.5625
+            },
+            "cpuMillisecondsPerOpen": 0.020763999999999998,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.02026800939347595,
+            "size": 1073741824
+          },
+          {
+            "accepted": 0,
+            "after": {
+              "footprintMiB": 0.87890625,
+              "peakFootprintMiB": 0.87890625,
+              "peakResidentMiB": 2.69140625,
+              "residentMiB": 2.69140625
+            },
+            "before": {
+              "footprintMiB": 0.80859375,
+              "peakFootprintMiB": 0.80859375,
+              "peakResidentMiB": 2.59765625,
+              "residentMiB": 2.59765625
+            },
+            "cpuMillisecondsPerOpen": 0.020766999999999997,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.020338993635959923,
+            "size": 1073741824
+          },
+          {
+            "accepted": 0,
+            "after": {
+              "footprintMiB": 0.8984375,
+              "peakFootprintMiB": 0.8984375,
+              "peakResidentMiB": 2.7109375,
+              "residentMiB": 2.7109375
+            },
+            "before": {
+              "footprintMiB": 0.77734375,
+              "peakFootprintMiB": 0.77734375,
+              "peakResidentMiB": 2.56640625,
+              "residentMiB": 2.56640625
+            },
+            "cpuMillisecondsPerOpen": 0.020678000000000002,
+            "iterations": 1000,
+            "kind": "log",
+            "medianMilliseconds": 0.020099003450013697,
+            "size": 1073741824
+          }
+        ]
+      },
+      "summary": {
+        "baseline": {
+          "medianMilliseconds": 0.01706001057755202,
+          "cpuMillisecondsPerOpen": 0.017889000000000002,
+          "peakFootprintMiB": 0.8046875,
+          "residentMiB": 2.46484375
+        },
+        "current": {
+          "medianMilliseconds": 0.020338993635959923,
+          "cpuMillisecondsPerOpen": 0.020766999999999997,
+          "peakFootprintMiB": 0.8984375,
+          "residentMiB": 2.7109375
+        }
+      }
+    }
+  ]
+}

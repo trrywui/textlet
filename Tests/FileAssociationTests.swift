@@ -25,6 +25,11 @@ func runFileAssociationTests() throws {
     try expect(documentTypes.contains { ($0["CFBundleTypeRole"] as? String) == "Editor"
         && ($0["LSHandlerRank"] as? String) == "Alternate" },
                "document declaration uses Editor and Alternate")
+    try expect(documentTypes.contains { ($0["LSItemContentTypes"] as? [String])?.contains("public.data") == true
+        && ($0["CFBundleTypeRole"] as? String) == "Editor"
+        && ($0["LSHandlerRank"] as? String) == "Alternate" },
+               "unknown file types are declared as alternate openers without entering the default-association catalog")
+    try expect(contentTypes.contains("public.text"), "known text subtypes are offered as open-with candidates")
     print("All file association tests passed.")
 }
 

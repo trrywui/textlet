@@ -1,0 +1,67 @@
+{
+  "baselineTarget": "/Applications/Textlet.app",
+  "currentTarget": "build/Textlet.app",
+  "scope": "LSCanURLAcceptURL with acceptDefault and NSWorkspace candidates; Finder UI is not automated",
+  "files": [
+    {
+      "name": "document.txt",
+      "type": "public.plain-text",
+      "baselineAccepted": true,
+      "currentAccepted": true,
+      "status": 0,
+      "currentInCandidates": true,
+      "defaultBefore": "/Applications/Textlet.app",
+      "defaultAfter": "/Applications/Textlet.app"
+    },
+    {
+      "name": "document.xml",
+      "type": "public.xml",
+      "baselineAccepted": false,
+      "currentAccepted": true,
+      "status": 0,
+      "currentInCandidates": true,
+      "defaultBefore": "/Applications/Sublime Text.app",
+      "defaultAfter": "/Applications/Sublime Text.app"
+    },
+    {
+      "name": "document.csv",
+      "type": "public.comma-separated-values-text",
+      "baselineAccepted": true,
+      "currentAccepted": true,
+      "status": 0,
+      "currentInCandidates": true,
+      "defaultBefore": "/Applications/wpsoffice.app",
+      "defaultAfter": "/Applications/wpsoffice.app"
+    },
+    {
+      "name": "document.textletprobe",
+      "type": "dyn.ah62d4rv4ge81k3p2sv0gn7dusm10e3k",
+      "baselineAccepted": false,
+      "currentAccepted": true,
+      "status": 0,
+      "currentInCandidates": false,
+      "defaultBefore": "",
+      "defaultAfter": ""
+    },
+    {
+      "name": "Dockerfile",
+      "type": "public.data",
+      "baselineAccepted": false,
+      "currentAccepted": true,
+      "status": 0,
+      "currentInCandidates": true,
+      "defaultBefore": "/System/Applications/TextEdit.app",
+      "defaultAfter": "/System/Applications/TextEdit.app"
+    },
+    {
+      "name": ".env",
+      "type": "public.data",
+      "baselineAccepted": false,
+      "currentAccepted": true,
+      "status": 0,
+      "currentInCandidates": true,
+      "defaultBefore": "/System/Applications/TextEdit.app",
+      "defaultAfter": "/System/Applications/TextEdit.app"
+    }
+  ]
+}

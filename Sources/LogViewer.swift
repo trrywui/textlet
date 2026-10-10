@@ -80,7 +80,8 @@ final class LogViewer: NSObject, NSSearchFieldDelegate {
         let savedOffset = note.record.logOffset ?? 0
         let savedScroll = note.record.scrollY
         do {
-            if let cached = note.logFile, let cachedIndex = note.logIndex, (try? cached.validate()) != nil {
+            let cachedFile = note.logFile.flatMap { (try? $0.validate()) != nil ? $0 : nil }
+            if let cached = cachedFile, let cachedIndex = note.logIndex {
                 file = cached; index = cachedIndex
                 navigation.forEach { $0.isEnabled = true }; slider.isEnabled = true; searchButton.isEnabled = true
                 app.window.makeFirstResponder(app.editor)
@@ -89,7 +90,7 @@ final class LogViewer: NSObject, NSSearchFieldDelegate {
                 app.window.makeFirstResponder(app.editor)
                 return
             }
-            let file = try LogFile(url: URL(fileURLWithPath: note.record.logPath!))
+            let file = try cachedFile ?? LogFile(url: URL(fileURLWithPath: note.record.logPath!))
             self.file = file
             try display(at: 0)
             // Keep the saved position while the index is being built.

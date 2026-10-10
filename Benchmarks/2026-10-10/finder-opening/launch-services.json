@@ -1,0 +1,47 @@
+{
+  "checks": {
+    "coldFileDelivered": true,
+    "defaultApplicationsPreserved": true,
+    "defaultFilterAccepts-.env": true,
+    "defaultFilterAccepts-cold.textletprobe": true,
+    "defaultFilterAccepts-Dockerfile": true,
+    "defaultFilterAccepts-plain.txt": true,
+    "defaultFilterAccepts-table.csv": true,
+    "defaultFilterAccepts-warm.xml": true,
+    "duplicateReusesTab": true,
+    "extensionlessFileDelivered": true,
+    "warmFileDelivered": true,
+    "warmRequestReusesProcess": true
+  },
+  "defaultsAfter": [
+    "",
+    "/Applications/Sublime Text.app",
+    "/System/Applications/TextEdit.app",
+    "/Applications/wpsoffice.app",
+    "/System/Applications/TextEdit.app",
+    "/Applications/Textlet.app"
+  ],
+  "defaultsBefore": [
+    "",
+    "/Applications/Sublime Text.app",
+    "/System/Applications/TextEdit.app",
+    "/Applications/wpsoffice.app",
+    "/System/Applications/TextEdit.app",
+    "/Applications/Textlet.app"
+  ],
+  "fixtureNames": [
+    "cold.textletprobe",
+    "warm.xml",
+    "Dockerfile",
+    "table.csv",
+    ".env",
+    "plain.txt"
+  ],
+  "isolatedBundleIdentifier": "io.github.trrywui.textlet.finder-probe.2d6a7d59-00cc-4703-bd74-e190f7c1e817",
+  "openedPaths": [
+    "cold.textletprobe",
+    "warm.xml",
+    "Dockerfile"
+  ],
+  "scope": "real Launch Services cold/warm file events in an isolated app copy; Finder menu visuals are not automated"
+}

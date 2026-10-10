@@ -45,6 +45,8 @@ SQL 识别常用关键词、引号文本、数字和注释；YAML 识别常用�
 
 ## 编辑与查看
 
+- **Finder 临时打开。** 右键“打开方式 → Textlet”或“打开方式 → 其它…”选择 Textlet.app，可打开 `.xml`、`.csv`、自定义扩展名、`Dockerfile`、`.env` 等纯文本。未知类型是否直接出现在一级菜单由 macOS 决定，可使用“其它…”选择。临时打开不会主动改变默认应用；应用内“文件关联”仍保留固定列表。
+- **按内容检查。** 图片、压缩包、PDF 等可识别的二进制文件提示“此文件不是受支持的文本文件”，不新增标签。只检查开头最多 16KiB，因此可能漏识别后部才出现的二进制内容；普通文本仍执行原有完整无损解码。检测和资源测量见 [Finder 打开验证报告](docs/Finder临时打开验证-2026-10-10.md)。
 - **JSON 格式化：`⌘⇧J`。** 有选区时格式化选区，否则格式化全文；两空格缩进，一次撤销即可还原。保留键顺序、重复键、数字原始表示和字符串转义；非法 JSON 提示错误，不修改原文。单次输入限 2MiB、输出限 8MiB、嵌套限 128 层，避免异常输入撑大内存。
 - **行号。** 仅绘制可见逻辑行；自动折行不会增加行号。小文本支持 LF、CRLF、CR 和 Unicode 换行。大日志按 LF/CRLF/CR 计数，显示文件中的绝对行号。
 - **大日志分段查看。** 超过 8MiB 的文件自动进入只读模式；小文件也可通过“文件 → 以只读日志模式打开”使用。每段约 48KiB，后台以 256KiB 缓冲扫描并建立稀疏行号索引，不把整个文件读进编辑器或复制到草稿。
@@ -222,6 +224,19 @@ python3 scripts/make-log-fixtures.py test-output/textlet-fixtures
 ```
 
 覆盖已保存文件、已修改文件、原文件丢失且未修改、原文件丢失且已修改、未保存草稿五种情况，并检查退出不会改写原文件。文件读写自测另覆盖编码、BOM、换行、可执行权限及外部修改检测。
+
+Finder 临时打开的针对性检查（GUI 检查须用新的隔离会话）：
+
+```sh
+./build/Textlet.app/Contents/MacOS/textlet --text-file-test
+./build/Textlet.app/Contents/MacOS/textlet \
+  --data-dir test-output/textlet-opening-session \
+  --opening-check test-output/textlet-opening.json
+xcrun swift -module-cache-path build/module-cache \
+  scripts/check-finder-opening.swift build/Textlet.app test-output/finder-opening
+```
+
+最后一项复制应用并使用独立 Bundle ID 和草稿目录，通过 Launch Services 检查真实冷启动、运行中打开、重复文件及默认应用保持，结束后退出并注销测试副本。它不自动点击 Finder 的菜单和“其它…”面板。可用 `--text-opening-benchmark <output.json> --opening-fixture <path> --opening-kind document|log --opening-iterations 100` 单独测量读取器；该测量不含窗口绘制和原有日志全文索引。
 
 
 ## 可选的独立实验构建

@@ -107,6 +107,7 @@ enum DocumentFile {
     static func open(_ source: URL) throws -> Note {
         let url = canonical(source)
         let data = try Data(contentsOf: url)
+        let content = try TextFileContent.inspect(data)
         let markers: [([UInt8], String.Encoding)] = [([0xff, 0xfe, 0, 0], .utf32LittleEndian),
             ([0, 0, 0xfe, 0xff], .utf32BigEndian), ([0xef, 0xbb, 0xbf], .utf8),
             ([0xff, 0xfe], .utf16LittleEndian), ([0xfe, 0xff], .utf16BigEndian)]
@@ -120,7 +121,25 @@ enum DocumentFile {
             let raw = NSString.stringEncoding(for: data, encodingOptions: nil, convertedString: &decoded, usedLossyConversion: &lossy)
             if raw != 0 && !lossy.boolValue { encoding = String.Encoding(rawValue: raw); text = decoded as String? }
         }
-        guard let text else { throw CocoaError(.fileReadInapplicableStringEncoding) }
+        guard let text else {
+            try content.validate(encoding: .utf8)
+            throw CocoaError(.fileReadInapplicableStringEncoding)
+        }
+        try content.validate(encoding: encoding)
+        // Foundation can report generic UTF-32 for unmarked input. Preserve the
+        // source byte order explicitly so saving does not add an implicit BOM.
+        if marker == nil && encoding == .utf32 {
+            encoding = .utf32LittleEndian
+            for (index, scalar) in text.unicodeScalars.prefix(min(data.count, TextFileContent.sampleLimit) / 4).enumerated() {
+                let i = index * 4
+                let little = UInt32(data[i]) | UInt32(data[i + 1]) << 8 | UInt32(data[i + 2]) << 16 | UInt32(data[i + 3]) << 24
+                let big = UInt32(data[i]) << 24 | UInt32(data[i + 1]) << 16 | UInt32(data[i + 2]) << 8 | UInt32(data[i + 3])
+                if little != big {
+                    encoding = little == scalar.value ? .utf32LittleEndian : .utf32BigEndian
+                    break
+                }
+            }
+        }
         let note = Note(name: url.lastPathComponent, text: text)
         note.record.file = reference(url: url, text: text, data: data, encoding: encoding, bom: bom)
         note.record.fileModified = false

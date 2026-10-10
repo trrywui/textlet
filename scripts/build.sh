@@ -13,4 +13,6 @@ if [ ! -f "$PROJECT_DIR/AppIcon.icns" ]; then
 fi
 cp "$PROJECT_DIR/AppIcon.icns" "$APP_PATH/Contents/Resources/AppIcon.icns"
 codesign --force --sign - "$APP_PATH"
+# Let Launch Services notice updated document claims when an existing bundle is rebuilt.
+touch "$APP_PATH"
 printf 'Built: %s\n' "$APP_PATH"

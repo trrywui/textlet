@@ -36,6 +36,13 @@
         <string>public.conf</string>
       </array>
     </dict>
+    <dict>
+      <!-- Opening a file is separate from offering to become its default application. -->
+      <key>CFBundleTypeName</key><string>Textlet 文本打开</string>
+      <key>CFBundleTypeRole</key><string>Editor</string>
+      <key>LSHandlerRank</key><string>Alternate</string>
+      <key>LSItemContentTypes</key><array><string>public.text</string><string>public.data</string></array>
+    </dict>
   </array>
   <!-- Imported declarations describe existing public text formats; Textlet does not own them. -->
   <key>UTImportedTypeDeclarations</key>

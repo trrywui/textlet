@@ -295,6 +295,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
             if let output = Self.argument("--rows-check") { runRowsIntegrationCheck(app: self, output: URL(fileURLWithPath: output)) }
 #endif
             if let output = Self.argument("--lifecycle-check") { runLifecycleCheck(app: self, output: URL(fileURLWithPath: output)) }
+            if let output = Self.argument("--opening-check") { runOpeningCheck(app: self, output: URL(fileURLWithPath: output)) }
             if let output = Self.argument("--file-session-check") { runFileSessionCheck(app: self, output: URL(fileURLWithPath: output)) }
             if let output = Self.argument("--window-check") { runWindowCheck(app: self, output: URL(fileURLWithPath: output)) }
             if let output = Self.argument("--appearance-check") { runAppearanceCheck(app: self, output: URL(fileURLWithPath: output)) }
@@ -853,10 +854,14 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
             try selectNote(existing.record.id)
             return saveSession()
         }
-        let note = try isLog
-            ? Note(record: NoteRecord(id: UUID(), name: url.lastPathComponent,
+        let note: Note
+        if isLog {
+            // Reject unsupported content before changing tabs or starting the index.
+            let file = try LogFile(url: url)
+            note = Note(record: NoteRecord(id: UUID(), name: url.lastPathComponent,
                 draftFile: "", selection: 0, scrollY: 0, logPath: url.path, logOffset: 0))
-            : DocumentFile.open(url)
+            note.logFile = file
+        } else { note = try DocumentFile.open(url) }
         notes.append(note)
         do {
             try selectNote(note.record.id)

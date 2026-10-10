@@ -79,4 +79,5 @@ func runSelfTests() throws {
     try runFileWatchTests(root: root.appendingPathComponent("file-watch"))
     try runFeatureTests(root: root.appendingPathComponent("features"))
     try runFileAssociationTests()
+    try runTextFileTests()
 }
