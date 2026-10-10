@@ -145,11 +145,19 @@ final class NoteTab: NSView {
     let label = NSTextField(labelWithString: "")
     private let close = NSButton()
     private var middleMousePressed = false
-    var selected = false { didSet { guard selected != oldValue else { return }; needsDisplay = true; label.textColor = selected ? Theme.text : Theme.muted } }
+    var selected = false {
+        didSet {
+            guard selected != oldValue else { return }
+            label.textColor = selected ? Theme.text : Theme.muted
+            needsDisplay = true
+        }
+    }
     init(note: Note) {
         id = note.record.id
         super.init(frame: NSRect(x: 0, y: 0, width: 160, height: 32))
         translatesAutoresizingMaskIntoConstraints = false
+        wantsLayer = true
+        layerContentsRedrawPolicy = .onSetNeedsDisplay
         label.stringValue = note.displayName
         label.textColor = Theme.muted
         label.font = .systemFont(ofSize: 12, weight: .medium)
@@ -219,8 +227,12 @@ final class NoteTab: NSView {
     }
     override func accessibilityPerformPress() -> Bool { onSelect?(); return true }
     @objc private func closeNote() { onClose?() }
+    override var isOpaque: Bool { true }
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
+        // 清除自身缓存中的旧高亮，不依赖滚动视图或父视图重绘背景。
+        Theme.chrome.setFill()
+        bounds.intersection(dirtyRect).fill()
         if selected {
             Theme.canvas.setFill()
             NSBezierPath(roundedRect: bounds.insetBy(dx: 1, dy: 1), xRadius: 7, yRadius: 7).fill()
@@ -248,9 +260,6 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
     var switching = false
     var saveTimer: Timer?
     var pendingOpen: [String] = []
-    var benchmark: Benchmark?
-    var featureBenchmark: FeatureBenchmark?
-    var interactionBenchmark: InteractionBenchmark?
     var fileAssociationWindowController: FileAssociationWindowController?
     var lastSaveError: String?
     var restoredWindowFrame: NSRect?
@@ -289,32 +298,6 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
             if let notice = store.recoveryNotice { showMessage("已恢复草稿", notice) }
             for path in pendingOpen { openText(URL(fileURLWithPath: path)) }
             pendingOpen.removeAll()
-            if let output = Self.argument("--rendering-comparison") { runRenderingComparison(app: self, output: URL(fileURLWithPath: output)) }
-            if let output = Self.argument("--real-usage-benchmark") { runRealUsageBenchmark(app: self, output: URL(fileURLWithPath: output)) }
-#if ROW_RENDERER
-            if let output = Self.argument("--rows-check") { runRowsIntegrationCheck(app: self, output: URL(fileURLWithPath: output)) }
-#endif
-            if let output = Self.argument("--lifecycle-check") { runLifecycleCheck(app: self, output: URL(fileURLWithPath: output)) }
-            if let output = Self.argument("--opening-check") { runOpeningCheck(app: self, output: URL(fileURLWithPath: output)) }
-            if let output = Self.argument("--file-session-check") { runFileSessionCheck(app: self, output: URL(fileURLWithPath: output)) }
-            if let output = Self.argument("--window-check") { runWindowCheck(app: self, output: URL(fileURLWithPath: output)) }
-            if let output = Self.argument("--appearance-check") { runAppearanceCheck(app: self, output: URL(fileURLWithPath: output)) }
-            if let output = Self.argument("--benchmark") {
-                benchmark = Benchmark(app: self, output: URL(fileURLWithPath: output))
-                benchmark?.start()
-            }
-            if let expected = Self.argument("--restore-check") {
-                checkRestoredUI(app: self, expectedURL: URL(fileURLWithPath: expected))
-            }
-            if let output = Self.argument("--feature-benchmark"), let fixture = Self.argument("--log-fixture") {
-                featureBenchmark = FeatureBenchmark(app: self, output: URL(fileURLWithPath: output), fixture: URL(fileURLWithPath: fixture))
-                featureBenchmark?.start()
-            }
-            if let output = Self.argument("--interaction-benchmark") {
-                interactionBenchmark = InteractionBenchmark(app: self, output: URL(fileURLWithPath: output))
-                interactionBenchmark?.start()
-            }
-            if let expected = Self.argument("--feature-restore") { checkFeatureRestore(app: self, path: expected) }
         } catch {
             showMessage("Textlet 无法读取草稿", error.localizedDescription)
             NSApp.terminate(nil)

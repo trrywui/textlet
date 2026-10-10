@@ -1,10 +1,15 @@
 # Textlet
 
-面向 macOS 14 Intel 的原生纯文本编辑器。Swift + AppKit，无 WebView、Electron、第三方运行时和语言服务器。当前版本为 **0.5.1（build 8）**，默认采用已试用的 CPU/内存平衡绘制实现。50MB 不是所有场景下的硬上限，性能取舍见 [平衡报告](docs/逐行绘制CPU内存平衡-2026-09-28.md)。
+面向 macOS 14 Intel 的原生纯文本编辑器。Swift + AppKit，无 WebView、Electron、第三方运行时和语言服务器。当前版本为 **0.5.2**，默认采用已试用的 CPU/内存平衡绘制实现。50MB 不是所有场景下的硬上限，性能取舍见 [平衡报告](docs/逐行绘制CPU内存平衡-2026-09-28.md)。
 
 ## 运行
 
 运行 `bash scripts/build.sh`，得到正式项目的 `build/Textlet.app`，可拖进“应用程序”目录。本机构建采用临时签名，尚未公证。安装前退出旧 Textlet，避免同一草稿目录被两个进程使用。
+
+## 0.5.2 修复与构建整理
+
+- 标签自行绘制完整背景并明确设置重绘策略，清除切换后可能残留的旧高亮；补充 A/B/C 连续切换、缓存重绘、局部重绘和正文同步回归测试。用户报告的原始偶现触发条件仍需实际使用确认。
+- 正式构建只包含应用源码，测试使用独立的临时应用并自动清理。对外统一使用发布版本号。
 
 ## 0.5.1 修复与优化
 
@@ -121,137 +126,35 @@ Java、Python、Rust 和 JSON 尚无语法高亮；JSON 格式化仍然可用。
 
 - `Sources/`：应用代码，主控制器为 `Textlet.swift`。
 - `AppIcon.svg` / `AppIcon.icns`：图标矢量源文件与应用图标。
-- `Tests/`：功能测试与窗口基准测试。
-- `scripts/`：构建和合成日志生成脚本。
-- `docs/`、`Benchmarks/`：性能报告、历史测量及验收记录。
+- `Tests/`：轻量功能测试源码，只编入临时测试构建。
+- `scripts/`：正式构建、临时测试和生成物清理脚本。
+- `docs/`、`Benchmarks/`：性能报告、历史测量及验收记录；其中的旧命令只作历史证据。
 - `build/`：本机构建产物，已被 Git 忽略。
-- `test-output/`：新的测试会话、临时基线源码与检查输出，已被 Git 忽略。
+- `dist/`：按发布版本号命名的 ZIP 安装包和校验文件，已被 Git 忽略。
+- `test-output/`：保留的历史检查输出，已被 Git 忽略。
 - `archives/`：整合前的本地项目归档，已被 Git 忽略。
 
-## 构建与测试
+## 构建与验证
 
 需要 Xcode / Command Line Tools，目标为 `x86_64-apple-macosx14.0`。
+
+正式构建只编译 `Sources/`，不会把测试和基准代码打进 Textlet：
 
 ```sh
 bash scripts/build.sh
 ./build/Textlet.app/Contents/MacOS/textlet --build-info
-./build/Textlet.app/Contents/MacOS/textlet --self-test
 ```
 
-构建脚本也可接收自定义 `.app` 输出路径。需要重新生成图标时，执行 `bash scripts/build-icon.sh`（由 `scripts/icon.swift` 按矢量源的几何绘制），随后重新构建应用。应用包、压缩包和大型日志不纳入 Git。
-
-下列示例均从项目根目录运行，先执行 `mkdir -p test-output`。每次新测量应使用未占用的会话目录。普通窗口回归测试持续约 30 秒，自动结束。附加 `--stress` 测试十标签。
+自动验证使用独立 Bundle ID，在 `/private/tmp/textlet-tests.*` 内临时构建。脚本退出时会注销并删除测试应用和临时目录：
 
 ```sh
-./build/Textlet.app/Contents/MacOS/textlet \
-  --data-dir test-output/textlet-small-session \
-  --benchmark test-output/textlet-small.json
-./build/Textlet.app/Contents/MacOS/textlet \
-  --data-dir test-output/textlet-small-session \
-  --restore-check test-output/textlet-small.expected.json
+bash scripts/test.sh
 ```
 
-大日志与 JSON 快捷键测试：
+需要检查真实窗口、Finder 打开方式或系统菜单时，只构建一个 `build/Textlet.app` 手动检查；检查完成后清理本地应用包及其 Launch Services 注册：
 
 ```sh
-python3 scripts/make-log-fixtures.py test-output/textlet-fixtures
-./build/Textlet.app/Contents/MacOS/textlet \
-  --data-dir test-output/textlet-log-session \
-  --feature-benchmark test-output/textlet-log.json \
-  --log-fixture test-output/textlet-fixtures/500MB.log
-./build/Textlet.app/Contents/MacOS/textlet \
-  --data-dir test-output/textlet-log-session \
-  --feature-restore test-output/textlet-log.expected.json
+bash scripts/clean-generated.sh
 ```
 
-所有测试必须用隔离目录。基准测试拒绝覆盖已有会话；重启检查使用相应测试会话。测试窗口会自行切换、编辑和隐藏，请勿操作它们。测试结束后才截图；普通启动不采样、不截图。原始结果见 `Benchmarks/v0.2/` 和 `Benchmarks/v0.3/`。
-
-
-替换、标签双击、循环切换/编辑/撤销和大小窗口内存测试约 90 秒：
-
-```sh
-./build/Textlet.app/Contents/MacOS/textlet \
-  --data-dir test-output/textlet-interaction-session \
-  --interaction-benchmark test-output/textlet-interaction.json
-./build/Textlet.app/Contents/MacOS/textlet \
-  --data-dir test-output/textlet-interaction-session \
-  --restore-check test-output/textlet-interaction.expected.json
-```
-
-附加 `--quick-check` 可运行约 17 秒的快速功能检查，跳过大小窗口和长循环测量。
-
-该测试使用合成文本和隔离会话，临时使用并还原系统查找剪贴板，不修改普通剪贴板。大窗口失去焦点后保持显示，用于区别“后台但仍可见”和“隐藏窗口”。报告检查结果之外还需核对实际循环次数和前台采样数。
-
-
-0.4 的针对性检查（未追加大范围性能测试）：
-
-```sh
-./build/Textlet.app/Contents/MacOS/textlet --syntax-test
-./build/Textlet.app/Contents/MacOS/textlet \
-  --data-dir test-output/textlet-appearance-session \
-  --appearance-check test-output/textlet-appearance.json
-```
-
-第二项约 8 秒，只用合成文本检查配色、三种高亮、语言保存、撤销、只读模式和查找替换栏；草稿目录必须为空。截图仅用于检查测试窗口外观。
-
-关闭标签与窗口恢复回归：
-
-```sh
-./build/Textlet.app/Contents/MacOS/textlet \
-  --data-dir test-output/textlet-lifecycle-session \
-  --lifecycle-check test-output/textlet-lifecycle.json
-./build/Textlet.app/Contents/MacOS/textlet \
-  --data-dir test-output/textlet-window-session \
-  --window-check test-output/textlet-window-zoom.json --window-size zoom
-./build/Textlet.app/Contents/MacOS/textlet \
-  --data-dir test-output/textlet-window-session \
-  --window-check test-output/textlet-window-restored.json
-```
-
-关闭回归必须使用新建的隔离草稿目录，输出目录也应独立且为空（会生成合成导出文件）。窗口回归可使用 `--window-size small` 验证小窗口退出与恢复。GUI 测试需要可访问 macOS 图形会话。
-
-关闭回归使用真实确认框和文件写入，路径选择由测试替身提供，不代表系统保存面板交互已经完整自动化验证。附加 `--no-screenshot` 可禁用关闭确认框截图，便于独立进行内存扫描。本次完整结果和限制见 [2026-09-27 回归报告](docs/回归测试-2026-09-27.md)。
-
-文件关联与未保存内容的真实退出、重启恢复检查（首次运行须使用新的隔离目录）：
-
-```sh
-./build/Textlet.app/Contents/MacOS/textlet \
-  --data-dir test-output/textlet-file-session \
-  --file-session-check test-output/textlet-file.expected.json
-./build/Textlet.app/Contents/MacOS/textlet \
-  --data-dir test-output/textlet-file-session \
-  --restore-check test-output/textlet-file.expected.json
-```
-
-覆盖已保存文件、已修改文件、原文件丢失且未修改、原文件丢失且已修改、未保存草稿五种情况，并检查退出不会改写原文件。文件读写自测另覆盖编码、BOM、换行、可执行权限及外部修改检测。
-
-Finder 临时打开的针对性检查（GUI 检查须用新的隔离会话）：
-
-```sh
-./build/Textlet.app/Contents/MacOS/textlet --text-file-test
-./build/Textlet.app/Contents/MacOS/textlet \
-  --data-dir test-output/textlet-opening-session \
-  --opening-check test-output/textlet-opening.json
-xcrun swift -module-cache-path build/module-cache \
-  scripts/check-finder-opening.swift build/Textlet.app test-output/finder-opening
-```
-
-最后一项复制应用并使用独立 Bundle ID 和草稿目录，通过 Launch Services 检查真实冷启动、运行中打开、重复文件及默认应用保持，结束后退出并注销测试副本。它不自动点击 Finder 的菜单和“其它…”面板。可用 `--text-opening-benchmark <output.json> --opening-fixture <path> --opening-kind document|log --opening-iterations 100` 单独测量读取器；该测量不含窗口绘制和原有日志全文索引。
-
-
-## 可选的独立实验构建
-
-可单独构建带完整编辑功能的“Textlet 实验版”：
-
-```sh
-bash scripts/build-experimental.sh
-open 'build/Textlet Rows.app'
-```
-
-正式版与实验版现在使用同一套优化绘制实现，均保留系统输入、撤销、查找替换及现有功能。实验构建额外启用 `TEXTLET_EXPERIMENTAL`，草稿位于独立的 `~/Library/Application Support/Textlet-Rows-Experiment/`，不会自动导入正式版草稿。日常使用和后续功能开发以正式构建为准。
-
-使用方法和测量边界见 [实验版说明](Experiments/TextletRows/README.md)；完整结果见 [实验版集成验证](docs/Textlet实验版集成验证-2026-09-27.md)。
-
-正式版的行图片缓存预算为 32MiB，供滚动复用；这不是整个应用的内存上限，可见行超出预算时优先保证显示。历史实验报告中“正式版”“原版”指当时的旧构建，请按报告日期理解。验证过程与取舍见 [CPU/内存平衡报告](docs/逐行绘制CPU内存平衡-2026-09-28.md)。
-
-连续输入、滚动和停止后的 CPU 对照见 [2026-09-28 测量报告](docs/真实连续输入与滚动CPU对照-2026-09-28.md)。
+`scripts/build.sh` 仍可接收自定义 `.app` 输出路径。需要重新生成图标时，执行 `bash scripts/build-icon.sh`，随后重新构建。已退役的实验构建、Finder 自动探针和性能基准不再保留可执行入口；历史结果继续保存在 `docs/` 与 `Benchmarks/`，不会被日常开发重新运行。
