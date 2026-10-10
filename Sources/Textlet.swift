@@ -30,6 +30,11 @@ func disableTextSubstitutions(in editor: NSTextView) {
 }
 
 final class EditorWindow: NSWindow {
+    weak var tabReordering: TabReordering?
+    override func sendEvent(_ event: NSEvent) {
+        if event.type == .keyDown, event.keyCode == 53, tabReordering?.cancel() == true { return }
+        super.sendEvent(event)
+    }
     override func makeFirstResponder(_ responder: NSResponder?) -> Bool {
         let accepted = super.makeFirstResponder(responder)
         if accepted, let fieldEditor = firstResponder as? NSTextView, fieldEditor.isFieldEditor {
@@ -105,6 +110,7 @@ final class BackgroundView: NSView {
 // Hit-test only the empty strip; existing tabs and controls keep their normal actions.
 final class TabBarView: NSView {
     var onNewNote: (() -> Void)?
+    var reordering: TabReordering?
     weak var scroller: NSScrollView?
     private var forwardingScroll = false
     override func hitTest(_ point: NSPoint) -> NSView? {
@@ -144,6 +150,7 @@ final class NoteTab: NSView {
     var onClose: (() -> Void)?
     let label = NSTextField(labelWithString: "")
     private let close = NSButton()
+    weak var reordering: TabReordering?
     private var middleMousePressed = false
     var selected = false {
         didSet {
@@ -214,7 +221,9 @@ final class NoteTab: NSView {
         let hit = super.hitTest(point)
         return hit === label ? self : hit
     }
-    override func mouseDown(with event: NSEvent) { onSelect?() }
+    override func mouseDown(with event: NSEvent) { reordering?.begin(self, with: event) }
+    override func mouseDragged(with event: NSEvent) { reordering?.drag(self, with: event) }
+    override func mouseUp(with event: NSEvent) { reordering?.end(self, with: event) }
     override func otherMouseDown(with event: NSEvent) {
         guard event.buttonNumber == 2 else { super.otherMouseDown(with: event); return }
         middleMousePressed = true
@@ -346,6 +355,13 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         plus.translatesAutoresizingMaskIntoConstraints = false
         top.addSubview(tabScroller)
         top.addSubview(plus)
+        let reordering = TabReordering(bar: top, stack: tabStack, scroller: tabScroller)
+        top.reordering = reordering
+        (window as? EditorWindow)?.tabReordering = reordering
+        reordering.onMove = { [weak self] id, index in
+            do { try self?.moveNote(id, to: index) }
+            catch { self?.showMessage("无法保存标签顺序", error.localizedDescription) }
+        }
 
         let storage = NSTextStorage()
         let layout = NSLayoutManager()
@@ -532,6 +548,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
 
     func selectNote(_ id: UUID, saveCurrent: Bool = true) throws {
         guard let next = notes.first(where: { $0.record.id == id }) else { throw SessionError.invalid("标签不存在") }
+        tabBar?.reordering?.cancel()
         if saveCurrent {
             capturePosition()
             editor.breakUndoCoalescing()
@@ -590,11 +607,14 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         updateStatus()
     }
 
-    func renderTabs() {
+    func renderTabs(scrollToSelection: Bool = true) {
         let existing = Dictionary(uniqueKeysWithValues: tabStack.arrangedSubviews.compactMap {
             ($0 as? NoteTab).map { ($0.id, $0) }
         })
         let wanted = Set(notes.map { $0.record.id })
+        if existing.count != wanted.count || existing.keys.contains(where: { !wanted.contains($0) }) {
+            tabBar.reordering?.cancel()
+        }
         for (id, tab) in existing where !wanted.contains(id) {
             tabStack.removeArrangedSubview(tab)
             tab.removeFromSuperview()
@@ -604,11 +624,13 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
             let tab = existing[id] ?? NoteTab(note: note)
             if existing[id] == nil {
                 tab.onSelect = { [weak self] in
-                    do { try self?.selectNote(id) }
-                    catch { self?.showMessage("无法打开草稿", error.localizedDescription) }
+                    guard let self, self.activeID != id else { return }
+                    do { try self.selectNote(id) }
+                    catch { self.showMessage("无法打开草稿", error.localizedDescription) }
                 }
                 tab.onClose = { [weak self] in self?.closeNote(id) }
             }
+            tab.reordering = tabBar.reordering
             if tabStack.arrangedSubviews.firstIndex(of: tab) != index {
                 if tab.superview != nil { tabStack.removeArrangedSubview(tab); tab.removeFromSuperview() }
                 tabStack.insertArrangedSubview(tab, at: index)
@@ -619,9 +641,31 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         }
         tabStack.layoutSubtreeIfNeeded()
         tabStack.setFrameSize(tabStack.fittingSize)
-        if let selected = tabStack.arrangedSubviews.compactMap({ $0 as? NoteTab }).first(where: \.selected) {
+        if scrollToSelection, let selected = tabStack.arrangedSubviews.compactMap({ $0 as? NoteTab }).first(where: \.selected) {
             tabStack.scrollToVisible(selected.frame)
         }
+    }
+
+    func moveNote(_ id: UUID, to index: Int) throws {
+        guard notes.indices.contains(index), let oldIndex = notes.firstIndex(where: { $0.record.id == id }) else {
+            throw SessionError.invalid("标签位置无效")
+        }
+        guard index != oldIndex else { return }
+        tabBar.reordering?.cancel()
+        let oldNotes = notes
+        let note = notes.remove(at: oldIndex)
+        notes.insert(note, at: index)
+        guard saveSession() else {
+            notes = oldNotes
+            throw SessionError.invalid(lastSaveError ?? "会话保存失败")
+        }
+        // Move only the dragged control; all intervening controls stay attached.
+        if let tab = tabStack.arrangedSubviews.first(where: { ($0 as? NoteTab)?.id == id }) {
+            tabStack.removeArrangedSubview(tab)
+            tab.removeFromSuperview()
+            tabStack.insertArrangedSubview(tab, at: index)
+        }
+        renderTabs(scrollToSelection: false)
     }
 
     func textDidChange(_ notification: Notification) {
@@ -683,6 +727,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         position.stringValue = "\(active.language.title) · \(active.encodingTitle)"
     }
     func applicationDidResignActive(_ notification: Notification) {
+        tabBar?.reordering?.cancel()
         guard saveSession() else { return }
         for note in notes where note.record.id != activeID && !note.undo.canUndo && !note.undo.canRedo {
             note.storage = nil
@@ -692,6 +737,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         DispatchQueue.global(qos: .utility).async { _ = malloc_zone_pressure_relief(nil, 0) }
     }
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        tabBar?.reordering?.cancel()
         if saveSession() { return .terminateNow }
         showMessage("草稿尚未保存", "请先导出文本再退出。\n\(lastSaveError ?? "")")
         return .terminateCancel
@@ -700,6 +746,8 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         NSApp.terminate(nil)
         return false
     }
+    func windowDidResignKey(_ notification: Notification) { tabBar?.reordering?.cancel() }
+    func windowWillClose(_ notification: Notification) { tabBar?.reordering?.cancel() }
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         window?.makeKeyAndOrderFront(nil)
         return true
@@ -715,6 +763,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
     }
 
     @objc func newNote() {
+        tabBar?.reordering?.cancel()
         let oldActiveID = activeID
         let note = Note(name: Note.nextName(in: notes), automaticTitle: true)
         notes.append(note)
@@ -770,6 +819,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
 
     func removeNote(_ id: UUID) throws {
         guard let closingIndex = notes.firstIndex(where: { $0.record.id == id }) else { return }
+        tabBar?.reordering?.cancel()
         guard saveSession() else { throw SessionError.invalid(lastSaveError ?? "会话保存失败") }
         let closingActive = activeID == id
         let oldNotes = notes
@@ -845,6 +895,7 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
                 draftFile: "", selection: 0, scrollY: 0, logPath: url.path, logOffset: 0))
             note.logFile = file
         } else { note = try DocumentFile.open(url) }
+        tabBar?.reordering?.cancel()
         notes.append(note)
         do {
             try selectNote(note.record.id)

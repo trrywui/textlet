@@ -74,6 +74,7 @@ func runSelfTests() throws {
     print("All persistence tests passed.")
     try runTitleTests(root: root.appendingPathComponent("titles"))
     try runTabSelectionTests(root: root.appendingPathComponent("tab-selection"))
+    try runTabReorderingTests(root: root.appendingPathComponent("tab-reordering"))
     try runRecoveryTests(root: root.appendingPathComponent("recovery"))
     try runFileStateTests(root: root.appendingPathComponent("file-state"))
     try runFileSavingTests(root: root.appendingPathComponent("file-saving"))
