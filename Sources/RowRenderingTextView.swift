@@ -23,10 +23,14 @@ class RowRenderingTextView: NSTextView, NSLayoutManagerDelegate {
         let bytes: Int
         let image: CGImage?
         var lastUsed: Int
+        let containsMarkedText: Bool
+        let containsBackground: Bool
     }
     private var tiles: [Int: Tile] = [:]
     private let selectionLayer = CAShapeLayer()
     private var rendering = false
+    private var drawingRowImage = false
+    private var rowSelections: [NSValue]?
     private var scheduled = false
     private var observers: [NSObjectProtocol] = []
     private var installed = false
@@ -86,6 +90,17 @@ class RowRenderingTextView: NSTextView, NSLayoutManagerDelegate {
     override func setNeedsDisplay(_ rect: NSRect) {
         super.setNeedsDisplay(rect)
         if !rendering { invalidateRows() }
+    }
+    // TextKit's background primitive also draws the current selection. Hide it
+    // only while drawing a cached row; the vector layer draws the real selection.
+    // No selection setter, delegate notification, or undo state is involved.
+    override func selectedRange() -> NSRange {
+        if drawingRowImage, let range = rowSelections?.first?.rangeValue { return range }
+        return super.selectedRange()
+    }
+    override var selectedRanges: [NSValue] {
+        get { drawingRowImage ? rowSelections ?? super.selectedRanges : super.selectedRanges }
+        set { super.selectedRanges = newValue }
     }
     override func setSelectedRanges(_ ranges: [NSValue], affinity: NSSelectionAffinity, stillSelecting: Bool) {
         super.setSelectedRanges(ranges, affinity: affinity, stillSelecting: stillSelecting)
@@ -155,13 +170,32 @@ class RowRenderingTextView: NSTextView, NSLayoutManagerDelegate {
             self.renderRows()
         }
     }
+    private func drawRow(_ glyphs: NSRange, at origin: NSPoint, using layout: NSLayoutManager) {
+        if rowSelections == nil {
+            let ranges = super.selectedRanges
+            // Collapse highlight lengths without moving the insertion points.
+            // Read once per render with cache misses; reuse the native array when
+            // it already contains only carets, without allocating replacement values.
+            rowSelections = ranges.contains { $0.rangeValue.length > 0 }
+                ? ranges.map { NSValue(range: NSRange(location: $0.rangeValue.location, length: 0)) } : ranges
+        }
+        drawingRowImage = true
+        defer { drawingRowImage = false }
+        // Keep document/temporary backgrounds and marked-text decoration. Only
+        // the live selection is excluded from the reusable image.
+        layout.drawBackground(forGlyphRange: glyphs, at: origin)
+        layout.drawGlyphs(forGlyphRange: glyphs, at: origin)
+    }
     func renderRows() {
         guard !rendering, let root = layer, let layout = layoutManager, let container = textContainer,
               let storage = textStorage, window != nil else { return }
         rendering = true
         scheduled = false
         generation += 1; rowRenderPasses += 1
-        defer { rendering = false }
+        defer {
+            rendering = false
+            rowSelections = nil
+        }
         CATransaction.begin(); CATransaction.setDisableActions(true)
         defer { CATransaction.commit() }
         if !installed {
@@ -191,6 +225,7 @@ class RowRenderingTextView: NSTextView, NSLayoutManagerDelegate {
         let glyphs = layout.glyphRange(forBoundingRectWithoutAdditionalLayout: visible, in: container)
         renderedGlyphRange = glyphs
         let scale = window?.backingScaleFactor ?? 2
+        let marked = markedRange()
         var keep = Set<Int>(), glyph = glyphs.location
         let limit = min(NSMaxRange(glyphs), layout.firstUnlaidGlyphIndex())
         while glyph < limit {
@@ -198,6 +233,7 @@ class RowRenderingTextView: NSTextView, NSLayoutManagerDelegate {
             let line = layout.lineFragmentRect(forGlyphAt: glyph, effectiveRange: &range, withoutAdditionalLayout: true)
             guard range.length > 0, NSMaxRange(range) > glyph else { break }
             let characters = layout.characterRange(forGlyphRange: range, actualGlyphRange: nil)
+            let containsMarkedText = marked.location != NSNotFound && NSIntersectionRange(marked, characters).length > 0
             // Newline control glyphs have a full-fragment bounding box; they carry no ink.
             var end = NSMaxRange(characters)
             let string = storage.mutableString
@@ -226,8 +262,12 @@ class RowRenderingTextView: NSTextView, NSLayoutManagerDelegate {
             let dy = anchor.minY - (previous?.line.minY ?? anchor.minY)
             // Keep the glyphs' pixel phase when reusing a moved image.
             let aligned = abs(dx * scale - (dx * scale).rounded()) < 0.0001 && abs(dy * scale - (dy * scale).rounded()) < 0.0001
+            // Native background rectangles can settle after shaping/IME updates
+            // without a storage edit. Refresh only decorated rows; ordinary
+            // plaintext and foreground syntax colors retain the fast cache path.
             if var old = previous, old.characters == characters, old.line.size == anchor.size,
-               old.scale == scale, aligned, old.temporaryRuns == temporaryRuns {
+               old.scale == scale, aligned, old.temporaryRuns == temporaryRuns,
+               !containsMarkedText, !old.containsMarkedText, !old.containsBackground {
                 old.frame = old.frame.offsetBy(dx: dx, dy: dy); old.line = anchor
                 old.layer.frame = old.frame; old.lastUsed = generation
                 if old.layer.superlayer == nil { root.insertSublayer(old.layer, above: selectionLayer) }
@@ -239,6 +279,10 @@ class RowRenderingTextView: NSTextView, NSLayoutManagerDelegate {
             let signature = NSMutableAttributedString(attributedString: storage.attributedSubstring(from: characters))
             for run in temporaryRuns {
                 signature.addAttributes(run.attributes as! [NSAttributedString.Key: Any], range: run.range)
+            }
+            var containsBackground = false
+            signature.enumerateAttribute(.backgroundColor, in: NSRange(location: 0, length: signature.length)) { value, _, stop in
+                if value != nil { containsBackground = true; stop.pointee = true }
             }
             // Include overhanging glyphs/underlines, bounded by the view's width.
             var rect = inkGlyphs.length > 0 ? layout.boundingRect(forGlyphRange: inkGlyphs, in: container) : NSRect(x: line.minX, y: line.minY, width: 1, height: line.height)
@@ -258,8 +302,7 @@ class RowRenderingTextView: NSTextView, NSLayoutManagerDelegate {
                     let graphics = NSGraphicsContext(cgContext: context, flipped: true)
                     NSGraphicsContext.saveGraphicsState(); NSGraphicsContext.current = graphics
                     let offset = NSPoint(x: origin.x - rect.minX, y: origin.y - rect.minY)
-                    layout.drawBackground(forGlyphRange: inkGlyphs, at: offset)
-                    layout.drawGlyphs(forGlyphRange: inkGlyphs, at: offset)
+                    drawRow(inkGlyphs, at: offset, using: layout)
                     NSGraphicsContext.restoreGraphicsState()
                     let tile = previous?.layer ?? CALayer()
                     tile.contentsScale = scale; tile.contentsGravity = .resize
@@ -267,7 +310,9 @@ class RowRenderingTextView: NSTextView, NSLayoutManagerDelegate {
                     rowRasterizations += 1
                     tile.frame = rect; tile.contents = image
                     if tile.superlayer == nil { root.insertSublayer(tile, above: selectionLayer) }
-                    tiles[key] = Tile(layer: tile, characters: characters, frame: rect, line: anchor, signature: signature, temporaryRuns: temporaryRuns, scale: scale, bytes: context.bytesPerRow * h, image: image, lastUsed: generation)
+                    // Marked-text decoration can change outside storage edits.
+                    // Refresh only its rows, including once after composition ends.
+                    tiles[key] = Tile(layer: tile, characters: characters, frame: rect, line: anchor, signature: signature, temporaryRuns: temporaryRuns, scale: scale, bytes: context.bytesPerRow * h, image: image, lastUsed: generation, containsMarkedText: containsMarkedText, containsBackground: containsBackground)
                 }
             }
             glyph = NSMaxRange(range)

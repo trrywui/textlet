@@ -559,6 +559,9 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         highlighter.reset(.plain)
         switching = true
         editor.textStorage?.delegate = nil
+        // Preserve the old position above, then discard its selection before
+        // replacing the body: AppKit's font updates can query it immediately.
+        editor.setSelectedRange(NSRange(location: 0, length: 0))
         activeID = id
         if next.isLog {
             let hideFind = NSMenuItem(); hideFind.tag = NSTextFinder.Action.hideFindInterface.rawValue
@@ -582,9 +585,9 @@ final class Textlet: NSObject, NSApplicationDelegate, NSTextViewDelegate, NSText
         editor.layoutManager!.replaceTextStorage(storage)
         storage.delegate = self
         ruler.reset()
+        editor.setSelectedRange(NSRange(location: min(max(0, next.record.selection), storage.length), length: 0))
         editor.typingAttributes = [.font: editor.font ?? NSFont.monospacedSystemFont(ofSize: 14, weight: .regular),
                                    .foregroundColor: Theme.text]
-        editor.setSelectedRange(NSRange(location: min(max(0, next.record.selection), storage.length), length: 0))
         // Notify NSTextView's finder that replacing the entire storage changed the document.
         // Keep switching=true so this does not mark the newly selected draft as edited.
         editor.didChangeText()
