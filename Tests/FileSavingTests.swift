@@ -97,8 +97,9 @@ func runFileWatchTests(root: URL) throws {
     try fm.createDirectory(at: directory, withIntermediateDirectories: true)
     let a = directory.appendingPathComponent("a.txt"), b = directory.appendingPathComponent("b.txt")
     try Data("a".utf8).write(to: a); try Data("b".utf8).write(to: b)
+    let watchedNote = try DocumentFile.open(a)
     var aEvents = 0, bEvents = 0
-    var first: FileWatch? = FileWatch(url: a) { aEvents += 1 }
+    var first: FileWatch? = FileWatch(url: a) { aEvents += 1; watchedNote.refreshFileState() }
     var second: FileWatch? = FileWatch(url: b) { bEvents += 1 }
     weak var releasedFirst = first, releasedSecond = second
     func expect(_ condition: @autoclosure () -> Bool, _ message: String) throws {
@@ -113,9 +114,18 @@ func runFileWatchTests(root: URL) throws {
     try Data("unrelated".utf8).write(to: directory.appendingPathComponent("other.txt"))
     RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.1))
     try expect(aEvents == 0 && bEvents == 0, "unrelated directory changes do not refresh tab state")
-    try Data("replacement".utf8).write(to: a, options: .atomic)
+    try fm.setAttributes([.modificationDate: Date(timeIntervalSince1970: 1_000_000)], ofItemAtPath: a.path)
     waitUntil { aEvents > 0 }
-    try expect(aEvents > 0 && bEvents == 0, "atomic replacement notifies only the affected file")
+    try expect(aEvents > 0 && !watchedNote.needsFileSave, "metadata notification keeps the file saved without polling")
+    let beforeSameContent = aEvents
+    try Data("a".utf8).write(to: a, options: .atomic)
+    waitUntil { aEvents > beforeSameContent }
+    try expect(aEvents > beforeSameContent && !watchedNote.needsFileSave, "same-content replacement notification keeps the file saved")
+    let beforeReplacement = aEvents
+    try Data("replacement".utf8).write(to: a, options: .atomic)
+    waitUntil { aEvents > beforeReplacement }
+    try expect(aEvents > beforeReplacement && bEvents == 0 && watchedNote.fileChangedExternally,
+        "atomic replacement notifies only the affected file and detects changed content")
     var before = aEvents
     let handle = try FileHandle(forWritingTo: a)
     try handle.write(contentsOf: Data("updated".utf8)); try handle.close()

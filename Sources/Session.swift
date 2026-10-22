@@ -73,12 +73,15 @@ final class Note {
             let url = URL(fileURLWithPath: file.path)
             let signature = try DocumentFile.signature(at: url)
             fileMissing = false
-            if let saved = file.signature {
-                fileChangedExternally = signature != saved
+            if signature == file.signature {
+                fileChangedExternally = false
             } else if signature != inspectedFileSignature || file.diskDigest != inspectedFileDigest {
-                // Older sessions have no inode/ctime baseline. Verify once per disk
-                // version before adopting it, so a pre-launch change is not missed.
-                fileChangedExternally = try DocumentFile.version(at: url) != .present(file.diskDigest)
+                // iCloud can change metadata or replace an inode without changing
+                // bytes. Verify content once per signature and saved digest, also
+                // covering older sessions that have no signature baseline.
+                let version = try DocumentFile.version(at: url)
+                guard try DocumentFile.signature(at: url) == signature else { throw DocumentFileError.changed }
+                fileChangedExternally = version != .present(file.diskDigest)
                 inspectedFileSignature = signature
                 inspectedFileDigest = file.diskDigest
                 inspectedFileChangedExternally = fileChangedExternally
